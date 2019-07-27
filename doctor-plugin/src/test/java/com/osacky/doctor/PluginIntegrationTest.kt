@@ -20,11 +20,10 @@ class PluginIntegrationTest constructor(private val version: String) {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun getParams(): List<String> {
-            return Arrays.asList("5.0", "5.1", "5.2","5.3", "5.4", "5.5.1")
+            return listOf("5.0", "5.1", "5.2","5.3", "5.4", "5.5.1")
         }
     }
 
-    @Ignore
     @Test
     fun testOlderVersion() {
         assumeSupportedVersion()

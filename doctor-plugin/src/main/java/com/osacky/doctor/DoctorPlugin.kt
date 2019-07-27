@@ -1,7 +1,5 @@
 package com.osacky.doctor
 
-import org.gradle.BuildResult
-import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,18 +18,23 @@ class DoctorPlugin : Plugin<Project> {
         }
 
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector())
-        val javaAnnotationTime = JavaAnnotationTime()
+        val operations = BuildOperations(target.gradle)
+        val javaAnnotationTime = JavaAnnotationTime(operations)
+        val deprecationWarningPrinter = DeprecationWarningPrinter(operations)
+        deprecationWarningPrinter.start()
 
-        javaAnnotationTime.startListening(target.gradle)
-
-        target.gradle.buildFinished(Action<BuildResult> {
+        target.gradle.buildFinished {
             garbagePrinter.onFinish()
-            javaAnnotationTime.onFinished(target.gradle)
-        })
+            javaAnnotationTime.onFinished()
+            if (target.hasProperty("org.gradle.warning.mode") && target.property("org.gradle.warning.mode") == "all") {
+                deprecationWarningPrinter.buildFinished()
+            }
+        }
 
         val appPluginProjects = mutableSetOf<Project>()
 
         target.subprojects project@ {
+            // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
             tasks.withType(SourceTask::class.java).configureEach {
                 doFirst {
                     source.visit {
@@ -41,6 +44,7 @@ class DoctorPlugin : Plugin<Project> {
                     }
                 }
             }
+            // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
             tasks.withType(Test::class.java).configureEach {
                 outputs.upToDateWhen { false }
             }
@@ -50,6 +54,7 @@ class DoctorPlugin : Plugin<Project> {
                 }
             }
         }
+
         target.gradle.taskGraph.whenReady {
             // If there is only one application plugin, we don't need to check that we're assembling all the applications.
             if (appPluginProjects.size <= 1) {
