@@ -21,7 +21,9 @@ class DoctorPlugin : Plugin<Project> {
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations)
         val deprecationWarningPrinter = DeprecationWarningPrinter(operations)
+        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations)
         deprecationWarningPrinter.start()
+        downloadSpeedMeasurer.start()
 
         target.gradle.buildFinished {
             garbagePrinter.onFinish()
@@ -29,6 +31,7 @@ class DoctorPlugin : Plugin<Project> {
             if (target.hasProperty("org.gradle.warning.mode") && target.property("org.gradle.warning.mode") == "all") {
                 deprecationWarningPrinter.buildFinished()
             }
+            downloadSpeedMeasurer.buildFinished()
         }
 
         val appPluginProjects = mutableSetOf<Project>()

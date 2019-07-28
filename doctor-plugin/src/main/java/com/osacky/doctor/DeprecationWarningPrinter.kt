@@ -8,7 +8,7 @@ class DeprecationWarningPrinter (private val operationEvents: OperationEvents) {
     private val depreacationTraces = mutableListOf<DeprecatedUsage>()
 
     fun start(): Disposable {
-        return operationEvents.progressOfType(DeprecatedUsageProgressDetails::class.java)
+        return operationEvents.progressDetailsOfType(DeprecatedUsageProgressDetails::class.java)
                 .subscribe {
                     depreacationTraces.add(DeprecatedUsage(it.summary, it.stackTrace))
                 }

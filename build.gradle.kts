@@ -32,6 +32,7 @@ plugins {
   id("com.gradle.build-scan") version "2.3"
 }
 
+apply(plugin = "idea")
 apply(plugin = "com.osacky.doctor")
 
 tasks.wrapper {

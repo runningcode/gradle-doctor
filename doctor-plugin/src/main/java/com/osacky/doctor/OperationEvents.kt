@@ -13,14 +13,14 @@ interface OperationEvents {
     fun starts() : Observable<OperationStartEvent>
     fun progress() : Observable<OperationProgressEvent>
     fun finishes() : Observable<OperationFinishEvent>
-    fun <T : Any> progressOfType(clazz : Class<T>) : Observable<T> {
+    fun <T : Any> progressDetailsOfType(clazz : Class<T>) : Observable<T> {
         return progress()
                 .filter { it.details != null }
                 .map { it.details }
                 .filter { clazz.isAssignableFrom(it::class.java) }
                 .cast(clazz)
     }
-    fun <T : Any> finishesOfType(clazz : Class<T>) : Observable<T> {
+    fun <T : Any> finisheResultsOfType(clazz : Class<T>) : Observable<T> {
         return finishes()
                 .filter { it.result != null }
                 .map { it.result }

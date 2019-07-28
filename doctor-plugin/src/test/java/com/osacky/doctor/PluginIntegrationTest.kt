@@ -25,7 +25,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     @Test
-    fun testOlderVersion() {
+    fun testSupportedVersion() {
         assumeSupportedVersion()
         writeBuildGradle(
                 """
@@ -43,7 +43,6 @@ class PluginIntegrationTest constructor(private val version: String) {
 
         assertThat(result.output).contains("total dagger time was")
     }
-
 
     @Test
     fun testFailOnOlderVersion() {
@@ -77,7 +76,10 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     private fun writeBuildGradle(build: String) {
-        val file = testProjectRoot.newFile("build.gradle")
-        file.writeText(build)
+        writeFileToName("build.gradle", build)
+    }
+
+    private fun writeFileToName(fileName : String, contents: String) {
+        testProjectRoot.newFile(fileName).writeText(contents)
     }
 }
