@@ -1,13 +1,3 @@
-import org.gradle.api.internal.GradleInternal
-import org.gradle.internal.featurelifecycle.DeprecatedUsageProgressDetails
-import org.gradle.internal.operations.BuildOperationDescriptor
-import org.gradle.internal.operations.BuildOperationListener
-import org.gradle.internal.operations.BuildOperationListenerManager
-import org.gradle.internal.operations.OperationFinishEvent
-import org.gradle.internal.operations.OperationIdentifier
-import org.gradle.internal.operations.OperationProgressEvent
-import org.gradle.internal.operations.OperationStartEvent
-
 buildscript {
   repositories {
     mavenCentral()
@@ -30,6 +20,7 @@ allprojects {
 
 plugins {
   id("com.gradle.build-scan") version "2.3"
+  id("com.github.ben-manes.versions") version "0.21.0"
 }
 
 apply(plugin = "idea")
