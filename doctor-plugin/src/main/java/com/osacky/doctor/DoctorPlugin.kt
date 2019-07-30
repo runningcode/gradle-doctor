@@ -22,8 +22,10 @@ class DoctorPlugin : Plugin<Project> {
         val javaAnnotationTime = JavaAnnotationTime(operations)
         val deprecationWarningPrinter = DeprecationWarningPrinter(operations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations)
+        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations)
         deprecationWarningPrinter.start()
         downloadSpeedMeasurer.start()
+        buildCacheConnectionMeasurer.onStart()
 
         target.gradle.buildFinished {
             garbagePrinter.onFinish()
@@ -32,6 +34,7 @@ class DoctorPlugin : Plugin<Project> {
                 deprecationWarningPrinter.buildFinished()
             }
             downloadSpeedMeasurer.buildFinished()
+            buildCacheConnectionMeasurer.onFinish()
         }
 
         val appPluginProjects = mutableSetOf<Project>()

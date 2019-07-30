@@ -20,7 +20,7 @@ interface OperationEvents {
                 .filter { clazz.isAssignableFrom(it::class.java) }
                 .cast(clazz)
     }
-    fun <T : Any> finisheResultsOfType(clazz : Class<T>) : Observable<T> {
+    fun <T : Any> finishResultsOfType(clazz : Class<T>) : Observable<T> {
         return finishes()
                 .filter { it.result != null }
                 .map { it.result }

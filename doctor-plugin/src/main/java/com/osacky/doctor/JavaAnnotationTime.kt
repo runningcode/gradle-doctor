@@ -6,7 +6,7 @@ class JavaAnnotationTime(operationEvents: OperationEvents) {
     var totalDaggerTime = 0
 
     init {
-        operationEvents.finisheResultsOfType(CompileJavaBuildOperationType.Result::class.java)
+        operationEvents.finishResultsOfType(CompileJavaBuildOperationType.Result::class.java)
                 .filter { it.annotationProcessorDetails != null }
                 .map { it.annotationProcessorDetails }
                 .map { detailsList -> detailsList.filter { it.className.contains("dagger") }.sumBy { it.executionTimeInMillis.toInt() } }
