@@ -9,6 +9,7 @@ class GarbagePrinter(private val clock: Clock, private val collector: DirtyBeanC
 
     override fun onStart() {
     }
+
     override fun onFinish() {
         val endGarbageTime = collector.collect()
         val endBuildTime = clock.upTime().toMillis()

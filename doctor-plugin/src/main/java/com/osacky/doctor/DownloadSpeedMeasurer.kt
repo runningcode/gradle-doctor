@@ -9,11 +9,11 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : Buil
 
 
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
-    private lateinit var disposable : Disposable
+    private lateinit var disposable: Disposable
 
     override fun onStart() {
         disposable = buildOperations.finishes()
-                .filter { it.result is ExternalResourceReadBuildOperationType.Result  }
+                .filter { it.result is ExternalResourceReadBuildOperationType.Result }
                 .map { fromGradleType(it) }
                 .subscribe { event ->
                     downloadEvents.add(event)
@@ -44,7 +44,7 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : Buil
         disposable.dispose()
     }
 
-    data class ExternalDownloadEvent(val duration : Long, val byteTotal : Long) {
+    data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
         companion object {
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result

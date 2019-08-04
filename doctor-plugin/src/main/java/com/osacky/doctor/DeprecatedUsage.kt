@@ -6,7 +6,7 @@ class DeprecatedUsage(private val message: String, private val stackTraceElement
         UsageException(message, stackTraceElements).printStackTrace()
     }
 
-    private class UsageException (override val message: String, val stackTraceElements: List<StackTraceElement>): Exception() {
+    private class UsageException(override val message: String, val stackTraceElements: List<StackTraceElement>) : Exception() {
         init {
             stackTrace = stackTraceElements.toTypedArray()
         }

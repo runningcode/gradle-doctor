@@ -1,18 +1,24 @@
 package com.osacky.doctor
 
+import java.io.InputStream
+
 
 class DaemonCheck {
 
-    fun numberOfDaemons() : Int {
+    fun numberOfDaemons(): Int {
         return arrayOf("/bin/bash", "-c", "ps aux | grep GradleDaemon | wc -l").execute().toInt() - 2
     }
 
-    private fun Array<String>.execute() : String {
+    private fun Array<String>.execute(): String {
         val process = Runtime.getRuntime().exec(this)
         if (process.waitFor() != 0) {
-            throw RuntimeException(process.errorStream.readBytes().toString(Charsets.UTF_8).trim())
+            throw RuntimeException(process.errorStream.readToString())
         }
 
-        return process.inputStream.readBytes().toString(Charsets.UTF_8).trim()
+        return process.inputStream.readToString()
+    }
+
+    private fun InputStream.readToString() = use {
+        it.readBytes().toString(Charsets.UTF_8).trim()
     }
 }

@@ -36,7 +36,7 @@ class DoctorPlugin : Plugin<Project> {
 
         val appPluginProjects = mutableSetOf<Project>()
 
-        target.subprojects project@ {
+        target.subprojects project@{
             // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
             tasks.withType(SourceTask::class.java).configureEach {
                 doFirst {
@@ -51,7 +51,7 @@ class DoctorPlugin : Plugin<Project> {
             tasks.withType(Test::class.java).configureEach {
                 outputs.upToDateWhen { false }
             }
-            plugins.whenPluginAdded plugin@ {
+            plugins.whenPluginAdded plugin@{
                 if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
                     appPluginProjects.add(this@project)
                 }
@@ -65,7 +65,7 @@ class DoctorPlugin : Plugin<Project> {
             }
             val assembleTasksInAndroidAppProjects = allTasks
                     // Find executing tasks which are in Android AppPlugin Projects and contain the word assemble in the name.
-                    .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble")}
+                    .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble") }
             val projectsWithAssembleTasks = assembleTasksInAndroidAppProjects.map { it.project }.toSet()
             // Check if we have at least one assemble task in every project which has the application plugin.
             if (projectsWithAssembleTasks.containsAll(appPluginProjects)) {

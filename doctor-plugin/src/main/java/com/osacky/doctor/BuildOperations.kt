@@ -12,7 +12,7 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
-class BuildOperations(gradle : Gradle) : OperationEvents {
+class BuildOperations(gradle: Gradle) : OperationEvents {
 
     private val starts: PublishSubject<OperationStartEvent> = PublishSubject.create()
     private val progress: PublishSubject<OperationProgressEvent> = PublishSubject.create()
@@ -40,9 +40,9 @@ class BuildOperations(gradle : Gradle) : OperationEvents {
 
     private val Gradle.buildOperationListenerManger get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
-    override fun starts() : Observable<OperationStartEvent> = starts.hide()
+    override fun starts(): Observable<OperationStartEvent> = starts.hide()
 
-    override fun finishes() : Observable<OperationFinishEvent> = finishes.hide()
+    override fun finishes(): Observable<OperationFinishEvent> = finishes.hide()
 
-    override fun progress() : Observable<OperationProgressEvent> = progress.hide()
+    override fun progress(): Observable<OperationProgressEvent> = progress.hide()
 }

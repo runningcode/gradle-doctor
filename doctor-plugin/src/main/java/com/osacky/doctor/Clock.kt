@@ -1,7 +1,7 @@
 package com.osacky.doctor
 
 interface Clock {
-    fun upTime() : Long
+    fun upTime(): Long
 }
 
 class SystemClock : Clock {

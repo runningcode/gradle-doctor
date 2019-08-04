@@ -5,10 +5,10 @@ import io.reactivex.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
 
-class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener{
+class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener {
 
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
-    private lateinit var disposable : Disposable
+    private lateinit var disposable: Disposable
     override fun onStart() {
         disposable = buildOperations.finishes()
                 .filter { (it.result is BuildCacheRemoteLoadBuildOperationType.Result) && (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit }
@@ -44,7 +44,7 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
         disposable.dispose()
     }
 
-    data class ExternalDownloadEvent(val duration : Long, val byteTotal : Long) {
+    data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
         companion object {
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
