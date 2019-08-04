@@ -1,14 +1,16 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
+import io.reactivex.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
 
 class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener{
 
-    val downloadEvents = mutableListOf<ExternalDownloadEvent>()
+    private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
+    private lateinit var disposable : Disposable
     override fun onStart() {
-        buildOperations.finishes()
+        disposable = buildOperations.finishes()
                 .filter { (it.result is BuildCacheRemoteLoadBuildOperationType.Result) && (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit }
                 .map {
                     fromGradleType(it)
@@ -39,6 +41,7 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
             // TODO Decimal formatting
             println("Total speed from cache = $totalSpeed MB/s")
         }
+        disposable.dispose()
     }
 
     data class ExternalDownloadEvent(val duration : Long, val byteTotal : Long) {

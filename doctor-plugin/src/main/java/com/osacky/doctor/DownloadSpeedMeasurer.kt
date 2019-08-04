@@ -5,13 +5,14 @@ import io.reactivex.disposables.Disposable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 
-class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) {
+class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener {
 
 
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
+    private lateinit var disposable : Disposable
 
-    fun start(): Disposable {
-        return buildOperations.finishes()
+    override fun onStart() {
+        disposable = buildOperations.finishes()
                 .filter { it.result is ExternalResourceReadBuildOperationType.Result  }
                 .map { fromGradleType(it) }
                 .subscribe { event ->
@@ -19,7 +20,7 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) {
                 }
     }
 
-    fun buildFinished() {
+    override fun onFinish() {
         val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
 
@@ -40,6 +41,7 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) {
             // TODO Decimal formatting
             println("Total speed = $totalSpeed MB/s")
         }
+        disposable.dispose()
     }
 
     data class ExternalDownloadEvent(val duration : Long, val byteTotal : Long) {

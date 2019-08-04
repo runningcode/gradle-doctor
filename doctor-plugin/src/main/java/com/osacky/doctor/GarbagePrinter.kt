@@ -2,12 +2,14 @@ package com.osacky.doctor
 
 import java.util.concurrent.TimeUnit
 
-class GarbagePrinter(val clock: Clock, val collector: DirtyBeanCollector) {
+class GarbagePrinter(private val clock: Clock, private val collector: DirtyBeanCollector) : BuildStartFinishListener {
 
-    val startGarbageTime = collector.collect()
-    val startBuildTime = clock.upTime().toMillis()
+    private val startGarbageTime = collector.collect()
+    private val startBuildTime = clock.upTime().toMillis()
 
-    fun onFinish() {
+    override fun onStart() {
+    }
+    override fun onFinish() {
         val endGarbageTime = collector.collect()
         val endBuildTime = clock.upTime().toMillis()
 
@@ -17,9 +19,6 @@ class GarbagePrinter(val clock: Clock, val collector: DirtyBeanCollector) {
 
         println("build took $buildDuration")
         println("garbage took $garbageDuration")
-
-
-
     }
 
     private fun Long.toMillis(): Long {

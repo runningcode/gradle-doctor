@@ -1,12 +1,15 @@
 package com.osacky.doctor
 
+import io.reactivex.disposables.Disposable
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 
-class JavaAnnotationTime(operationEvents: OperationEvents) {
+class JavaAnnotationTime(private val operationEvents: OperationEvents) : BuildStartFinishListener {
     var totalDaggerTime = 0
 
-    init {
-        operationEvents.finishResultsOfType(CompileJavaBuildOperationType.Result::class.java)
+    private lateinit var disposable: Disposable
+
+    override fun onStart() {
+        disposable = operationEvents.finishResultsOfType(CompileJavaBuildOperationType.Result::class.java)
                 .filter { it.annotationProcessorDetails != null }
                 .map { it.annotationProcessorDetails }
                 .map { detailsList -> detailsList.filter { it.className.contains("dagger") }.sumBy { it.executionTimeInMillis.toInt() } }
@@ -15,7 +18,7 @@ class JavaAnnotationTime(operationEvents: OperationEvents) {
                 }
     }
 
-    fun onFinished() {
+    override fun onFinish() {
         println("total dagger time was $totalDaggerTime")
     }
 }

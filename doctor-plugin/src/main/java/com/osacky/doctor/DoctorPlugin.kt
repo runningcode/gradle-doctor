@@ -20,20 +20,17 @@ class DoctorPlugin : Plugin<Project> {
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector())
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations)
-        val deprecationWarningPrinter = DeprecationWarningPrinter(operations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations)
-        deprecationWarningPrinter.start()
-        downloadSpeedMeasurer.start()
+        garbagePrinter.onStart()
+        javaAnnotationTime.onStart()
+        downloadSpeedMeasurer.onStart()
         buildCacheConnectionMeasurer.onStart()
 
         target.gradle.buildFinished {
             garbagePrinter.onFinish()
-            javaAnnotationTime.onFinished()
-            if (target.hasProperty("org.gradle.warning.mode") && target.property("org.gradle.warning.mode") == "all") {
-                deprecationWarningPrinter.buildFinished()
-            }
-            downloadSpeedMeasurer.buildFinished()
+            javaAnnotationTime.onFinish()
+            downloadSpeedMeasurer.onFinish()
             buildCacheConnectionMeasurer.onFinish()
         }
 
