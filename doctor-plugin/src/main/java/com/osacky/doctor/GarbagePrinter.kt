@@ -1,11 +1,19 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.Clock
+import com.osacky.doctor.internal.DirtyBeanCollector
+import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 
-class GarbagePrinter(private val clock: Clock, private val collector: DirtyBeanCollector) : BuildStartFinishListener {
+class GarbagePrinter(
+    private val clock: Clock,
+    private val collector: DirtyBeanCollector,
+    private val extension: DoctorExtension
+) : BuildStartFinishListener {
 
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTime().toMillis()
+    private val formatter = NumberFormat.getPercentInstance()
 
     override fun onStart() {
     }
@@ -17,9 +25,10 @@ class GarbagePrinter(private val clock: Clock, private val collector: DirtyBeanC
         val buildDuration = endBuildTime - startBuildTime
         val garbageDuration = endGarbageTime - startGarbageTime
 
-
-        println("build took $buildDuration")
-        println("garbage took $garbageDuration")
+        val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
+        if (percentGarbageCollecting > extension.GCWarningThreshold) {
+            println("This build ${formatter.format(percentGarbageCollecting)} garbage collecting!")
+        }
     }
 
     private fun Long.toMillis(): Long {

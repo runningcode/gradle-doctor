@@ -19,6 +19,8 @@ class JavaAnnotationTime(private val operationEvents: OperationEvents) : BuildSt
     }
 
     override fun onFinish() {
-        println("total dagger time was $totalDaggerTime")
+        if (totalDaggerTime > 5000) {
+            println("Total time spent in Dagger annotation processing was $totalDaggerTime.")
+        }
     }
 }

@@ -1,16 +1,15 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Assume
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.util.*
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
@@ -32,14 +31,13 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |plugins {
                     |  id "com.osacky.doctor"
                     |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |}
                 """.trimMargin("|")
         )
 
-        val result = GradleRunner.create()
-                .withProjectDir(testProjectRoot.root)
-                .withPluginClasspath()
-                .withGradleVersion(version)
-                .build()
+        val result = runBuild()
 
         assertThat(result.output).contains("total dagger time was")
     }
@@ -52,18 +50,46 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |plugins {
                     |  id "com.osacky.doctor"
                     |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |}
                 """.trimMargin("|")
         )
 
         try {
-            GradleRunner.create()
-                    .withProjectDir(testProjectRoot.root)
-                    .withPluginClasspath()
-                    .withGradleVersion(version)
-                    .build()
+            runBuild()
         } catch (e: UnexpectedBuildFailure) {
             assertThat(e).hasMessageThat().contains("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
         }
+    }
+
+    @Test
+    fun testFailWithMultipleDaemons() {
+        assumeSupportedVersion()
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |doctor {
+                    |  disallowMultipleDaemons = true
+                    |}
+                """.trimMargin("|")
+        )
+        try {
+            runBuild()
+        } catch (e: UnexpectedBuildFailure) {
+            assertThat(e).hasMessageThat()
+                .contains("This might be expected if you are working on multiple Gradle projects.")
+        }
+    }
+
+    private fun runBuild(): BuildResult {
+        return GradleRunner.create()
+            .withProjectDir(testProjectRoot.root)
+            .withPluginClasspath()
+            .withGradleVersion(version)
+            .build()
     }
 
     private fun assumeSupportedVersion() {
@@ -72,7 +98,6 @@ class PluginIntegrationTest constructor(private val version: String) {
 
     private fun assumeUnsupportedVersion() {
         Assume.assumeTrue(version == "5.0")
-
     }
 
     private fun writeBuildGradle(build: String) {

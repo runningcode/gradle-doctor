@@ -1,10 +1,14 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.DaemonCheck
+import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.SystemClock
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.create
 import org.gradle.util.GradleVersion
 
 class DoctorPlugin : Plugin<Project> {
@@ -12,12 +16,10 @@ class DoctorPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         ensureMinimumSupportedGradleVersion()
 
-        val currentlyActiveGradleDaemons = DaemonCheck().numberOfDaemons()
-        if (currentlyActiveGradleDaemons > 1) {
-            println("there are currently more than one Gradle Daemons. Found $currentlyActiveGradleDaemons")
-        }
+        val extension = target.extensions.create<DoctorExtension>("doctor")
 
-        val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector())
+        val daemonChecker = BuildDaemonChecker(extension, DaemonCheck())
+        val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations)
@@ -26,8 +28,12 @@ class DoctorPlugin : Plugin<Project> {
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
         buildCacheConnectionMeasurer.onStart()
+        target.afterEvaluate {
+            daemonChecker.onStart()
+        }
 
         target.gradle.buildFinished {
+            daemonChecker.onFinish()
             garbagePrinter.onFinish()
             javaAnnotationTime.onFinish()
             downloadSpeedMeasurer.onFinish()

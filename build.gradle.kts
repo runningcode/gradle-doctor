@@ -1,3 +1,5 @@
+import com.osacky.doctor.DoctorExtension
+
 buildscript {
   repositories {
     mavenCentral()
@@ -26,6 +28,11 @@ plugins {
 apply(plugin = "idea")
 apply(plugin = "com.osacky.doctor")
 
+configure<DoctorExtension> {
+  disallowMultipleDaemons = false
+  GCWarningThreshold = 0.01f
+}
+
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
   gradleVersion = "5.5.1"
@@ -35,4 +42,8 @@ buildScan {
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
   termsOfServiceAgree = "yes"
   publishAlways()
+}
+
+tasks.register("testPlugin") {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":test"))
 }

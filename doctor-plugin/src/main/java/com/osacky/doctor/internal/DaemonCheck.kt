@@ -1,4 +1,4 @@
-package com.osacky.doctor
+package com.osacky.doctor.internal
 
 import java.io.InputStream
 

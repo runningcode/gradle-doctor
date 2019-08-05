@@ -1,4 +1,4 @@
-package com.osacky.doctor
+package com.osacky.doctor.internal
 
 interface Clock {
     fun upTime(): Long
