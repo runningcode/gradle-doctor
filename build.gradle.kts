@@ -44,6 +44,10 @@ buildScan {
   publishAlways()
 }
 
-tasks.register("testPlugin") {
+tasks.register("testPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":test"))
+}
+
+tasks.register("publishPlugins").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishPlugins"))
 }
