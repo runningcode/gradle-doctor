@@ -8,7 +8,6 @@ buildscript {
 
   dependencies {
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
-    classpath("com.android.tools.build:gradle:3.4.2")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }

@@ -1,6 +1,4 @@
 include 'simple'
 include 'dagger-jvm'
-include 'appOne'
-include 'appTwo'
 
 includeBuild 'doctor-plugin'
