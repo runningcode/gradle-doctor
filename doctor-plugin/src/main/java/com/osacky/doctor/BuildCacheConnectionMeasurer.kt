@@ -35,11 +35,11 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
         if (totalBytes > DownloadSpeedMeasurer.ONE_MEGABYTE) {
             if (totalSpeed < 1.0f) {
                 println("Detected a slow download speed downloading from Build Cache.")
+                println("Total downloaded from cache: $totalBytes bytes")
+                println("Total time from cache $totalTime ms")
+                // TODO Decimal formatting
+                println("Total speed from cache = $totalSpeed MB/s")
             }
-            println("Total downloaded from cache: $totalBytes bytes")
-            println("Total time from cache $totalTime ms")
-            // TODO Decimal formatting
-            println("Total speed from cache = $totalSpeed MB/s")
         }
         disposable.dispose()
     }

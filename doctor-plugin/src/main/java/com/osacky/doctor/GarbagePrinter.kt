@@ -27,7 +27,7 @@ class GarbagePrinter(
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
         if (percentGarbageCollecting > extension.GCWarningThreshold) {
-            println("This build ${formatter.format(percentGarbageCollecting)} garbage collecting!")
+            println("This build spent ${formatter.format(percentGarbageCollecting)} garbage collecting!")
         }
     }
 

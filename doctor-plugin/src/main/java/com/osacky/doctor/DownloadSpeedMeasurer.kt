@@ -35,11 +35,11 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : Buil
         if (totalBytes > ONE_MEGABYTE) {
             if (totalSpeed < 1.0f) {
                 println("Detected a slow download speed downloading from External Repos.")
+                println("Total downloaded: $totalBytes bytes")
+                println("Total time $totalTime ms")
+                // TODO Decimal formatting
+                println("Total speed = $totalSpeed MB/s")
             }
-            println("Total downloaded: $totalBytes bytes")
-            println("Total time $totalTime ms")
-            // TODO Decimal formatting
-            println("Total speed = $totalSpeed MB/s")
         }
         disposable.dispose()
     }
