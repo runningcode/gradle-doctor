@@ -47,6 +47,10 @@ tasks.register("testPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":test"))
 }
 
-tasks.register("publishPlugins").configure {
+tasks.register("publishToGradlePlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":publishPlugins"))
+}
+
+tasks.register("publishToMavenCentral").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishMavenJavaPublicationToMavenRepository"))
 }
