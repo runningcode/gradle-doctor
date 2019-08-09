@@ -22,8 +22,8 @@ class DoctorPlugin : Plugin<Project> {
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations)
-        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations)
-        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations)
+        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
+        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
@@ -43,19 +43,25 @@ class DoctorPlugin : Plugin<Project> {
         val appPluginProjects = mutableSetOf<Project>()
 
         target.subprojects project@{
-            // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
-            tasks.withType(SourceTask::class.java).configureEach {
-                doFirst {
-                    source.visit {
-                        if (file.isDirectory && file.listFiles().isEmpty()) {
-                            throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
+            afterEvaluate {
+                if (!extension.failOnEmptyDirectories) {
+                    // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
+                    tasks.withType(SourceTask::class.java).configureEach {
+                        doFirst {
+                            source.visit {
+                                if (file.isDirectory && file.listFiles().isEmpty()) {
+                                    throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
+                                }
+                            }
                         }
                     }
                 }
-            }
-            // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
-            tasks.withType(Test::class.java).configureEach {
-                outputs.upToDateWhen { false }
+                // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
+                if (!extension.enableTestCaching) {
+                    tasks.withType(Test::class.java).configureEach {
+                        outputs.upToDateWhen { false }
+                    }
+                }
             }
             plugins.whenPluginAdded plugin@{
                 if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
@@ -66,7 +72,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.gradle.taskGraph.whenReady {
             // If there is only one application plugin, we don't need to check that we're assembling all the applications.
-            if (appPluginProjects.size <= 1) {
+            if (appPluginProjects.size <= 1 || extension.allowBuildingAllAppSimultaneously) {
                 return@whenReady
             }
             val assembleTasksInAndroidAppProjects = allTasks

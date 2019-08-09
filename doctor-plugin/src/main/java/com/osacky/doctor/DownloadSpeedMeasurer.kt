@@ -5,7 +5,7 @@ import io.reactivex.disposables.Disposable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 
-class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener {
+class DownloadSpeedMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
 
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
     private lateinit var disposable: Disposable
@@ -31,7 +31,7 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : Buil
 
         // Only print time if we downloaded at least one megabyte
         if (totalBytes > ONE_MEGABYTE) {
-            if (totalSpeed < 1.0f) {
+            if (totalSpeed < extension.downloadSpeedWarningThreshold) {
                 println("Detected a slow download speed downloading from External Repos.")
                 println("Total downloaded: $totalBytes bytes")
                 println("Total time $totalTime ms")

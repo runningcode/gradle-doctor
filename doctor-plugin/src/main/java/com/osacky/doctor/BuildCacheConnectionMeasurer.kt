@@ -5,7 +5,7 @@ import io.reactivex.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
 
-class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener {
+class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
 
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
     private lateinit var disposable: Disposable
@@ -32,7 +32,7 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
 
         // Only print time if we downloaded at least one megabyte
         if (totalBytes > DownloadSpeedMeasurer.ONE_MEGABYTE) {
-            if (totalSpeed < 1.0f) {
+            if (totalSpeed < extension.downloadSpeedWarningThreshold) {
                 println("Detected a slow download speed downloading from Build Cache.")
                 println("Total downloaded from cache: $totalBytes bytes")
                 println("Total time from cache $totalTime ms")
