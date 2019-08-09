@@ -13,6 +13,9 @@ class BuildDaemonChecker(private val extension: DoctorExtension, private val dae
                    This might be expected if you are working on multiple Gradle projects.
                    Otherwise, there might be a settings mismatch between the IDE and the terminal.
                    There might also be a bug causing extra Daemons to spawn.
+                   You can check active Daemons with `jps`.
+                   To kill all active Daemons use:
+                   pkill -f '.*GradleDaemon.*'
                 """.trimIndent()
                 throw GradleException(message)
             }
