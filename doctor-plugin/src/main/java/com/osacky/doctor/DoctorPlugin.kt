@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.SystemClock
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -24,6 +25,7 @@ class DoctorPlugin : Plugin<Project> {
         val javaAnnotationTime = JavaAnnotationTime(operations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
+        val list = listOf(daemonChecker, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer)
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
@@ -33,11 +35,24 @@ class DoctorPlugin : Plugin<Project> {
         }
 
         target.gradle.buildFinished {
-            daemonChecker.onFinish()
-            garbagePrinter.onFinish()
-            javaAnnotationTime.onFinish()
-            downloadSpeedMeasurer.onFinish()
-            buildCacheConnectionMeasurer.onFinish()
+            val thingsToPrint = list.map { it.onFinish() }.filterIsInstance(Finish.FinishMessage::class.java)
+            if (thingsToPrint.isEmpty()) {
+                return@buildFinished
+            }
+
+            val longestMessage = thingsToPrint.map { it.message }
+                .flatMap { it.split('\n') }
+                .maxBy { it.length }!!.length
+
+            thingsToPrint.forEachIndexed { index, item ->
+                if (index == 0) {
+                    target.logger.warn(" Gradle Doctor Prescriptions ".padStart(longestMessage / 2 + 10, '=').padEnd(longestMessage + 4, '='))
+                }
+                item.message.split('\n').forEach {
+                    println("| ${it.padEnd(longestMessage)} |")
+                }
+                target.logger.warn("".padEnd(longestMessage + 4, '='))
+            }
         }
 
         val appPluginProjects = mutableSetOf<Project>()

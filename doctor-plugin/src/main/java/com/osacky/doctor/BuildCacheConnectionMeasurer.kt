@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
+import com.osacky.doctor.internal.Finish
 import io.reactivex.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
@@ -20,27 +21,30 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
                 }
     }
 
-    override fun onFinish() {
+    override fun onFinish(): Finish {
         val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
 
+        disposable.dispose()
         // Don't do anything if we didn't download anything.
         if (totalBytes == 0 || totalTime == 0) {
-            return
+            return Finish.None
         }
         val totalSpeed = (totalBytes / totalTime) / 1024f
 
         // Only print time if we downloaded at least one megabyte
         if (totalBytes > DownloadSpeedMeasurer.ONE_MEGABYTE) {
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
-                println("Detected a slow download speed downloading from Build Cache.")
-                println("Total downloaded from cache: $totalBytes bytes")
-                println("Total time from cache $totalTime ms")
-                // TODO Decimal formatting
-                println("Total speed from cache = $totalSpeed MB/s")
+                val message = """
+                    Detected a slow download speed downloading from Build Cache.
+                    Total downloaded from cache: $totalBytes bytes
+                    Total time from cache $totalTime ms
+                    Total speed from cache = $totalSpeed MB/s
+                """.trimIndent()
+                return Finish.FinishMessage(message)
             }
         }
-        disposable.dispose()
+        return Finish.None
     }
 
     data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {

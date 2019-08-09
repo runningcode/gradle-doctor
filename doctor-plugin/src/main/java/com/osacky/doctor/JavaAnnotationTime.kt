@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.Finish
 import io.reactivex.disposables.Disposable
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 
@@ -18,9 +19,10 @@ class JavaAnnotationTime(private val operationEvents: OperationEvents) : BuildSt
                 }
     }
 
-    override fun onFinish() {
+    override fun onFinish(): Finish {
         if (totalDaggerTime > 5000) {
-            println("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors (Excluding Kapt).\nSwitch to Dagger Reflect to save some time.")
+            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors (Excluding Kapt).\nSwitch to Dagger Reflect to save some time.")
         }
+        return Finish.None
     }
 }

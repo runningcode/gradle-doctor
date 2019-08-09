@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.Finish
 import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +19,7 @@ class GarbagePrinter(
     override fun onStart() {
     }
 
-    override fun onFinish() {
+    override fun onFinish(): Finish {
         val endGarbageTime = collector.collect()
         val endBuildTime = clock.upTime().toMillis()
 
@@ -33,8 +34,9 @@ class GarbagePrinter(
                 Otherwise, if this is happening after several builds it could indicate a memory leak.
                 For a quick fix, restart this Gradle daemon. ./gradlew --stop
             """.trimIndent()
-            println(message)
+            return Finish.FinishMessage(message)
         }
+        return Finish.None
     }
 
     private fun Long.toMillis(): Long {
