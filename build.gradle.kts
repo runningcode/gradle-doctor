@@ -30,7 +30,7 @@ apply(plugin = "com.osacky.doctor")
 configure<DoctorExtension> {
   disallowMultipleDaemons = false
   GCWarningThreshold = 0.01f
-  enableTestCaching = true
+  enableTestCaching = false
 }
 
 tasks.wrapper {
