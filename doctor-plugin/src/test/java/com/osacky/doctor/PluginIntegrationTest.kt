@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
+import java.io.File
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Assume
@@ -9,7 +10,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.io.File
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {

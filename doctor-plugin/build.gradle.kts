@@ -1,7 +1,8 @@
 plugins {
     `kotlin-dsl`
+    kotlin("jvm") version "1.3.41"
     id("com.gradle.plugin-publish") version "0.10.1"
-    id("org.jmailen.kotlinter") version "1.26.0"
+    id("org.jmailen.kotlinter") version "2.1.1"
     `maven-publish`
     signing
 }
