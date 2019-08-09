@@ -7,7 +7,6 @@ import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 
 class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : BuildStartFinishListener {
 
-
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
     private lateinit var disposable: Disposable
 
@@ -23,7 +22,6 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations) : Buil
     override fun onFinish() {
         val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
-
 
         // Don't do anything if we didn't download anything.
         if (totalBytes == 0 || totalTime == 0) {

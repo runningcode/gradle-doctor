@@ -2,7 +2,6 @@ package com.osacky.doctor.internal
 
 import java.io.InputStream
 
-
 class DaemonCheck {
 
     fun numberOfDaemons(): Int {

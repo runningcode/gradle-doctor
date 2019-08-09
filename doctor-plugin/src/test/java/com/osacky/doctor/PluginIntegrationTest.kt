@@ -19,7 +19,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun getParams(): List<String> {
-            return listOf("5.0", "5.1", "5.2","5.3", "5.4", "5.5.1")
+            return listOf("5.0", "5.1", "5.2", "5.3", "5.4", "5.5.1")
         }
     }
 
@@ -135,7 +135,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             createRunner()
                 .withArguments("assembleDebug")
                 .buildAndFail()
-        } catch (e : UnexpectedBuildFailure) {
+        } catch (e: UnexpectedBuildFailure) {
             assertThat(e).hasMessageThat().contains("Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app-two:assembleDebug']\n" +
                     "Maybe you just meant to assemble one of them? In that case, you can try\n" +
                     "  ./gradlew app-one:assembleDebug\n" +
@@ -163,11 +163,11 @@ class PluginIntegrationTest constructor(private val version: String) {
         writeFileToName("build.gradle", build)
     }
 
-    private fun writeFileToName(fileName : String, contents: String) {
+    private fun writeFileToName(fileName: String, contents: String) {
         testProjectRoot.newFile(fileName).writeText(contents)
     }
 
-    private fun createFolder(folderName : String): File {
+    private fun createFolder(folderName: String): File {
         return testProjectRoot.newFolder(folderName)
     }
 

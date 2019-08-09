@@ -24,7 +24,6 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
         val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
 
-
         // Don't do anything if we didn't download anything.
         if (totalBytes == 0 || totalTime == 0) {
             return
@@ -54,5 +53,4 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations)
             }
         }
     }
-
 }

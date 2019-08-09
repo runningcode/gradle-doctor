@@ -20,7 +20,7 @@ class JavaAnnotationTime(private val operationEvents: OperationEvents) : BuildSt
 
     override fun onFinish() {
         if (totalDaggerTime > 5000) {
-            println("This build spent ${totalDaggerTime/1000f} s in Dagger Annotation Processors (Excluding Kapt).\nSwitch to Dagger Reflect to save some time.")
+            println("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors (Excluding Kapt).\nSwitch to Dagger Reflect to save some time.")
         }
     }
 }

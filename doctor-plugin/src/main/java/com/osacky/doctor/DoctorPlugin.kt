@@ -92,5 +92,4 @@ class DoctorPlugin : Plugin<Project> {
             throw GradleException("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
         }
     }
-
 }

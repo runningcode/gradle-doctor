@@ -20,8 +20,8 @@ allprojects {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "2.3"
-  id("com.github.ben-manes.versions") version "0.21.0"
+  id("com.gradle.build-scan") version "2.4"
+  id("com.github.ben-manes.versions") version "0.22.0"
 }
 
 apply(plugin = "idea")
@@ -41,6 +41,10 @@ buildScan {
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
   termsOfServiceAgree = "yes"
   publishAlways()
+}
+
+tasks.register("formatKotlinPlugin").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":formatKotlin"))
 }
 
 tasks.register("testPlugin").configure {
