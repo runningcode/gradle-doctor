@@ -2,9 +2,10 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
 
-class BuildDaemonChecker(private val extension: DoctorExtension, private val daemonCheck: DaemonCheck) : BuildStartFinishListener {
+class BuildDaemonChecker(private val extension: DoctorExtension, private val daemonCheck: DaemonCheck, private val pillBoxPrinter: PillBoxPrinter) : BuildStartFinishListener {
     override fun onStart() {
         if (extension.disallowMultipleDaemons) {
             val numberOfDaemons = daemonCheck.numberOfDaemons()
@@ -18,7 +19,7 @@ class BuildDaemonChecker(private val extension: DoctorExtension, private val dae
                    To kill all active Daemons use:
                    pkill -f '.*GradleDaemon.*'
                 """.trimIndent()
-                throw GradleException(message)
+                throw GradleException(pillBoxPrinter.createPill(message))
             }
         }
     }

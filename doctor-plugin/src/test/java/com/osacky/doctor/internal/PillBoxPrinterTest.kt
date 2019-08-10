@@ -18,7 +18,7 @@ internal class PillBoxPrinterTest {
             |This is the second line.
         """.trimMargin()
 
-        underTest.print(listOf(message))
+        underTest.writePrescription(listOf(message))
         verifyPrinting("""
         | Gradle Doctor Prescriptions 
         || This is the message.     |
@@ -39,7 +39,7 @@ internal class PillBoxPrinterTest {
             |
             |Just another message
         """.trimMargin()
-        underTest.print(listOf(messageOne, messageTwo))
+        underTest.writePrescription(listOf(messageOne, messageTwo))
         verifyPrinting("""
         |===================================================== Gradle Doctor Prescriptions ==================================================================
         || This is the message.                                                                                                                             |

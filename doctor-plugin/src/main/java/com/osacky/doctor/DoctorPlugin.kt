@@ -20,7 +20,8 @@ class DoctorPlugin : Plugin<Project> {
 
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
-        val daemonChecker = BuildDaemonChecker(extension, DaemonCheck())
+        val pillBoxPrinter = PillBoxPrinter(target.logger)
+        val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations)
@@ -41,7 +42,7 @@ class DoctorPlugin : Plugin<Project> {
                 return@buildFinished
             }
 
-            PillBoxPrinter(target.logger).print(thingsToPrint.map { it.message })
+            pillBoxPrinter.writePrescription(thingsToPrint.map { it.message })
         }
 
         val appPluginProjects = mutableSetOf<Project>()
@@ -92,7 +93,7 @@ class DoctorPlugin : Plugin<Project> {
                     |Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles all the code in the entire project?
                     |Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).
                 """.trimMargin("|")
-                throw GradleException(errorMessage)
+                throw GradleException(pillBoxPrinter.createPill(errorMessage))
             }
         }
     }
