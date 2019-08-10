@@ -7,21 +7,41 @@ import org.gradle.api.logging.Logger
  */
 class PillBoxPrinter(private val logger: Logger) {
 
-    val title = "Gradle Doctor Prescriptions"
+    private val title = "Gradle Doctor Prescriptions"
 
-    fun print(messages: List<String>) {
+    fun writePrescription(messages: List<String>) {
         val longestMessage = messages
             .flatMap { it.split('\n') }
             .maxBy { it.length }!!.length
 
         messages.forEachIndexed { index, item ->
             if (index == 0) {
-                logger.warn(" $title ".padStart(longestMessage / 2 + 10, '=').padEnd(longestMessage + 4, '='))
+                logger.warn(createTitle(longestMessage))
             }
             item.split('\n').forEach {
                 logger.warn("| ${it.padEnd(longestMessage)} |")
             }
-            logger.warn("".padEnd(longestMessage + 4, '='))
+            logger.warn(createEnding(longestMessage))
         }
+    }
+
+    private fun createTitle(lineLength: Int): String {
+        return " $title ".padStart(lineLength / 2 + 10, '=').padEnd(lineLength + 4, '=')
+    }
+
+    private fun createEnding(lineLength: Int): String {
+        return "".padEnd(lineLength + 4, '=')
+    }
+
+    fun createPill(message: String): String {
+        val longestLine = message.split('\n').maxBy { it.length }!!.length
+        val messages = message.split('\n').map { "| ${it.padEnd(longestLine)} |" }
+        val lines = listOf(createTitle(longestLine)) + messages + createEnding(longestLine)
+        val builder = StringBuilder()
+
+        for (line in lines) {
+            builder.append(line).append('\n')
+        }
+        return builder.toString()
     }
 }
