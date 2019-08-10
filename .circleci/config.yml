@@ -27,6 +27,8 @@ jobs:
 
       - run: ./gradlew lintKotlinPlugin testPlugin
 
+      - store_test_results:
+          path: doctor-plugin/build/test-results
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -35,4 +37,27 @@ jobs:
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+  deploy:
+    docker:
+      - image: circleci/android:api-28-alpha
+    working_directory: ~/repo
+    environment:
+      JVM_OPTS: -Xmx3g
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+      TERM: dumb
 
+    steps:
+      - checkout
+      - run: ./gradlew publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
