@@ -4,5 +4,5 @@ import com.osacky.doctor.internal.Finish
 
 interface BuildStartFinishListener {
     fun onStart()
-    fun onFinish() : Finish
+    fun onFinish(): Finish
 }
