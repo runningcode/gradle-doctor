@@ -48,7 +48,7 @@ jobs:
 
     steps:
       - checkout
-      - run: ./gradlew publishToMavenCentral
+      - run: ./gradlew publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME
 
 workflows:
   version: 2.1
