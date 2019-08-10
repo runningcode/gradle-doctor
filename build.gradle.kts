@@ -44,6 +44,10 @@ buildScan {
   publishAlways()
 }
 
+tasks.register("lintKotlinPlugin").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":lintKotlin"))
+}
+
 tasks.register("formatKotlinPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":formatKotlin"))
 }

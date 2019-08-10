@@ -19,6 +19,7 @@ dependencies {
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
     testImplementation("com.google.truth:truth:1.0")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 }
 
 pluginBundle {
