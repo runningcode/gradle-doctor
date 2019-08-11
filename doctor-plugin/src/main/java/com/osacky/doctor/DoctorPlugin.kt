@@ -12,6 +12,10 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.create
 import org.gradle.util.GradleVersion
+import org.gradle.util.VersionNumber
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 class DoctorPlugin : Plugin<Project> {
 
@@ -24,7 +28,7 @@ class DoctorPlugin : Plugin<Project> {
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
-        val javaAnnotationTime = JavaAnnotationTime(operations)
+        val javaAnnotationTime = JavaAnnotationTime(operations, extension)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
         val list = listOf(daemonChecker, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer)
@@ -71,6 +75,13 @@ class DoctorPlugin : Plugin<Project> {
             plugins.whenPluginAdded plugin@{
                 if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
                     appPluginProjects.add(this@project)
+                }
+                // TODO check if this works even if we don't depend on kotlin
+                if (this is Kapt3GradleSubplugin) {
+                    if (VersionNumber.parse(this@project.getKotlinPluginVersion()!!).baseVersion >= VersionNumber.parse("1.3.50")) {
+                        val kapt3Extension = this@project.extensions.findByType(KaptExtension::class.java)!!
+                        kapt3Extension.showProcessorTimings = true
+                    }
                 }
             }
         }

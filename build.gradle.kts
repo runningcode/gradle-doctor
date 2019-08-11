@@ -4,10 +4,11 @@ buildscript {
   repositories {
     mavenCentral()
     google()
+    maven { url=uri("https://dl.bintray.com/kotlin/kotlin-eap") }
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50-eap-54")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }
@@ -16,6 +17,7 @@ allprojects {
   repositories {
     mavenCentral()
     google()
+    maven { url=uri("https://dl.bintray.com/kotlin/kotlin-eap") }
   }
 }
 
@@ -31,6 +33,8 @@ configure<DoctorExtension> {
   disallowMultipleDaemons = false
   GCWarningThreshold = 0.01f
   enableTestCaching = false
+  downloadSpeedWarningThreshold = 2.0f
+  daggerThreshold = 100
 }
 
 tasks.wrapper {

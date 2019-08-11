@@ -14,6 +14,10 @@ open class DoctorExtension {
      */
     var GCWarningThreshold = 0.05f
     /**
+     * Print a warning to the console if we spend more than this amount of time with Dagger annoation processors.
+     */
+    var daggerThreshold = 5000
+    /**
      * By default, Gradle caches test results. This can be dangerous if tests rely on timestamps, dates, or other files
      * which are not declared as inputs.
      */

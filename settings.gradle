@@ -1,4 +1,5 @@
 include 'simple'
 include 'dagger-jvm'
+include 'dagger-kapt'
 
 includeBuild 'doctor-plugin'

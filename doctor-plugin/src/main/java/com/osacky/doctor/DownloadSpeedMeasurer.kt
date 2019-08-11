@@ -36,9 +36,8 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations, privat
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
                 val message = """
                     Detected a slow download speed downloading from External Repos.
-                    Total downloaded from cache: $totalBytes bytes
-                    Total time from cache $totalTime ms
-                    Total speed from cache = $totalSpeed MB/s
+                    $totalBytes bytes downloaded in $totalTime ms
+                    Total speed from maven: $totalSpeed MB/s
                 """.trimIndent()
                 return Finish.FinishMessage(message)
             }

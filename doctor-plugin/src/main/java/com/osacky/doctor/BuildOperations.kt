@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.invocation.Gradle
+import org.gradle.internal.logging.events.StyledTextOutputEvent
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
@@ -19,6 +20,10 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
     private val finishes: PublishSubject<OperationFinishEvent> = PublishSubject.create()
     private val listener = object : BuildOperationListener {
         override fun progress(operationIdentifier: OperationIdentifier, progressEvent: OperationProgressEvent) {
+            // There's a ton of these. Don't pass them through for better performance.
+            if (progressEvent.details is StyledTextOutputEvent) {
+                return
+            }
             progress.onNext(progressEvent)
         }
 
