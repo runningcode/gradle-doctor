@@ -37,8 +37,7 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
                 val message = """
                     Detected a slow download speed downloading from Build Cache.
-                    Total downloaded from cache: $totalBytes bytes
-                    Total time from cache $totalTime ms
+                    $totalBytes bytes downloaded in $totalTime ms
                     Total speed from cache = $totalSpeed MB/s
                 """.trimIndent()
                 return Finish.FinishMessage(message)
