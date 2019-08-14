@@ -30,5 +30,5 @@ open class DoctorExtension {
     /**
      * Do not allow building all apps simultaneously. This is likely not what the user intended.
      */
-    var allowBuildingAllAppSimultaneously = false
+    var allowBuildingAllAndroidAppsSimultaneously = false
 }

@@ -86,7 +86,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.gradle.taskGraph.whenReady {
             // If there is only one application plugin, we don't need to check that we're assembling all the applications.
-            if (appPluginProjects.size <= 1 || extension.allowBuildingAllAppSimultaneously) {
+            if (appPluginProjects.size <= 1 || extension.allowBuildingAllAndroidAppsSimultaneously) {
                 return@whenReady
             }
             val assembleTasksInAndroidAppProjects = allTasks
