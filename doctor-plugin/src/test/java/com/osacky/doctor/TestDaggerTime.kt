@@ -37,7 +37,7 @@ class TestDaggerTime {
             .build()
 
         assertThat(result.output).containsMatch("================== Gradle Doctor Prescriptions ===============================\n" +
-                "| This build spent 0.\\d+ s in Dagger Annotation Processors (Excluding Kapt). |\n" +
+                "| This build spent 0.\\d+ s in Dagger Annotation Processors                   |\n" +
                 "| Switch to Dagger Reflect to save some time.                                |\n" +
                 "==============================================================================")
     }

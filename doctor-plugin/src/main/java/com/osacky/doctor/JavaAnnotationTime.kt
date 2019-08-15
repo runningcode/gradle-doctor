@@ -35,7 +35,7 @@ class JavaAnnotationTime(private val operationEvents: OperationEvents, private v
     override fun onFinish(): Finish {
         disposable.dispose()
         if (totalDaggerTime > doctorExtension.daggerThreshold) {
-            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors (Excluding Kapt).\nSwitch to Dagger Reflect to save some time.")
+            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\nSwitch to Dagger Reflect to save some time.")
         }
         return Finish.None
     }
