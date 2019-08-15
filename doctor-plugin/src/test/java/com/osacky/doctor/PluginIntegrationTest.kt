@@ -80,7 +80,19 @@ class PluginIntegrationTest constructor(private val version: String) {
             createRunner().buildAndFail()
         } catch (e: UnexpectedBuildFailure) {
             assertThat(e).hasMessageThat()
-                .contains("This might be expected if you are working on multiple Gradle projects.")
+                .contains(
+                        "Daemons Active.\n" +
+                        "This may indicate a settings mismatch between the IDE and the terminal.\n" +
+                        "There might also be a bug causing extra Daemons to spawn.\n" +
+                        "You can check active Daemons with `jps`.\n" +
+                        "To kill all active Daemons use:\n" +
+                        "pkill -f '.*GradleDaemon.*'\n" +
+                        "\n" +
+                        "This might be expected if you are working on multiple Gradle projects or if you are using build.gradle.kts.\n" +
+                        "To disable this message add this to your root build.gradle file:\n" +
+                        "doctor {\n" +
+                        "  disallowMultipleDaemons = false\n" +
+                        "}This might be expected if you are working on multiple Gradle projects.")
         }
     }
 
@@ -165,10 +177,6 @@ class PluginIntegrationTest constructor(private val version: String) {
 
     private fun writeFileToName(fileName: String, contents: String) {
         testProjectRoot.newFile(fileName).writeText(contents)
-    }
-
-    private fun createFolder(folderName: String): File {
-        return testProjectRoot.newFolder(folderName)
     }
 
     private fun createFileInFolder(folder: File, fileName: String, contents: String) {
