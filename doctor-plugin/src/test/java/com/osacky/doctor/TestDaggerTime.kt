@@ -1,7 +1,6 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
-import java.io.File
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +26,7 @@ class TestDaggerTime {
             include '$fixtureName'
         """.trimIndent())
 
-        setupFixture(fixtureName)
+        testProjectRoot.setupFixture(fixtureName)
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
@@ -38,9 +37,5 @@ class TestDaggerTime {
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors. |\n" +
                 "Switch to Dagger Reflect to save some time.")
-    }
-
-    private fun setupFixture(fixtureName: String) {
-        File(this::class.java.classLoader.getResource(fixtureName)!!.file).copyRecursively(testProjectRoot.newFile(fixtureName), true)
     }
 }

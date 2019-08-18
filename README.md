@@ -1,7 +1,13 @@
 # Gradle Doctor
 
+[![CircleCI](https://circleci.com/gh/runningcode/gradle-doctor/tree/master.svg?style=svg)](https://circleci.com/gh/runningcode/gradle-doctor/tree/master)
+
 The right prescription for your Gradle build.
 
+
+## Usage
+
+More details coming soon.
 
 Snapshots are available in the sonatype snapshots repository.
 ``` groovy
