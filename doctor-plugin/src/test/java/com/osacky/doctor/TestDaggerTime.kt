@@ -32,17 +32,15 @@ class TestDaggerTime {
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
-            .withGradleVersion("5.5.1")
+            .withGradleVersion("5.6")
             .withArguments("assemble")
             .build()
 
-        assertThat(result.output).containsMatch("================== Gradle Doctor Prescriptions ===============================\n" +
-                "| This build spent 0.\\d+ s in Dagger Annotation Processors                   |\n" +
-                "| Switch to Dagger Reflect to save some time.                                |\n" +
-                "==============================================================================")
+        assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors. |\n" +
+                "Switch to Dagger Reflect to save some time.")
     }
 
     private fun setupFixture(fixtureName: String) {
-        File("src/test/fixtures/$fixtureName").copyRecursively(testProjectRoot.newFile(fixtureName), true)
+        File(this::class.java.classLoader.getResource(fixtureName)!!.file).copyRecursively(testProjectRoot.newFile(fixtureName), true)
     }
 }
