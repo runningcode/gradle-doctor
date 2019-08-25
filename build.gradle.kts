@@ -4,11 +4,10 @@ buildscript {
   repositories {
     mavenCentral()
     google()
-    maven { url=uri("https://dl.bintray.com/kotlin/kotlin-eap") }
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50-eap-54")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }
@@ -17,12 +16,11 @@ allprojects {
   repositories {
     mavenCentral()
     google()
-    maven { url=uri("https://dl.bintray.com/kotlin/kotlin-eap") }
   }
 }
 
 plugins {
-  id("com.gradle.build-scan") version "2.4"
+  id("com.gradle.build-scan") version "2.4.1"
   id("com.github.ben-manes.versions") version "0.22.0"
 }
 
