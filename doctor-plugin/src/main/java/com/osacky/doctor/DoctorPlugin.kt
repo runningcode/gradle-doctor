@@ -20,6 +20,7 @@ class DoctorPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         ensureMinimumSupportedGradleVersion()
+        ensureAppliedInProjectRoot(target)
 
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
@@ -104,6 +105,12 @@ class DoctorPlugin : Plugin<Project> {
                 """.trimMargin("|")
                 throw GradleException(pillBoxPrinter.createPill(errorMessage))
             }
+        }
+    }
+
+    private fun ensureAppliedInProjectRoot(target: Project) {
+        if (target.parent != null) {
+            throw GradleException("Gradle Doctor must be applied in the project root.")
         }
     }
 
