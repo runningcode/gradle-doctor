@@ -4,7 +4,15 @@ open class DoctorExtension {
     /**
      * Throw an exception when multiple Gradle Daemons are running.
      */
-    var disallowMultipleDaemons = true
+    var disallowMultipleDaemons = false
+    /**
+     * Ensure that we are using JAVA_HOME to build with this Gradle.
+     */
+    var ensureJavaHomeMatches = true
+    /**
+     * Ensure we have JAVA_HOME set.
+     */
+    var ensureJavaHomeIsSet = true
     /**
      * Show a message if the download speed is less than this.
      */
