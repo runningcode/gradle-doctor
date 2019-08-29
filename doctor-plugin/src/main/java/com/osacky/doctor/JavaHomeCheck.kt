@@ -30,11 +30,10 @@ class JavaHomeCheck(
     private val environmentJavaHome = System.getenv("JAVA_HOME")
     private val gradleJavaHome = Jvm.current().javaHome
 
-    private fun isGradleUsingJavaHome() : Boolean {
+    private fun isGradleUsingJavaHome(): Boolean {
         if (environmentJavaHome != null && gradleJavaHome.startsWith(environmentJavaHome)) {
             return true
         }
         return false
     }
-
 }
