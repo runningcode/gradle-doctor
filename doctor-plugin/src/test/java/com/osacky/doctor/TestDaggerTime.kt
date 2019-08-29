@@ -20,6 +20,7 @@ class TestDaggerTime {
                     doctor {
                       disallowMultipleDaemons = false
                       daggerThreshold = 100
+                      ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     }
         """.trimIndent())
         testProjectRoot.newFile("settings.gradle").writeText("""

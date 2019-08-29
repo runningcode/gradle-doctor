@@ -33,6 +33,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
+                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     |}
                 """.trimMargin("|")
         )
@@ -52,6 +53,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
+                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     |}
                 """.trimMargin("|")
         )
@@ -73,6 +75,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = true
+                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     |}
                 """.trimMargin("|")
         )
@@ -115,6 +118,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
+              ensureJavaHomeMatches = !System.getenv().containsKey("CI")
             }
         """.trimIndent())
 
