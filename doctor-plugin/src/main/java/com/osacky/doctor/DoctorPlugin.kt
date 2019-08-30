@@ -26,18 +26,20 @@ class DoctorPlugin : Plugin<Project> {
 
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
+        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations, extension)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
-        val list = listOf(daemonChecker, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer)
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer)
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
         buildCacheConnectionMeasurer.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
+            javaHomeCheck.onStart()
         }
 
         target.gradle.buildFinished {

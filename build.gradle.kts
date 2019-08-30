@@ -29,6 +29,7 @@ apply(plugin = "com.osacky.doctor")
 
 configure<DoctorExtension> {
   disallowMultipleDaemons = false
+  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
   GCWarningThreshold = 0.01f
   enableTestCaching = false
   downloadSpeedWarningThreshold = 2.0f
