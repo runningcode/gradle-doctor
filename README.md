@@ -9,14 +9,10 @@ The right prescription for your Gradle build.
 
 More details coming soon.
 
-Snapshots are available in the sonatype snapshots repository.
 ``` groovy
 buildscript {
-  repositories {
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-  }
   dependencies {
-    classpath "com.osacky.doctor:doctor-plugin:0.1.4-SNAPSHOT"
+    classpath "com.osacky.doctor:doctor-plugin:0.1.4"
   }
 }
 
