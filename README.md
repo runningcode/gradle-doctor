@@ -16,7 +16,7 @@ buildscript {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
   }
   dependencies {
-    classpath "com.osacky.doctor:doctor-plugin:0.1.3-SNAPSHOT"
+    classpath "com.osacky.doctor:doctor-plugin:0.1.4-SNAPSHOT"
   }
 }
 
