@@ -1,4 +1,9 @@
+plugins {
+  id "com.gradle.enterprise" version "3.1.1"
+}
+
 include 'simple'
 include 'dagger-kapt'
 
 includeBuild 'doctor-plugin'
+

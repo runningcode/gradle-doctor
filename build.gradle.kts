@@ -7,7 +7,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }
@@ -20,8 +20,7 @@ allprojects {
 }
 
 plugins {
-  id("com.gradle.build-scan") version "2.4.1"
-  id("com.github.ben-manes.versions") version "0.24.0"
+  id("com.github.ben-manes.versions") version "0.27.0"
 }
 
 apply(plugin = "idea")
@@ -38,7 +37,7 @@ configure<DoctorExtension> {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "5.6.1"
+  gradleVersion = "6.0.1"
 }
 
 buildScan {

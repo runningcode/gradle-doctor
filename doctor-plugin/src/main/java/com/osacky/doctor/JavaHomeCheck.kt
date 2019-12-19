@@ -16,6 +16,8 @@ class JavaHomeCheck(
         if (extension.ensureJavaHomeMatches && !isGradleUsingJavaHome()) {
             throw GradleException(pillBoxPrinter.createPill("""
                 |Gradle is not using JAVA_HOME.
+                |JAVA_HOME is $environmentJavaHome
+                |Gradle is using $gradleJavaHome
                 |This can slow down your build significantly when switching from command line to the terminal.
                 |To fix: Project Structure -> JDK Location.
                 |Set this to your JAVA_HOME.
