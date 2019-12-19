@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.61"
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jmailen.kotlinter") version "2.1.1"
     `maven-publish`
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
     implementation("io.reactivex.rxjava3:rxjava:3.0.0-RC1")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.12")
