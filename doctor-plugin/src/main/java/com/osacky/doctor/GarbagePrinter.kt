@@ -15,6 +15,7 @@ class GarbagePrinter(
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTime().toMillis()
     private val formatter = NumberFormat.getPercentInstance()
+    private val warningThreshold = 10
 
     override fun onStart() {
     }
@@ -27,7 +28,7 @@ class GarbagePrinter(
         val garbageDuration = endGarbageTime - startGarbageTime
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
-        if (percentGarbageCollecting > extension.GCWarningThreshold) {
+        if (buildDuration > warningThreshold && percentGarbageCollecting > extension.GCWarningThreshold) {
             val message = """
                 This build spent ${formatter.format(percentGarbageCollecting)} garbage collecting.
                 If this is the first build with this Daemon, it likely means that this build needs more heap space.
