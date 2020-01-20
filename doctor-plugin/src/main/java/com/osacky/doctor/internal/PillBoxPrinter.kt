@@ -7,22 +7,26 @@ import org.gradle.api.logging.Logger
  */
 class PillBoxPrinter(private val logger: Logger) {
 
+    private val messageLength = 80
     private val title = "Gradle Doctor Prescriptions"
 
     fun writePrescription(messages: List<String>) {
-        val longestMessage = messages
-            .flatMap { it.split('\n') }
-            .maxBy { it.length }!!.length
-
-        messages.forEachIndexed { index, item ->
-            if (index == 0) {
-                logger.warn(createTitle(longestMessage))
-            }
-            item.split('\n').forEach {
-                logger.warn("| ${it.padEnd(longestMessage)} |")
-            }
-            logger.warn(createEnding(longestMessage))
+        if (messages.isNotEmpty()) {
+            logger.warn(createTitle(messageLength))
         }
+        messages.forEach { item ->
+            item.split('\n').forEachIndexed { _, line ->
+                val chunked = line.chunked(messageLength)
+                // If chunked is empty for empty lines, but we still want to print an empty line.
+                if (chunked.isEmpty()) {
+                    logger.warn("| ${"".padEnd(messageLength)} |")
+                }
+                line.chunked(messageLength).forEachIndexed { _, shortenedLine ->
+                    logger.warn("| ${shortenedLine.padEnd(messageLength)} |")
+                }
+            }
+        }
+        logger.warn(createEnding(messageLength))
     }
 
     private fun createTitle(lineLength: Int): String {
