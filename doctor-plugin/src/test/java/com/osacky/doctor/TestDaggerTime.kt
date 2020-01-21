@@ -38,15 +38,15 @@ class TestDaggerTime {
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors.")
         assertThat(result.output).contains("""
-            | Use Dagger Reflect to skip Dagger Annotation processing:                         |
-            |                                                                                  |
-            | buildscript {                                                                    |
-            |   classpath 'com.soundcloud.delect:delect-plugin:0.2.0'                          |
-            | }                                                                                |
-            | apply plugin: 'com.soundcloud.delect'                                            |
-            |                                                                                  |
-            | For more information: https://github.com/soundcloud/delect#usage                 |
-            ====================================================================================
+            | Use Dagger Reflect to skip Dagger Annotation processing:                                             |
+            |                                                                                                      |
+            | buildscript {                                                                                        |
+            |   classpath 'com.soundcloud.delect:delect-plugin:0.2.0'                                              |
+            | }                                                                                                    |
+            | apply plugin: 'com.soundcloud.delect'                                                                |
+            |                                                                                                      |
+            | For more information: https://github.com/soundcloud/delect#usage                                     |
+            ========================================================================================================
             """.trimIndent()
         )
     }
@@ -88,9 +88,9 @@ class TestDaggerTime {
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors.")
         assertThat(result.output).contains("""
-            | Enable to Dagger Reflect to save yourself some time.                             |
-            | echo "dagger.reflect=true" >> ~/.gradle/gradle.properties                        |
-            ====================================================================================
+            | Enable to Dagger Reflect to save yourself some time.                                                 |
+            | echo "dagger.reflect=true" >> ~/.gradle/gradle.properties                                            |
+            ========================================================================================================
             """.trimIndent())
     }
 }
