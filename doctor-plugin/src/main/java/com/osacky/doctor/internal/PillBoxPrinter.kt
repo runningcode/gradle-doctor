@@ -14,19 +14,11 @@ class PillBoxPrinter(private val logger: Logger) {
         if (messages.isNotEmpty()) {
             logger.warn(createTitle(messageLength))
         }
+
         messages.forEach { item ->
-            item.split('\n').forEachIndexed { _, line ->
-                val chunked = line.chunked(messageLength)
-                // If chunked is empty for empty lines, but we still want to print an empty line.
-                if (chunked.isEmpty()) {
-                    logger.warn("| ${"".padEnd(messageLength)} |")
-                }
-                line.chunked(messageLength).forEachIndexed { _, shortenedLine ->
-                    logger.warn("| ${shortenedLine.padEnd(messageLength)} |")
-                }
-            }
+            logger.warn(padMessage(item))
+            logger.warn(createEnding(messageLength))
         }
-        logger.warn(createEnding(messageLength))
     }
 
     private fun createTitle(lineLength: Int): String {
@@ -37,13 +29,23 @@ class PillBoxPrinter(private val logger: Logger) {
         return "".padEnd(lineLength + 4, '=')
     }
 
+    fun padMessage(message: String): String {
+        return message.split('\n').flatMap { line ->
+            val chunked = line.chunked(messageLength)
+            if (chunked.isEmpty()) {
+                return@flatMap listOf("| ${"".padEnd(messageLength)} |")
+            } else {
+                return@flatMap chunked.map { "| ${it.padEnd(messageLength)} |" }
+            }
+        }.joinToString("\n")
+    }
+
     fun createPill(message: String): String {
-        val longestLine = message.split('\n').maxBy { it.length }!!.length
-        val messages = message.split('\n').map { "| ${it.padEnd(longestLine)} |" }
-        val lines = listOf(createTitle(longestLine)) + messages + createEnding(longestLine)
+        val lines = padMessage(message)
+        val pilledLines = listOf(createTitle(messageLength)) + lines + createEnding(messageLength)
         val builder = StringBuilder()
 
-        for (line in lines) {
+        for (line in pilledLines) {
             builder.append(line).append('\n')
         }
         return builder.toString()
