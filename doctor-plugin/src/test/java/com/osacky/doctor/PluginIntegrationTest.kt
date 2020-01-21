@@ -79,19 +79,19 @@ class PluginIntegrationTest constructor(private val version: String) {
             assertThat(result.output)
                 .contains(
                     """
-                    |  | This may indicate a settings mismatch between the IDE and the terminal.          |
-                    |  | There might also be a bug causing extra Daemons to spawn.                        |
-                    |  | You can check active Daemons with `jps`.                                         |
-                    |  | To kill all active Daemons use:                                                  |
-                    |  | pkill -f '.*GradleDaemon.*'                                                      |
-                    |  |                                                                                  |
-                    |  | This might be expected if you are working on multiple Gradle projects or if you  |
-                    |  | are using build.gradle.kts.                                                      |
-                    |  | To disable this message add this to your root build.gradle file:                 |
-                    |  | doctor {                                                                         |
-                    |  |   disallowMultipleDaemons = false                                                |
-                    |  | }                                                                                |
-                    |  ====================================================================================
+                    |  | This may indicate a settings mismatch between the IDE and the terminal.                              |
+                    |  | There might also be a bug causing extra Daemons to spawn.                                            |
+                    |  | You can check active Daemons with `jps`.                                                             |
+                    |  | To kill all active Daemons use:                                                                      |
+                    |  | pkill -f '.*GradleDaemon.*'                                                                          |
+                    |  |                                                                                                      |
+                    |  | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
+                    |  | le.kts.                                                                                              |
+                    |  | To disable this message add this to your root build.gradle file:                                     |
+                    |  | doctor {                                                                                             |
+                    |  |   disallowMultipleDaemons = false                                                                    |
+                    |  | }                                                                                                    |
+                    |  ========================================================================================================
                     """.trimMargin())
     }
 
@@ -148,15 +148,14 @@ class PluginIntegrationTest constructor(private val version: String) {
             .withArguments("assembleDebug")
             .buildAndFail()
         assertThat(result.output).contains("""
-               |===================== Gradle Doctor Prescriptions ==================================
-               || Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app |
-               || -two:assembleDebug']                                                             |
-               || Maybe you just meant to assemble one of them? In that case, you can try          |
-               ||   ./gradlew app-one:assembleDebug                                                |
-               || Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles al |
-               || l the code in the entire project?                                                |
-               || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).     |
-               |====================================================================================
+               |=============================== Gradle Doctor Prescriptions ============================================
+               || Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app-two:assembleDebug'] |
+               || Maybe you just meant to assemble one of them? In that case, you can try                              |
+               ||   ./gradlew app-one:assembleDebug                                                                    |
+               || Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles all the code in the en |
+               || tire project?                                                                                        |
+               || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
+               |========================================================================================================
                """.trimMargin()
         )
     }
