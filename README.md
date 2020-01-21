@@ -12,7 +12,7 @@ More details coming soon.
 ``` groovy
 buildscript {
   dependencies {
-    classpath "com.osacky.doctor:doctor-plugin:0.1.4"
+    classpath "com.osacky.doctor:doctor-plugin:0.1.5"
   }
 }
 
