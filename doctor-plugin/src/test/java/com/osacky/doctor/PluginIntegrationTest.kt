@@ -3,7 +3,6 @@ package com.osacky.doctor
 import com.google.common.truth.Truth.assertThat
 import java.io.File
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.junit.Assume
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +32,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  ensureJavaHomeMatches = false
                     |}
                 """.trimMargin("|")
         )
@@ -58,11 +57,8 @@ class PluginIntegrationTest constructor(private val version: String) {
                 """.trimMargin("|")
         )
 
-        try {
-            createRunner().buildAndFail()
-        } catch (e: UnexpectedBuildFailure) {
-            assertThat(e).hasMessageThat().contains("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
-        }
+        val result = createRunner().buildAndFail()
+        assertThat(result.output).contains("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
     }
 
     @Test
@@ -79,24 +75,24 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                 """.trimMargin("|")
         )
-        try {
-            createRunner().buildAndFail()
-        } catch (e: UnexpectedBuildFailure) {
-            assertThat(e).hasMessageThat()
+        val result = createRunner().buildAndFail()
+            assertThat(result.output)
                 .contains(
-                        "Daemons Active.\n" +
-                        "This may indicate a settings mismatch between the IDE and the terminal.\n" +
-                        "There might also be a bug causing extra Daemons to spawn.\n" +
-                        "You can check active Daemons with `jps`.\n" +
-                        "To kill all active Daemons use:\n" +
-                        "pkill -f '.*GradleDaemon.*'\n" +
-                        "\n" +
-                        "This might be expected if you are working on multiple Gradle projects or if you are using build.gradle.kts.\n" +
-                        "To disable this message add this to your root build.gradle file:\n" +
-                        "doctor {\n" +
-                        "  disallowMultipleDaemons = false\n" +
-                        "}This might be expected if you are working on multiple Gradle projects.")
-        }
+                    """
+                    |  | This may indicate a settings mismatch between the IDE and the terminal.          |
+                    |  | There might also be a bug causing extra Daemons to spawn.                        |
+                    |  | You can check active Daemons with `jps`.                                         |
+                    |  | To kill all active Daemons use:                                                  |
+                    |  | pkill -f '.*GradleDaemon.*'                                                      |
+                    |  |                                                                                  |
+                    |  | This might be expected if you are working on multiple Gradle projects or if you  |
+                    |  | are using build.gradle.kts.                                                      |
+                    |  | To disable this message add this to your root build.gradle file:                 |
+                    |  | doctor {                                                                         |
+                    |  |   disallowMultipleDaemons = false                                                |
+                    |  | }                                                                                |
+                    |  ====================================================================================
+                    """.trimMargin())
     }
 
     @Test
@@ -118,7 +114,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
-              ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+              ensureJavaHomeMatches = false
             }
         """.trimIndent())
 
@@ -146,18 +142,23 @@ class PluginIntegrationTest constructor(private val version: String) {
             android {
               compileSdkVersion 28
             }
-            """.trimIndent())
-        try {
-            createRunner()
-                .withArguments("assembleDebug")
-                .buildAndFail()
-        } catch (e: UnexpectedBuildFailure) {
-            assertThat(e).hasMessageThat().contains("Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app-two:assembleDebug']\n" +
-                    "Maybe you just meant to assemble one of them? In that case, you can try\n" +
-                    "  ./gradlew app-one:assembleDebug\n" +
-                    "Or did you hit \"build\" in the IDE (Green Hammer)? Did you know that assembles all the code in the entire project?\n" +
-                    "Next time try \"Sync Project with Gradle Files\" (Gradle Elephant with Arrow).")
-        }
+            """.trimIndent()
+        )
+        val result = createRunner()
+            .withArguments("assembleDebug")
+            .buildAndFail()
+        assertThat(result.output).contains("""
+               |===================== Gradle Doctor Prescriptions ==================================
+               || Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app |
+               || -two:assembleDebug']                                                             |
+               || Maybe you just meant to assemble one of them? In that case, you can try          |
+               ||   ./gradlew app-one:assembleDebug                                                |
+               || Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles al |
+               || l the code in the entire project?                                                |
+               || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).     |
+               |====================================================================================
+               """.trimMargin()
+        )
     }
 
     private fun createRunner(): GradleRunner {
