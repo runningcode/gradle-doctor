@@ -1,6 +1,6 @@
 package com.osacky.doctor
 
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent

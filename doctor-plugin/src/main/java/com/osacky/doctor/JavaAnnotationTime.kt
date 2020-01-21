@@ -1,8 +1,8 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.Finish
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 import org.gradle.internal.logging.events.operations.LogEventBuildOperationProgressDetails
 
