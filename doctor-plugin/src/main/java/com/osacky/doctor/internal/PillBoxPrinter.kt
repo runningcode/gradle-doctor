@@ -7,7 +7,7 @@ import org.gradle.api.logging.Logger
  */
 class PillBoxPrinter(private val logger: Logger) {
 
-    private val messageLength = 80
+    private val messageLength = 100
     private val title = "Gradle Doctor Prescriptions"
 
     fun writePrescription(messages: List<String>) {

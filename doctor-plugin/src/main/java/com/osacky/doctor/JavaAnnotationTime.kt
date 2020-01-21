@@ -3,10 +3,15 @@ package com.osacky.doctor
 import com.osacky.doctor.internal.Finish
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 import org.gradle.internal.logging.events.operations.LogEventBuildOperationProgressDetails
 
-class JavaAnnotationTime(private val operationEvents: OperationEvents, private val doctorExtension: DoctorExtension) : BuildStartFinishListener {
+class JavaAnnotationTime(
+    private val operationEvents: OperationEvents,
+    private val doctorExtension: DoctorExtension,
+    private val buildscriptConfiguration: ConfigurationContainer
+) : BuildStartFinishListener {
     private var totalDaggerTime = 0
 
     private val disposable = CompositeDisposable()
@@ -35,8 +40,29 @@ class JavaAnnotationTime(private val operationEvents: OperationEvents, private v
     override fun onFinish(): Finish {
         disposable.dispose()
         if (totalDaggerTime > doctorExtension.daggerThreshold) {
-            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\nSwitch to Dagger Reflect to save some time.")
+            val message = if (containsDelect()) enableReflectMessage else applyDelectPlugin
+            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\n$message")
         }
         return Finish.None
+    }
+
+    private val applyDelectPlugin = """
+        Use Dagger Reflect to skip Dagger Annotation processing:
+
+        buildscript {
+          classpath 'com.soundcloud.delect:delect-plugin:0.2.0'
+        }
+        apply plugin: 'com.soundcloud.delect'
+        
+        For more information: https://github.com/soundcloud/delect#usage
+    """.trimIndent()
+
+    private val enableReflectMessage = """
+        Enable to Dagger Reflect to save yourself some time.                           
+        echo "dagger.reflect=true" >> ~/.gradle/gradle.properties
+    """.trimIndent()
+
+    private fun containsDelect(): Boolean {
+        return buildscriptConfiguration.getByName("classpath").incoming.dependencies.find { it.group == "com.soundcloud.delect" } != null
     }
 }

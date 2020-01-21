@@ -29,7 +29,7 @@ class DoctorPlugin : Plugin<Project> {
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
-        val javaAnnotationTime = JavaAnnotationTime(operations, extension)
+        val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
         val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer)
