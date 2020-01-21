@@ -15,7 +15,7 @@ class GarbagePrinter(
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTime().toMillis()
     private val formatter = NumberFormat.getPercentInstance()
-    private val warningThreshold = 10
+    private val warningThreshold = 10 * 1000
 
     override fun onStart() {
     }
