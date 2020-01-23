@@ -37,7 +37,7 @@ configure<DoctorExtension> {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.0.1"
+  gradleVersion = "6.1"
 }
 
 buildScan {
