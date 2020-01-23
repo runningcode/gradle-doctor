@@ -11,14 +11,19 @@ class JavaHomeCheck(
 ) : BuildStartFinishListener {
     override fun onStart() {
         if (extension.ensureJavaHomeIsSet && environmentJavaHome == null) {
-            throw GradleException(pillBoxPrinter.createPill("JAVA_HOME must be set."))
+            throw GradleException(pillBoxPrinter.createPill("""
+                JAVA_HOME is not set.
+                Please set JAVA_HOME so that switching between Android Studio and the terminal does not trigger a full rebuild.
+                To set JAVA_HOME:
+                echo "export JAVA_HOME=${'$'}(/usr/libexec/java_home)" >> ~/.bash_profile
+                """.trimMargin()))
         }
         if (extension.ensureJavaHomeMatches && !isGradleUsingJavaHome()) {
             throw GradleException(pillBoxPrinter.createPill("""
                 |Gradle is not using JAVA_HOME.
                 |JAVA_HOME is $environmentJavaHome
                 |Gradle is using $gradleJavaHome
-                |This can slow down your build significantly when switching from command line to the terminal.
+                |This can slow down your build significantly when switching from Android Studio to the terminal.
                 |To fix: Project Structure -> JDK Location.
                 |Set this to your JAVA_HOME.
             """.trimMargin()))
