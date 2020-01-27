@@ -2,9 +2,11 @@ package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.twoDigits
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
+import org.slf4j.LoggerFactory
 
 class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
 
@@ -34,11 +36,14 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
 
         // Only print time if we downloaded at least one megabyte
         if (totalBytes > DownloadSpeedMeasurer.ONE_MEGABYTE) {
+            val megabytesDownloaded = twoDigits.format(totalBytes * 1.0f / DownloadSpeedMeasurer.ONE_MEGABYTE)
+            val secondsDownloading = twoDigits.format(totalTime * 1.0f / 1000)
+            val totalSpeedFormatted = twoDigits.format(totalSpeed)
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
                 val message = """
                     Detected a slow download speed downloading from Build Cache.
-                    $totalBytes bytes downloaded in $totalTime ms
-                    Total speed from cache = $totalSpeed MB/s
+                    $megabytesDownloaded bytes downloaded in $secondsDownloading s
+                    Total speed from cache = $totalSpeedFormatted MB/s
                 """.trimIndent()
                 return Finish.FinishMessage(message)
             }
@@ -48,11 +53,16 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
 
     data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
         companion object {
+            private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
                 require(result is BuildCacheRemoteLoadBuildOperationType.Result)
-
-                return ExternalDownloadEvent(event.endTime - event.startTime, result.archiveSize)
+                if (!result.isHit) {
+                    logger.debug("Received non-hit from $result, total was ${result.archiveSize}")
+                    // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
+                    return ExternalDownloadEvent(0, 0)
+                }
+                return ExternalDownloadEvent(event.endTime - event.startTime, requireNotNull(result.archiveSize) { "Archive size was not null for $result" })
             }
         }
     }

@@ -14,9 +14,10 @@ class JavaHomeCheck(
             throw GradleException(pillBoxPrinter.createPill("""
                 JAVA_HOME is not set.
                 Please set JAVA_HOME so that switching between Android Studio and the terminal does not trigger a full rebuild.
-                To set JAVA_HOME:
+                To set JAVA_HOME: (using bash)
                 echo "export JAVA_HOME=${'$'}(/usr/libexec/java_home)" >> ~/.bash_profile
-                """.trimMargin()))
+                or `~/.zshrc` if using zsh.
+                """.trimIndent()))
         }
         if (extension.ensureJavaHomeMatches && !isGradleUsingJavaHome()) {
             throw GradleException(pillBoxPrinter.createPill("""
