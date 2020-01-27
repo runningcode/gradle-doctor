@@ -2,12 +2,19 @@ package com.osacky.doctor
 
 import com.osacky.doctor.DownloadSpeedMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.SlowNetworkPrinter
+import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
+import org.slf4j.LoggerFactory
 
-class DownloadSpeedMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
+class DownloadSpeedMeasurer(
+    private val buildOperations: BuildOperations,
+    private val extension: DoctorExtension
+) : BuildStartFinishListener {
 
+    private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
     private lateinit var disposable: Disposable
 
@@ -34,12 +41,7 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations, privat
         // Only print time if we downloaded at least one megabyte
         if (totalBytes > ONE_MEGABYTE) {
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
-                val message = """
-                    Detected a slow download speed downloading from External Repos.
-                    $totalBytes bytes downloaded in $totalTime ms
-                    Total speed from maven: $totalSpeed MB/s
-                """.trimIndent()
-                return Finish.FinishMessage(message)
+                return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
             }
         }
         return Finish.None
@@ -47,16 +49,16 @@ class DownloadSpeedMeasurer(private val buildOperations: BuildOperations, privat
 
     data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
         companion object {
+            private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
                 require(result is ExternalResourceReadBuildOperationType.Result)
 
+                if (result.bytesRead == null) {
+                    logger.info("Null bytes read for $result")
+                }
                 return ExternalDownloadEvent(event.endTime - event.startTime, result.bytesRead)
             }
         }
-    }
-
-    companion object {
-        const val ONE_MEGABYTE = 1024 * 1024
     }
 }
