@@ -2,7 +2,8 @@ package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.Finish
-import com.osacky.doctor.internal.twoDigits
+import com.osacky.doctor.internal.SlowNetworkPrinter
+import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory
 
 class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
 
+    private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
     private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
     private lateinit var disposable: Disposable
     override fun onStart() {
@@ -32,20 +34,12 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
         if (totalBytes == 0 || totalTime == 0) {
             return Finish.None
         }
-        val totalSpeed = (totalBytes / totalTime) / 1024f
 
         // Only print time if we downloaded at least one megabyte
-        if (totalBytes > DownloadSpeedMeasurer.ONE_MEGABYTE) {
-            val megabytesDownloaded = twoDigits.format(totalBytes * 1.0f / DownloadSpeedMeasurer.ONE_MEGABYTE)
-            val secondsDownloading = twoDigits.format(totalTime * 1.0f / 1000)
-            val totalSpeedFormatted = twoDigits.format(totalSpeed)
+        if (totalBytes > ONE_MEGABYTE) {
+            val totalSpeed = (totalBytes / totalTime) / 1024f
             if (totalSpeed < extension.downloadSpeedWarningThreshold) {
-                val message = """
-                    Detected a slow download speed downloading from Build Cache.
-                    $megabytesDownloaded bytes downloaded in $secondsDownloading s
-                    Total speed from cache = $totalSpeedFormatted MB/s
-                """.trimIndent()
-                return Finish.FinishMessage(message)
+                return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
             }
         }
         return Finish.None
