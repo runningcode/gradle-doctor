@@ -26,10 +26,13 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
     }
 
     override fun onFinish(): Finish {
-        val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
+        // Dispose first before summing byte totals otherwise we get crazy NPEs?
+        disposable.dispose()
+
+        val totalBytes = requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
+            .sumBy { requireNotNull(requireNotNull(it) { "ExternalDownloadEvent cannot be null" }.byteTotal) { "byteTotal cannot be null" }.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
 
-        disposable.dispose()
         // Don't do anything if we didn't download anything.
         if (totalBytes == 0 || totalTime == 0) {
             return Finish.None

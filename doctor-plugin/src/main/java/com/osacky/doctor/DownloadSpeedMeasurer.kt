@@ -28,9 +28,11 @@ class DownloadSpeedMeasurer(
     }
 
     override fun onFinish(): Finish {
+        // Dispose first before summing byte totals otherwise we get crazy NPEs?
+        disposable.dispose()
+
         val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
         val totalTime = downloadEvents.sumBy { it.duration.toInt() }
-        disposable.dispose()
 
         // Don't do anything if we didn't download anything.
         if (totalBytes == 0 || totalTime == 0) {
