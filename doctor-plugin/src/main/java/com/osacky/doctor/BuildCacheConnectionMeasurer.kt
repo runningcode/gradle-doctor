@@ -5,6 +5,7 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
+import java.util.Collections
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
 import org.slf4j.LoggerFactory
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory
 class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
-    private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
+    private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
     override fun onStart() {
         disposable = buildOperations.finishes()
@@ -29,23 +30,25 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
         // Dispose first before summing byte totals otherwise we get crazy NPEs?
         disposable.dispose()
 
-        val totalBytes = requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
-            .sumBy { requireNotNull(requireNotNull(it) { "ExternalDownloadEvent cannot be null" }.byteTotal) { "byteTotal cannot be null" }.toInt() }
-        val totalTime = downloadEvents.sumBy { it.duration.toInt() }
+        synchronized(downloadEvents) {
+            val totalBytes = requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
+                .sumBy { event -> requireNotNull(requireNotNull(event) { "ExternalDownloadEvent cannot be null" }.byteTotal) { "byteTotal cannot be null" }.toInt() }
+            val totalTime = downloadEvents.sumBy { event -> event.duration.toInt() }
 
-        // Don't do anything if we didn't download anything.
-        if (totalBytes == 0 || totalTime == 0) {
+            // Don't do anything if we didn't download anything.
+            if (totalBytes == 0 || totalTime == 0) {
+                return Finish.None
+            }
+
+            // Only print time if we downloaded at least one megabyte
+            if (totalBytes > ONE_MEGABYTE) {
+                val totalSpeed = (totalBytes / totalTime) / 1024f
+                if (totalSpeed < extension.downloadSpeedWarningThreshold) {
+                    return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
+                }
+            }
             return Finish.None
         }
-
-        // Only print time if we downloaded at least one megabyte
-        if (totalBytes > ONE_MEGABYTE) {
-            val totalSpeed = (totalBytes / totalTime) / 1024f
-            if (totalSpeed < extension.downloadSpeedWarningThreshold) {
-                return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
-            }
-        }
-        return Finish.None
     }
 
     data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {

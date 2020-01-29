@@ -5,6 +5,7 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
+import java.util.Collections
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 import org.slf4j.LoggerFactory
@@ -15,7 +16,7 @@ class DownloadSpeedMeasurer(
 ) : BuildStartFinishListener {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
-    private val downloadEvents = mutableListOf<ExternalDownloadEvent>()
+    private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
 
     override fun onStart() {
@@ -31,19 +32,22 @@ class DownloadSpeedMeasurer(
         // Dispose first before summing byte totals otherwise we get crazy NPEs?
         disposable.dispose()
 
-        val totalBytes = downloadEvents.sumBy { it.byteTotal.toInt() }
-        val totalTime = downloadEvents.sumBy { it.duration.toInt() }
+        synchronized(downloadEvents) {
 
-        // Don't do anything if we didn't download anything.
-        if (totalBytes == 0 || totalTime == 0) {
-            return Finish.None
-        }
-        val totalSpeed = (totalBytes / totalTime) / 1024f
+            val totalBytes = downloadEvents.sumBy { event -> event.byteTotal.toInt() }
+            val totalTime = downloadEvents.sumBy { event -> event.duration.toInt() }
 
-        // Only print time if we downloaded at least one megabyte
-        if (totalBytes > ONE_MEGABYTE) {
-            if (totalSpeed < extension.downloadSpeedWarningThreshold) {
-                return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
+            // Don't do anything if we didn't download anything.
+            if (totalBytes == 0 || totalTime == 0) {
+                return Finish.None
+            }
+            val totalSpeed = (totalBytes / totalTime) / 1024f
+
+            // Only print time if we downloaded at least one megabyte
+            if (totalBytes > ONE_MEGABYTE) {
+                if (totalSpeed < extension.downloadSpeedWarningThreshold) {
+                    return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
+                }
             }
         }
         return Finish.None
