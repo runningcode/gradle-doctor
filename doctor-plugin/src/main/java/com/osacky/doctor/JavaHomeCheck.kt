@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.PillBoxPrinter
+import java.io.File
 import org.gradle.api.GradleException
 import org.gradle.internal.jvm.Jvm
 
@@ -22,8 +23,8 @@ class JavaHomeCheck(
         if (extension.ensureJavaHomeMatches && !isGradleUsingJavaHome()) {
             throw GradleException(pillBoxPrinter.createPill("""
                 |Gradle is not using JAVA_HOME.
-                |JAVA_HOME is $environmentJavaHome
-                |Gradle is using $gradleJavaHome
+                |JAVA_HOME is ${environmentJavaHome.toFile().toPath().toAbsolutePath()}
+                |Gradle is using ${gradleJavaHome.toPath().toAbsolutePath()}
                 |This can slow down your build significantly when switching from Android Studio to the terminal.
                 |To fix: Project Structure -> JDK Location.
                 |Set this to your JAVA_HOME.
@@ -39,9 +40,12 @@ class JavaHomeCheck(
     private val gradleJavaHome = Jvm.current().javaHome
 
     private fun isGradleUsingJavaHome(): Boolean {
-        if (environmentJavaHome != null && gradleJavaHome.startsWith(environmentJavaHome)) {
+        // Follow symlinks when checking that java home matches.
+        if (environmentJavaHome != null && gradleJavaHome.toPath().toRealPath() == File(environmentJavaHome).toPath().toRealPath()) {
             return true
         }
         return false
     }
+
+    private fun String.toFile() = File(this)
 }

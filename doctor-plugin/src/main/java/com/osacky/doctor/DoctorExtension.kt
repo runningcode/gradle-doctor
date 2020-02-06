@@ -29,7 +29,7 @@ open class DoctorExtension {
      * By default, Gradle caches test results. This can be dangerous if tests rely on timestamps, dates, or other files
      * which are not declared as inputs.
      */
-    var enableTestCaching = false
+    var enableTestCaching = true
     /**
      * By default, Gradle treats empty directories as inputs to compilation tasks. This can cause cache misses.
      */
