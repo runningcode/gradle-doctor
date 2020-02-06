@@ -18,7 +18,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun getParams(): List<String> {
-            return listOf("5.0", "5.1", "5.3", "5.6", "6.0.1", "6.1.1")
+            return listOf("5.0", "5.3", "5.6", "6.0.1", "6.1.1")
         }
     }
 
