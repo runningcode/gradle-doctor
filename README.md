@@ -19,11 +19,11 @@ apply plugin: "com.osacky.doctor"
 
 ## Features
 * Configurable warnings for build speed problems
-* Measure time spent in Dagger annotation processors.
-* Ensure JAVA_HOME is set and matches IDE's JAVA_HOME
-* Easily disable test caching
+* Measure time spent in Dagger annotation processors. Use [Delect](http://github.com/soundcloud/delect) to save time.
+* Ensure `JAVA_HOME` is set and matches IDE's `JAVA_HOME`
+* Easily disable test caching. Tests may not declare all inputs causing [false positives](https://github.com/gradle/gradle/issues/9151). [Needed until Gradle implements a sandbox.](https://github.com/gradle/gradle/issues/9210)
 * Disable assembling all apps in repository simultaneously.
-* Fail build when empty src directories are found
+* Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.
