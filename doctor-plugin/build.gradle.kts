@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.osacky.doctor"
-version = "0.2.1"
+version = "0.2.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
