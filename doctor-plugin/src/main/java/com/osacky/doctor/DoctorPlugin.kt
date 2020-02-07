@@ -55,7 +55,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.subprojects project@{
             afterEvaluate {
-                if (!extension.failOnEmptyDirectories) {
+                if (extension.failOnEmptyDirectories) {
                     // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
                     tasks.withType(SourceTask::class.java).configureEach {
                         doFirst {
