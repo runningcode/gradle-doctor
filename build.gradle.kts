@@ -1,4 +1,5 @@
 import com.osacky.doctor.DoctorExtension
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 buildscript {
   repositories {
@@ -33,6 +34,12 @@ configure<DoctorExtension> {
   enableTestCaching = false
   downloadSpeedWarningThreshold = 2.0f
   daggerThreshold = 100
+}
+
+tasks.withType(Test::class.java).configureEach {
+  testLogging {
+    events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
+  }
 }
 
 tasks.wrapper {

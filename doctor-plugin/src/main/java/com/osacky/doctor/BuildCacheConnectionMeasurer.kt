@@ -60,10 +60,12 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
                 if (!result.isHit) {
                     logger.debug("Received non-hit from $result, total was ${result.archiveSize}")
                     // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
-                    return ExternalDownloadEvent(0, 0)
+                    return zero
                 }
                 return ExternalDownloadEvent(event.endTime - event.startTime, requireNotNull(result.archiveSize) { "Archive size was not null for $result" })
             }
+
+            val zero = ExternalDownloadEvent(0, 0)
         }
     }
 }

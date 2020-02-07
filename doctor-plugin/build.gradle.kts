@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     `kotlin-dsl`
     kotlin("jvm") version "1.3.61"
@@ -113,4 +115,10 @@ publishing {
 signing {
     setRequired(isReleaseBuild)
     sign(publishing.publications["mavenJava"])
+}
+
+tasks.withType(Test::class.java).configureEach {
+    testLogging {
+        events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
+    }
 }
