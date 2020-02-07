@@ -94,13 +94,13 @@ class DoctorPlugin : Plugin<Project> {
             }
             val assembleTasksInAndroidAppProjects = allTasks
                     // Find executing tasks which are in Android AppPlugin Projects and contain the word assemble in the name.
-                    .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble") }
+                    .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble") || it.name.contains("install") }
             val projectsWithAssembleTasks = assembleTasksInAndroidAppProjects.map { it.project }.toSet()
             // Check if we have at least one assemble task in every project which has the application plugin.
             if (projectsWithAssembleTasks.containsAll(appPluginProjects)) {
                 val errorMessage = """
                     |Did you really mean to run all these? $assembleTasksInAndroidAppProjects
-                    |Maybe you just meant to assemble one of them? In that case, you can try
+                    |Maybe you just meant to assemble/install one of them? In that case, you can try
                     |  ./gradlew ${assembleTasksInAndroidAppProjects[0].project.name}:${assembleTasksInAndroidAppProjects[0].name}
                     |Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles all the code in the entire project?
                     |Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).

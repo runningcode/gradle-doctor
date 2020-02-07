@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
+    val agpVersion = "3.5.3"
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
@@ -129,7 +130,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     @Test
-    fun testFailMultipleProjects() {
+    fun testFailAssembleMultipleProjects() {
         assumeSupportedVersion()
         Assume.assumeFalse("5.1" == version)
         writeBuildGradle("""
@@ -138,7 +139,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 google()
               }
               dependencies {
-                classpath("com.android.tools.build:gradle:3.5.3")
+                classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
             
@@ -183,8 +184,73 @@ class PluginIntegrationTest constructor(private val version: String) {
         assertThat(result.output).contains("""
                |=============================== Gradle Doctor Prescriptions ============================================
                || Did you really mean to run all these? [task ':app-one:assembleDebug', task ':app-two:assembleDebug'] |
-               || Maybe you just meant to assemble one of them? In that case, you can try                              |
+               || Maybe you just meant to assemble/install one of them? In that case, you can try                      |
                ||   ./gradlew app-one:assembleDebug                                                                    |
+               || Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles all the code in the en |
+               || tire project?                                                                                        |
+               || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
+               |========================================================================================================
+               """.trimMargin()
+        )
+    }
+
+    @Test
+    fun testFailInstallMultipleProjects() {
+        assumeSupportedVersion()
+        Assume.assumeFalse("5.1" == version)
+        writeBuildGradle("""
+            buildscript {
+              repositories {
+                google()
+              }
+              dependencies {
+                classpath("com.android.tools.build:gradle:$agpVersion")
+              }
+            }
+            
+            plugins {
+              id "com.osacky.doctor"
+            }
+            doctor {
+              disallowMultipleDaemons = false
+              ensureJavaHomeMatches = false
+            }
+        """.trimIndent())
+
+        writeFileToName("settings.gradle", """
+            include 'app-one'
+            include 'app-two'
+        """.trimMargin())
+
+        val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
+        val folder = File(testProjectRoot.root, "app-one")
+        createFileInFolder(srcFolder, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.one\"/>")
+        createFileInFolder(folder, "build.gradle", """
+            apply plugin: 'com.android.application'
+
+            android {
+              compileSdkVersion 28
+            }
+            """.trimIndent())
+        val srcFolder2 = testProjectRoot.newFolder("app-two", "src", "main")
+        val folder2 = File(testProjectRoot.root, "app-two")
+        createFileInFolder(srcFolder2, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.two\"/>")
+        createFileInFolder(folder2, "build.gradle", """
+            apply plugin: 'com.android.application'
+
+            android {
+              compileSdkVersion 28
+            }
+            """.trimIndent()
+        )
+        val result = createRunner()
+            .withArguments("installDebug")
+            .buildAndFail()
+        assertThat(result.output).contains("""
+               |=============================== Gradle Doctor Prescriptions ============================================
+               || Did you really mean to run all these? [task ':app-one:installDebug', task ':app-two:installDebug']   |
+               || Maybe you just meant to assemble/install one of them? In that case, you can try                      |
+               ||   ./gradlew app-one:installDebug                                                                     |
                || Or did you hit "build" in the IDE (Green Hammer)? Did you know that assembles all the code in the en |
                || tire project?                                                                                        |
                || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
