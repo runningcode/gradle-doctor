@@ -96,6 +96,33 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     @Test
+    fun testJavaHomeNotSet() {
+        assumeSupportedVersion()
+
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |  ensureJavaHomeMatches = true
+                    |}
+                """.trimMargin("|")
+        )
+
+        val result = createRunner()
+            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+            .buildAndFail()
+        assertThat(result.output).contains("""
+                |> =============================== Gradle Doctor Prescriptions ============================================
+                |  | Gradle is not using JAVA_HOME.                                                                       |
+                |  | JAVA_HOME is foo                                                                                     |
+                |  """
+            .trimMargin("|"))
+    }
+
+    @Test
     fun testFailMultipleProjects() {
         assumeSupportedVersion()
         Assume.assumeFalse("5.1" == version)
