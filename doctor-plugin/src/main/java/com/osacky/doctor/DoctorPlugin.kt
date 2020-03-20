@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.Finish
@@ -24,10 +25,11 @@ class DoctorPlugin : Plugin<Project> {
 
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
+        val clock: Clock = SystemClock()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
-        val garbagePrinter = GarbagePrinter(SystemClock(), DirtyBeanCollector(), extension)
+        val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)

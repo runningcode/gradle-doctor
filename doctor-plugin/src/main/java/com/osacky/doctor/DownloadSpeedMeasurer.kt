@@ -8,7 +8,6 @@ import io.reactivex.rxjava3.disposables.Disposable
 import java.util.Collections
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
-import org.slf4j.LoggerFactory
 
 class DownloadSpeedMeasurer(
     private val buildOperations: BuildOperations,
@@ -55,14 +54,10 @@ class DownloadSpeedMeasurer(
 
     data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
         companion object {
-            private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
                 require(result is ExternalResourceReadBuildOperationType.Result)
 
-                if (result.bytesRead == null) {
-                    logger.info("Null bytes read for $result")
-                }
                 return ExternalDownloadEvent(event.endTime - event.startTime, result.bytesRead)
             }
         }
