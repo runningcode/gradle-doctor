@@ -14,7 +14,7 @@ interface OperationEvents {
         return progress()
                 .filter { it.details != null }
                 .map { it.details }
-                .filter { clazz.isAssignableFrom(it::class.java) }
+                .filter { clazz.isAssignableFrom(it!!::class.java) }
                 .cast(clazz)
     }
 
@@ -22,7 +22,7 @@ interface OperationEvents {
         return finishes()
                 .filter { it.result != null }
                 .map { it.result }
-                .filter { clazz.isAssignableFrom(it::class.java) }
+                .filter { clazz.isAssignableFrom(it!!::class.java) }
                 .cast(clazz)
     }
 }
