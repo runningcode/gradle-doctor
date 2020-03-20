@@ -2,9 +2,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.70"
     id("com.gradle.plugin-publish") version "0.10.1"
-    id("org.jmailen.kotlinter") version "2.1.1"
+    id("org.jmailen.kotlinter") version "2.3.2"
     `maven-publish`
     signing
 }
@@ -17,12 +17,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
-    implementation("io.reactivex.rxjava3:rxjava:3.0.0-RC8")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
+    implementation("io.reactivex.rxjava3:rxjava:3.0.1")
     testImplementation(gradleTestKit())
-    testImplementation("junit:junit:4.12")
-    testImplementation("com.google.truth:truth:1.0")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
+    testImplementation("junit:junit:4.13")
+    testImplementation("com.google.truth:truth:1.0.1")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 pluginBundle {

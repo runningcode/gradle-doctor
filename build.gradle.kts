@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }
@@ -21,7 +21,7 @@ allprojects {
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.27.0"
+  id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 apply(plugin = "idea")
