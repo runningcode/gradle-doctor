@@ -24,6 +24,7 @@ apply plugin: "com.osacky.doctor"
 * Easily disable test caching. Tests may not declare all inputs causing [false positives](https://github.com/gradle/gradle/issues/9151). [Needed until Gradle implements a sandbox.](https://github.com/gradle/gradle/issues/9210)
 * Disable assembling all apps in repository simultaneously.
 * Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
+* Benchmarking remote build cache connection speed.
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.
@@ -73,6 +74,32 @@ doctor {
 }
 ```
 [Configuration extension code is here.](https://github.com/runningcode/gradle-doctor/blob/master/doctor-plugin/src/main/java/com/osacky/doctor/DoctorExtension.kt)
+
+## Remote Build Cache Benchmark
+To enable, run a gradle task that you would like to profile with the flag `-PbenchmarkRemoteCache`.
+
+For example:
+`./gradlew :app:assembleDebug -PbenchmarkRemoteCache`
+
+The result will be output like so:
+```
+=============================== Gradle Doctor Prescriptions ============================================
+| = Remote Build Cache Benchmark Report =                                                              |
+| Executed tasks created compressed artifacts of size 7 MB                                             |
+| Total Task execution time was 86,68 s                                                                |
+|                                                                                                      |
+| To save time, you need an estimated connection to the build cache node of at least 0,08 MB/s.        |
+| Check a build scan to see your connection speed to the build cache node.                             |
+| Build cache node throughput may be different than your internet connection speed.                    |
+|                                                                                                      |
+| A 1 MB/s connection would save you 79.68 s.                                                         |
+| A 2 MB/s connection would save you 83.18 s.                                                         |
+| A 10 MB/s connection would save you 85.98 s.                                                        |
+|                                                                                                      |
+| Note: This is an estimate. Real world performance may vary. This estimate does not take in to accoun |
+| t time spent decompressing cached artifacts or roundtrip communication time to the cache node.       |
+========================================================================================================
+```
 
 ## Publishing
 ``` bash
