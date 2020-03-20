@@ -4,7 +4,6 @@ import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.Finish
 import java.text.NumberFormat
-import java.util.concurrent.TimeUnit
 
 class GarbagePrinter(
     private val clock: Clock,
@@ -13,7 +12,7 @@ class GarbagePrinter(
 ) : BuildStartFinishListener {
 
     private val startGarbageTime = collector.collect()
-    private val startBuildTime = clock.upTime().toMillis()
+    private val startBuildTime = clock.upTimeMillis()
     private val formatter = NumberFormat.getPercentInstance()
     private val warningThreshold = 10 * 1000
 
@@ -22,7 +21,7 @@ class GarbagePrinter(
 
     override fun onFinish(): Finish {
         val endGarbageTime = collector.collect()
-        val endBuildTime = clock.upTime().toMillis()
+        val endBuildTime = clock.upTimeMillis()
 
         val buildDuration = endBuildTime - startBuildTime
         val garbageDuration = endGarbageTime - startGarbageTime
@@ -38,9 +37,5 @@ class GarbagePrinter(
             return Finish.FinishMessage(message)
         }
         return Finish.None
-    }
-
-    private fun Long.toMillis(): Long {
-        return TimeUnit.NANOSECONDS.toMillis(this)
     }
 }

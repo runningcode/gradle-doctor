@@ -44,7 +44,7 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.1.1"
+  gradleVersion = "6.2.2"
 }
 
 buildScan {
@@ -72,3 +72,8 @@ tasks.register("publishToGradlePlugin").configure {
 tasks.register("publishToMavenCentral").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":publishMavenJavaPublicationToMavenRepository"))
 }
+
+tasks.register("publishToMavenLocal").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishMavenJavaPublicationToMavenLocal"))
+}
+
