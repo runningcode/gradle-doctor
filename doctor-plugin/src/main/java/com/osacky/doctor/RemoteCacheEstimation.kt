@@ -61,7 +61,7 @@ class RemoteCacheEstimation(
         val executionTime = endTime - startTime
         val executionTimeSec = executionTime / 1000f
 
-        val cacheSizeMB = cacheSizeBytes / ONE_MEGABYTE * 1.0f
+        val cacheSizeMB = cacheSizeBytes * 1.0f / ONE_MEGABYTE
         val minBuildCacheSpeed = (cacheSizeMB / executionTimeSec) * 1.0f
 
         val oneMBTime = cacheSizeMB
