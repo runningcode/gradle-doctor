@@ -62,8 +62,10 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
         val hashes = mutableListOf<HashCode>()
         executeTaskIdsMap.entries.forEach { entry ->
             if (entry.value.skipMessage == null) {
-                if (snapshotIdsMap.containsKey(entry.key)) {
-                    hashes.add(HashCode.fromBytes(snapshotIdsMap[entry.key]!!.hashBytes!!))
+                val bytes = snapshotIdsMap[entry.key]?.hashBytes
+                // hashBytes Can be null if inputs are invalid.
+                if (bytes != null) {
+                    hashes.add(HashCode.fromBytes(bytes))
                 }
             }
         }
