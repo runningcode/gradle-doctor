@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2
+* Fix NPE when calculating remote benchmark cache.
+
 ## 0.3.1
 * Fix megabyte estimation
 * Also add include Android resource compilation tasks in remote build cache estimation.
