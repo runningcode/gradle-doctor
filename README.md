@@ -9,7 +9,7 @@ The right prescription for your Gradle build.
 ``` groovy
 buildscript {
   dependencies {
-    classpath "com.osacky.doctor:doctor-plugin:0.3.2"
+    classpath "com.osacky.doctor:doctor-plugin:0.3.3"
   }
 }
 

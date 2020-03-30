@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.3
+* Print out number of tasks which were forced to re-execute.
+
 ## 0.3.2
 * Fix NPE when calculating remote benchmark cache.
 
