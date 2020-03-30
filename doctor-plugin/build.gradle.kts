@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.osacky.doctor"
-version = "0.3.2"
+version = "0.3.3-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ pluginBundle {
 
     mavenCoordinates {
         artifactId = "doctor-plugin"
-        groupId = group
+        groupId = project.group.toString()
     }
 }
 
