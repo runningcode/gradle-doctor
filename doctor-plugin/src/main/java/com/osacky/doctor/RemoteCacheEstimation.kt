@@ -79,8 +79,9 @@ class RemoteCacheEstimation(
 
         return Finish.FinishMessage("""
             = Remote Build Cache Benchmark Report =
+            Forced re-execution of ${buildOperations.tasksRan()} tasks in order to calculate local execution duration.
             Executed tasks created compressed artifacts of size ${twoDigits.format(cacheSizeMB)} MB
-            Total Task execution time was ${twoDigits.format(executionTimeSec)} s
+            Total task execution time was ${twoDigits.format(executionTimeSec)} s
            
             To save time, you need an estimated connection to the build cache node of at least ${twoDigits.format(minBuildCacheSpeed)} MB/s.
             Check a build scan to see your connection speed to the build cache node.

@@ -72,6 +72,10 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
         return hashes
     }
 
+    fun tasksRan(): Int {
+        return executeTaskIdsMap.entries.filter { it.value.skipMessage == null }.size
+    }
+
     private val Gradle.buildOperationListenerManger get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
     override fun starts(): Observable<OperationStartEvent> = starts.hide()
