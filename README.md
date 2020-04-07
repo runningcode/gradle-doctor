@@ -103,5 +103,5 @@ The result will be output like so:
 
 ## Publishing
 ``` bash
-./gradlew publishToMavenCentral
+./gradlew publishToMavenCentral -Dorg.gradle.internal.publish.checksums.insecure=true
 ```
