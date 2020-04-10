@@ -82,7 +82,7 @@ class RemoteCacheEstimation(
             Executed tasks created compressed artifacts of size ${twoDigits.format(cacheSizeMB)} MB
             Total Task execution time was ${twoDigits.format(executionTimeSec)} s
            
-            To save time, you need an estimated connection to the build cache node of at least ${twoDigits.format(minBuildCacheSpeed)} MB/s.
+            In order for a remote build cache to save you time, you would need a connection speed to your node of at least ${twoDigits.format(minBuildCacheSpeed)} MB/s.
             Check a build scan to see your connection speed to the build cache node.
             Build cache node throughput may be different than your internet connection speed.
             
