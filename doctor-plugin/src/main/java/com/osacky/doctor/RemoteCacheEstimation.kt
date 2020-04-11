@@ -49,7 +49,7 @@ class RemoteCacheEstimation(
         val cacheDir = gradleLocalCacheDir()
 
         // For every task output hash, find the size of the corresponding compressed artifact in the build cache directory.
-        val cacheSizeBytes = buildOperations.hashes().sumBy {
+        val cacheSizeBytes = buildOperations.cacheKeys().sumBy {
             File(cacheDir, it.toString()).length().toInt()
         }
 

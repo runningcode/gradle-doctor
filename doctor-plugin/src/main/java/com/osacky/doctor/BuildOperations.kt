@@ -58,18 +58,18 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
     }
 
     // TODO move this out of this class
-    fun hashes(): List<HashCode> {
-        val hashes = mutableListOf<HashCode>()
-        executeTaskIdsMap.entries.forEach { entry ->
-            if (entry.value.skipMessage == null) {
-                val bytes = snapshotIdsMap[entry.key]?.hashBytes
+    fun cacheKeys(): List<HashCode> {
+        val cacheKeys = mutableListOf<HashCode>()
+        executeTaskIdsMap.entries.forEach { (operationId, result) ->
+            if (result.skipMessage == null) {
+                val cacheKey = snapshotIdsMap[operationId]?.hashBytes
                 // hashBytes Can be null if inputs are invalid.
-                if (bytes != null) {
-                    hashes.add(HashCode.fromBytes(bytes))
+                if (cacheKey != null) {
+                    cacheKeys.add(HashCode.fromBytes(cacheKey))
                 }
             }
         }
-        return hashes
+        return cacheKeys
     }
 
     fun tasksRan(): Int {
