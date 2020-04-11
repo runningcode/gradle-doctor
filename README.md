@@ -85,16 +85,17 @@ The result will be output like so:
 ```
 =============================== Gradle Doctor Prescriptions ============================================
 | = Remote Build Cache Benchmark Report =                                                              |
-| Executed tasks created compressed artifacts of size 7 MB                                             |
-| Total Task execution time was 86,68 s                                                                |
+| Executed tasks created compressed artifacts of size 159,93 MB                                        |
+| Total Task execution time was 208,85 s                                                               |
 |                                                                                                      |
-| To save time, you need an estimated connection to the build cache node of at least 0,08 MB/s.        |
+| In order for a remote build cache to save you time, you would need an internet connection to your    |
+| node of at least 0,77 MB/s.                                                                          |
 | Check a build scan to see your connection speed to the build cache node.                             |
 | Build cache node throughput may be different than your internet connection speed.                    |
 |                                                                                                      |
-| A 1 MB/s connection would save you 79.68 s.                                                         |
-| A 2 MB/s connection would save you 83.18 s.                                                         |
-| A 10 MB/s connection would save you 85.98 s.                                                        |
+| A 1 MB/s connection would save you 48,92 s.                                                          |
+| A 2 MB/s connection would save you 128,88 s.                                                         |
+| A 10 MB/s connection would save you 192,86 s. i                                                      |
 |                                                                                                      |
 | Note: This is an estimate. Real world performance may vary. This estimate does not take in to accoun |
 | t time spent decompressing cached artifacts or roundtrip communication time to the cache node.       |
