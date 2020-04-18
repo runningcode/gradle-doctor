@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.DownloadSpeedMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
@@ -11,7 +12,8 @@ import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 
 class DownloadSpeedMeasurer(
     private val buildOperations: BuildOperations,
-    private val extension: DoctorExtension
+    private val extension: DoctorExtension,
+    private val intervalMeasurer: IntervalMeasurer
 ) : BuildStartFinishListener {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
@@ -34,10 +36,10 @@ class DownloadSpeedMeasurer(
         synchronized(downloadEvents) {
 
             val totalBytes = downloadEvents.sumBy { event -> event.byteTotal.toInt() }
-            val totalTime = downloadEvents.sumBy { event -> event.duration.toInt() }
+            val totalTime = intervalMeasurer.findTotalTime(downloadEvents.map { it.start to it.end })
 
             // Don't do anything if we didn't download anything.
-            if (totalBytes == 0 || totalTime == 0) {
+            if (totalBytes == 0 || totalTime == 0L) {
                 return Finish.None
             }
             val totalSpeed = (totalBytes / totalTime) / 1024f
@@ -52,13 +54,13 @@ class DownloadSpeedMeasurer(
         return Finish.None
     }
 
-    data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
+    data class ExternalDownloadEvent(val start: Long, val end: Long, val byteTotal: Long) {
         companion object {
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
                 require(result is ExternalResourceReadBuildOperationType.Result)
 
-                return ExternalDownloadEvent(event.endTime - event.startTime, result.bytesRead)
+                return ExternalDownloadEvent(event.startTime, event.endTime, result.bytesRead)
             }
         }
     }

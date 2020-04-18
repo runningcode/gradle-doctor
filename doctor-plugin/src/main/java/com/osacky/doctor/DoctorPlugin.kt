@@ -4,6 +4,7 @@ import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import org.gradle.api.GradleException
@@ -26,14 +27,15 @@ class DoctorPlugin : Plugin<Project> {
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
         val clock: Clock = SystemClock()
+        val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)
-        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension)
-        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension)
+        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension, intervalMeasurer)
+        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension, intervalMeasurer)
         val buildCacheKey = RemoteCacheEstimation(operations, target, clock)
         val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey)
         garbagePrinter.onStart()
