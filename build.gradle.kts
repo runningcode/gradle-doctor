@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.71")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }

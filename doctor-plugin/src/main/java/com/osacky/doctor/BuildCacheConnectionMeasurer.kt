@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.Finish
+import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
@@ -10,7 +11,11 @@ import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperation
 import org.gradle.internal.operations.OperationFinishEvent
 import org.slf4j.LoggerFactory
 
-class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations, private val extension: DoctorExtension) : BuildStartFinishListener {
+class BuildCacheConnectionMeasurer(
+    private val buildOperations: BuildOperations,
+    private val extension: DoctorExtension,
+    private val intervalMeasurer: IntervalMeasurer
+) : BuildStartFinishListener {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
@@ -33,10 +38,10 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
         synchronized(downloadEvents) {
             val totalBytes = requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
                 .sumBy { event -> requireNotNull(requireNotNull(event) { "ExternalDownloadEvent cannot be null" }.byteTotal) { "byteTotal cannot be null" }.toInt() }
-            val totalTime = downloadEvents.sumBy { event -> event.duration.toInt() }
+            val totalTime = intervalMeasurer.findTotalTime(downloadEvents.map { it.start to it.end })
 
             // Don't do anything if we didn't download anything.
-            if (totalBytes == 0 || totalTime == 0) {
+            if (totalBytes == 0 || totalTime == 0L) {
                 return Finish.None
             }
 
@@ -51,7 +56,7 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
         }
     }
 
-    data class ExternalDownloadEvent(val duration: Long, val byteTotal: Long) {
+    data class ExternalDownloadEvent(val start: Long, val end: Long, val byteTotal: Long) {
         companion object {
             private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
@@ -62,10 +67,10 @@ class BuildCacheConnectionMeasurer(private val buildOperations: BuildOperations,
                     // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
                     return zero
                 }
-                return ExternalDownloadEvent(event.endTime - event.startTime, requireNotNull(result.archiveSize) { "Archive size was not null for $result" })
+                return ExternalDownloadEvent(event.startTime, event.endTime, requireNotNull(result.archiveSize) { "Archive size was not null for $result" })
             }
 
-            val zero = ExternalDownloadEvent(0, 0)
+            val zero = ExternalDownloadEvent(0, 0, 0)
         }
     }
 }
