@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.4
+* Correctly calculate download speeds for build cache and remote repositories.
+
 ## 0.3.3
 * Print out number of tasks which were forced to re-execute.
 
