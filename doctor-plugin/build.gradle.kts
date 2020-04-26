@@ -125,5 +125,4 @@ tasks.withType(Test::class.java).configureEach {
         "-XX:+HeapDumpOnOutOfMemoryError", "-XX:GCTimeLimit=20", "-XX:GCHeapFreeLimit=10",
         "-XX:MaxMetaspaceSize=512m"
     )
-    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
