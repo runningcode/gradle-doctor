@@ -121,4 +121,9 @@ tasks.withType(Test::class.java).configureEach {
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
     }
+    jvmArgs(
+        "-XX:+HeapDumpOnOutOfMemoryError", "-XX:GCTimeLimit=20", "-XX:GCHeapFreeLimit=10",
+        "-XX:MaxMetaspaceSize=512m"
+    )
+    maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
 }
