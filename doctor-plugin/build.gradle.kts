@@ -118,6 +118,7 @@ signing {
 }
 
 tasks.withType(Test::class.java).configureEach {
+    jvmArgs = listOf("-Xmx256m")
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
     }
