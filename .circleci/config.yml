@@ -6,13 +6,13 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/android:api-28-alpha
+      - image: circleci/android:api-28
 
     working_directory: ~/repo
 
     environment:
       # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3g
+      JVM_OPTS: -Xmx2g
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
       TERM: dumb
 
@@ -46,10 +46,10 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
   deploy:
     docker:
-      - image: circleci/android:api-28-alpha
+      - image: circleci/android:api-28
     working_directory: ~/repo
     environment:
-      JVM_OPTS: -Xmx3g
+      JVM_OPTS: -Xmx2g
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
       TERM: dumb
 
