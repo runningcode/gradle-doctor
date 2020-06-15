@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.5
+* More control over which tasks are re-run in remote cache benchmark.
+
 ## 0.3.4
 * Correctly calculate download speeds for build cache and remote repositories.
 
