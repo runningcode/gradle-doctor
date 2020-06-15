@@ -118,6 +118,9 @@ signing {
 }
 
 tasks.withType(Test::class.java).configureEach {
+    maxParallelForks = 2
+    maxHeapSize = "1g"
+
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
     }
