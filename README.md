@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/runningcode/gradle-doctor/tree/master.svg?style=svg)](https://circleci.com/gh/runningcode/gradle-doctor/tree/master)
 
 The right prescription for your Gradle build.
+More information on this plugin and why it was developed as well as what it does can be found here: https://www.youtube.com/watch?v=lgaqS0pmUzk
 
 ## Usage
 
