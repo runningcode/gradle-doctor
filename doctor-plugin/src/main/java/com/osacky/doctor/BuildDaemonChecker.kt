@@ -10,7 +10,8 @@ class BuildDaemonChecker(private val extension: DoctorExtension, private val dae
         if (extension.disallowMultipleDaemons) {
             val numberOfDaemons = daemonCheck.numberOfDaemons()
             if (numberOfDaemons > 1) {
-                val message = """
+                val message =
+                    """
                    $numberOfDaemons Gradle Daemons Active.
                    This may indicate a settings mismatch between the IDE and the terminal.
                    There might also be a bug causing extra Daemons to spawn.
@@ -23,7 +24,7 @@ class BuildDaemonChecker(private val extension: DoctorExtension, private val dae
                    doctor {
                      disallowMultipleDaemons = false
                    }
-                """.trimIndent()
+                    """.trimIndent()
                 throw GradleException(pillBoxPrinter.createPill(message))
             }
         }

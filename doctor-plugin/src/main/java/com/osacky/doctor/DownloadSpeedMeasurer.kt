@@ -6,9 +6,9 @@ import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
-import java.util.Collections
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
+import java.util.Collections
 
 class DownloadSpeedMeasurer(
     private val buildOperations: BuildOperations,
@@ -22,11 +22,11 @@ class DownloadSpeedMeasurer(
 
     override fun onStart() {
         disposable = buildOperations.finishes()
-                .filter { it.result is ExternalResourceReadBuildOperationType.Result }
-                .map { fromGradleType(it) }
-                .subscribe { event ->
-                    downloadEvents.add(event)
-                }
+            .filter { it.result is ExternalResourceReadBuildOperationType.Result }
+            .map { fromGradleType(it) }
+            .subscribe { event ->
+                downloadEvents.add(event)
+            }
     }
 
     override fun onFinish(): Finish {

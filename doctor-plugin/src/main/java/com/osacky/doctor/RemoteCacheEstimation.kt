@@ -4,7 +4,6 @@ import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import com.osacky.doctor.internal.twoDigits
-import java.io.File
 import org.gradle.BuildListener
 import org.gradle.BuildResult
 import org.gradle.api.Project
@@ -12,6 +11,7 @@ import org.gradle.api.initialization.Settings
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.SourceTask
+import java.io.File
 
 class RemoteCacheEstimation(
     private val buildOperations: BuildOperations,
@@ -54,10 +54,12 @@ class RemoteCacheEstimation(
         }
 
         if (cacheSizeBytes == 0) {
-            return Finish.FinishMessage("""
+            return Finish.FinishMessage(
+                """
                 = Remote Build Cache Benchmark Report = 
                 This build did not generate any cached artifacts.
-            """.trimIndent())
+                """.trimIndent()
+            )
         }
 
         val endTime = clock.upTimeMillis()
@@ -77,7 +79,8 @@ class RemoteCacheEstimation(
         val twoMBSavings = executionTimeSec - twoMBTime
         val tenMBSavings = executionTimeSec - tenMBTime
 
-        return Finish.FinishMessage("""
+        return Finish.FinishMessage(
+            """
             = Remote Build Cache Benchmark Report =
             Forced re-execution of ${buildOperations.tasksRan()} tasks in order to calculate local execution duration.
             Executed tasks created compressed artifacts of size ${twoDigits.format(cacheSizeMB)} MB
@@ -92,7 +95,8 @@ class RemoteCacheEstimation(
             A 10 MB/s connection would save you ${twoDigits.format(tenMBSavings)} s.
             
             Note: This is an estimate. Real world performance may vary. This estimate does not take in to account time spent decompressing cached artifacts or roundtrip communication time to the cache node.
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     private fun gradleLocalCacheDir(): File {

@@ -6,10 +6,10 @@ import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
-import java.util.Collections
 import org.gradle.caching.internal.operations.BuildCacheRemoteLoadBuildOperationType
 import org.gradle.internal.operations.OperationFinishEvent
 import org.slf4j.LoggerFactory
+import java.util.Collections
 
 class BuildCacheConnectionMeasurer(
     private val buildOperations: BuildOperations,
@@ -22,13 +22,13 @@ class BuildCacheConnectionMeasurer(
     private lateinit var disposable: Disposable
     override fun onStart() {
         disposable = buildOperations.finishes()
-                .filter { (it.result is BuildCacheRemoteLoadBuildOperationType.Result) && (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit }
-                .map {
-                    fromGradleType(it)
-                }
-                .subscribe {
-                    downloadEvents.add(it)
-                }
+            .filter { (it.result is BuildCacheRemoteLoadBuildOperationType.Result) && (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit }
+            .map {
+                fromGradleType(it)
+            }
+            .subscribe {
+                downloadEvents.add(it)
+            }
     }
 
     override fun onFinish(): Finish {
