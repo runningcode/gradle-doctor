@@ -11,9 +11,6 @@ jobs:
     working_directory: ~/repo
 
     environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx2g
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
       TERM: dumb
 
     steps:
@@ -49,8 +46,6 @@ jobs:
       - image: circleci/android:api-28
     working_directory: ~/repo
     environment:
-      JVM_OPTS: -Xmx2g
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
       TERM: dumb
 
     steps:
