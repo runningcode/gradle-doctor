@@ -11,7 +11,7 @@ class JavaHomeCheck(
     private val pillBoxPrinter: PillBoxPrinter
 ) : BuildStartFinishListener {
     override fun onStart() {
-        if (extension.ensureJavaHomeIsSet && environmentJavaHome == null) {
+        if (extension.ensureJavaHomeIsSet.get() && environmentJavaHome == null) {
             throw GradleException(
                 pillBoxPrinter.createPill(
                     """
@@ -24,7 +24,7 @@ class JavaHomeCheck(
                 )
             )
         }
-        if (extension.ensureJavaHomeMatches && !isGradleUsingJavaHome()) {
+        if (extension.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
             throw GradleException(
                 pillBoxPrinter.createPill(
                     """

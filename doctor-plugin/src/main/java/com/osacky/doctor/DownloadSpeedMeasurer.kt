@@ -46,7 +46,7 @@ class DownloadSpeedMeasurer(
 
             // Only print time if we downloaded at least one megabyte
             if (totalBytes > ONE_MEGABYTE) {
-                if (totalSpeed < extension.downloadSpeedWarningThreshold) {
+                if (totalSpeed < extension.downloadSpeedWarningThreshold.get()) {
                     return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
                 }
             }
