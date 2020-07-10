@@ -13,7 +13,8 @@ class TestDaggerTime {
     @Test
     fun testDaggerJvm() {
         val fixtureName = "dagger-jvm"
-        testProjectRoot.newFile("build.gradle").writeText("""
+        testProjectRoot.newFile("build.gradle").writeText(
+            """
                     plugins {
                       id "com.osacky.doctor"
                     }
@@ -22,22 +23,26 @@ class TestDaggerTime {
                       daggerThreshold = 100
                       ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     }
-        """.trimIndent())
-        testProjectRoot.newFile("settings.gradle").writeText("""
+            """.trimIndent()
+        )
+        testProjectRoot.newFile("settings.gradle").writeText(
+            """
             include '$fixtureName'
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         testProjectRoot.setupFixture(fixtureName)
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
-            .withGradleVersion("5.6")
+            .withGradleVersion("5.6.4")
             .withArguments("assemble")
             .build()
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors.")
-        assertThat(result.output).contains("""
+        assertThat(result.output).contains(
+            """
             | Use Dagger Reflect to skip Dagger Annotation processing:                                             |
             |                                                                                                      |
             | buildscript {                                                                                        |
@@ -54,7 +59,8 @@ class TestDaggerTime {
     @Test
     fun testDaggerJvmWithDelect() {
         val fixtureName = "dagger-jvm"
-        testProjectRoot.newFile("build.gradle").writeText("""
+        testProjectRoot.newFile("build.gradle").writeText(
+            """
                     buildscript {
                       repositories {
                         mavenCentral()
@@ -72,10 +78,13 @@ class TestDaggerTime {
                       daggerThreshold = 100
                       ensureJavaHomeMatches = false
                     }
-        """.trimIndent())
-        testProjectRoot.newFile("settings.gradle").writeText("""
+            """.trimIndent()
+        )
+        testProjectRoot.newFile("settings.gradle").writeText(
+            """
             include '$fixtureName'
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         testProjectRoot.setupFixture(fixtureName)
 
@@ -87,10 +96,12 @@ class TestDaggerTime {
             .build()
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors.")
-        assertThat(result.output).contains("""
+        assertThat(result.output).contains(
+            """
             | Enable to Dagger Reflect to save yourself some time.                                                 |
             | echo "dagger.reflect=true" >> ~/.gradle/gradle.properties                                            |
             ========================================================================================================
-            """.trimIndent())
+            """.trimIndent()
+        )
     }
 }

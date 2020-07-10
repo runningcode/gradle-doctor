@@ -18,12 +18,12 @@ class JavaAnnotationTime(
 
     override fun onStart() {
         disposable += operationEvents.finishResultsOfType(CompileJavaBuildOperationType.Result::class.java)
-                .filter { it.annotationProcessorDetails != null }
-                .map { it.annotationProcessorDetails }
-                .map { detailsList -> detailsList.filter { it.className.contains("dagger") }.sumBy { it.executionTimeInMillis.toInt() } }
-                .subscribe {
-                    totalDaggerTime += it
-                }
+            .filter { it.annotationProcessorDetails != null }
+            .map { it.annotationProcessorDetails }
+            .map { detailsList -> detailsList.filter { it.className.contains("dagger") }.sumBy { it.executionTimeInMillis.toInt() } }
+            .subscribe {
+                totalDaggerTime += it
+            }
 
         disposable += operationEvents.progressDetailsOfType(LogEventBuildOperationProgressDetails::class.java)
             .subscribe {
@@ -46,7 +46,8 @@ class JavaAnnotationTime(
         return Finish.None
     }
 
-    private val applyDelectPlugin = """
+    private val applyDelectPlugin =
+        """
         Use Dagger Reflect to skip Dagger Annotation processing:
 
         buildscript {
@@ -55,12 +56,13 @@ class JavaAnnotationTime(
         apply plugin: 'com.soundcloud.delect'
         
         For more information: https://github.com/soundcloud/delect#usage
-    """.trimIndent()
+        """.trimIndent()
 
-    private val enableReflectMessage = """
+    private val enableReflectMessage =
+        """
         Enable to Dagger Reflect to save yourself some time.                           
         echo "dagger.reflect=true" >> ~/.gradle/gradle.properties
-    """.trimIndent()
+        """.trimIndent()
 
     private fun containsDelect(): Boolean {
         return buildscriptConfiguration.getByName("classpath").incoming.dependencies.find { it.group == "com.soundcloud.delect" } != null

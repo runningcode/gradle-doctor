@@ -28,12 +28,13 @@ class GarbagePrinter(
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
         if (buildDuration > warningThreshold && percentGarbageCollecting > extension.GCWarningThreshold) {
-            val message = """
+            val message =
+                """
                 This build spent ${formatter.format(percentGarbageCollecting)} garbage collecting.
                 If this is the first build with this Daemon, it likely means that this build needs more heap space.
                 Otherwise, if this is happening after several builds it could indicate a memory leak.
                 For a quick fix, restart this Gradle daemon. ./gradlew --stop
-            """.trimIndent()
+                """.trimIndent()
             return Finish.FinishMessage(message)
         }
         return Finish.None

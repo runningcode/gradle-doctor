@@ -44,13 +44,17 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.5"
+  gradleVersion = "6.5.1"
 }
 
 buildScan {
   termsOfServiceUrl = "https://gradle.com/terms-of-service"
   termsOfServiceAgree = "yes"
   publishAlways()
+}
+
+tasks.register("checkPlugin").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":check"))
 }
 
 tasks.register("lintKotlinPlugin").configure {
