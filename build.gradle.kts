@@ -28,12 +28,12 @@ apply(plugin = "idea")
 apply(plugin = "com.osacky.doctor")
 
 configure<DoctorExtension> {
-  disallowMultipleDaemons = false
-  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
-  GCWarningThreshold = 0.01f
-  enableTestCaching = false
-  downloadSpeedWarningThreshold = 2.0f
-  daggerThreshold = 100
+  disallowMultipleDaemons.set(false)
+  ensureJavaHomeMatches.set(!providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent)
+  GCWarningThreshold.set(0.01f)
+  enableTestCaching.set(false)
+  downloadSpeedWarningThreshold.set(2.0f)
+  daggerThreshold.set(100)
 }
 
 tasks.withType(Test::class.java).configureEach {

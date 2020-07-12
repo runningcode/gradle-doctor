@@ -61,7 +61,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.subprojects project@{
             afterEvaluate {
-                if (extension.failOnEmptyDirectories) {
+                if (extension.failOnEmptyDirectories.get()) {
                     // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
                     tasks.withType(SourceTask::class.java).configureEach {
                         doFirst {
@@ -74,7 +74,7 @@ class DoctorPlugin : Plugin<Project> {
                     }
                 }
                 // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
-                if (!extension.enableTestCaching) {
+                if (!extension.enableTestCaching.get()) {
                     tasks.withType(Test::class.java).configureEach {
                         outputs.upToDateWhen { false }
                     }
@@ -95,7 +95,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.gradle.taskGraph.whenReady {
             // If there is only one application plugin, we don't need to check that we're assembling all the applications.
-            if (appPluginProjects.size <= 1 || extension.allowBuildingAllAndroidAppsSimultaneously) {
+            if (appPluginProjects.size <= 1 || extension.allowBuildingAllAndroidAppsSimultaneously.get()) {
                 return@whenReady
             }
             val assembleTasksInAndroidAppProjects = allTasks
@@ -124,8 +124,8 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureMinimumSupportedGradleVersion() {
-        if (GradleVersion.current() < GradleVersion.version("5.1")) {
-            throw GradleException("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
+        if (GradleVersion.current() < GradleVersion.version("5.2")) {
+            throw GradleException("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
         }
     }
 }

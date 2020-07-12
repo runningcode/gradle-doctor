@@ -27,7 +27,7 @@ class GarbagePrinter(
         val garbageDuration = endGarbageTime - startGarbageTime
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
-        if (buildDuration > warningThreshold && percentGarbageCollecting > extension.GCWarningThreshold) {
+        if (buildDuration > warningThreshold && percentGarbageCollecting > extension.GCWarningThreshold.get()) {
             val message =
                 """
                 This build spent ${formatter.format(percentGarbageCollecting)} garbage collecting.

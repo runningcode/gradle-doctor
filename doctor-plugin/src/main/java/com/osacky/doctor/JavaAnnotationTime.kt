@@ -39,7 +39,7 @@ class JavaAnnotationTime(
 
     override fun onFinish(): Finish {
         disposable.dispose()
-        if (totalDaggerTime > doctorExtension.daggerThreshold) {
+        if (totalDaggerTime > doctorExtension.daggerThreshold.get()) {
             val message = if (containsDelect()) enableReflectMessage else applyDelectPlugin
             return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\n$message")
         }

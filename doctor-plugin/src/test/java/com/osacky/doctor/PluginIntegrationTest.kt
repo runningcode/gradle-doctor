@@ -3,6 +3,7 @@ package com.osacky.doctor
 import com.google.common.truth.Truth.assertThat
 import com.osacky.doctor.internal.androidHome
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.util.GradleVersion
 import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Rule
@@ -14,7 +15,7 @@ import java.io.File
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
-    val agpVersion = "3.6.3"
+    val agpVersion = "3.5.3"
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
@@ -23,7 +24,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         fun getParams(): List<String> {
             // Keep 5.0 as minimum unsupported version and 5.1 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("5.0", "5.1", "5.6.4", "6.0.1", "6.5.1")
+            return listOf("5.0", "5.2", "5.6.4", "6.0.1", "6.5.1")
         }
     }
 
@@ -63,7 +64,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         )
 
         val result = createRunner().buildAndFail()
-        assertThat(result.output).contains("Must be using Gradle Version 5.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
+        assertThat(result.output).contains("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
     }
 
     @Test
@@ -136,7 +137,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     @Test
     fun testFailAssembleMultipleProjects() {
         assumeSupportedVersion()
-        Assume.assumeFalse("5.1" == version)
+        assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
         writeBuildGradle(
             """
@@ -213,7 +214,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     @Test
     fun testFailInstallMultipleProjects() {
         assumeSupportedVersion()
-        Assume.assumeFalse("5.1" == version)
+        assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
         writeBuildGradle(
             """
@@ -319,6 +320,10 @@ class PluginIntegrationTest constructor(private val version: String) {
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
             .withGradleVersion(version)
+    }
+
+    private fun assumeCanRunAndroidBuild() {
+        Assume.assumeTrue(GradleVersion.version("5.4") < GradleVersion.version(version))
     }
 
     private fun assumeSupportedVersion() {
