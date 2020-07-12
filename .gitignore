@@ -7,3 +7,9 @@ build/
 /captures
 .externalNativeBuild
 
+# Mkdocs generated
+site
+
+# Python Environment
+lib
+bin
