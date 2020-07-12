@@ -104,6 +104,8 @@ The result will be output like so:
 ========================================================================================================
 ```
 
+Use `-PrerunSourceTasksForBenchmark` and `-PrerunLargeOutputTasksForBenchmark` to control which tasks are run as part of the benchmark. You can also omit those flags and measure the individual performance of certains tasks by marking the tasks with `outputs.upToDateWhen { false }`.
+
 ## Publishing
 ``` bash
 ./gradlew publishToMavenCentral -Dorg.gradle.internal.publish.checksums.insecure=true

@@ -20,6 +20,8 @@ class RemoteCacheEstimation(
 ) : BuildStartFinishListener {
 
     private val benchmarkBuildCache: Boolean = project.properties.containsKey("benchmarkRemoteCache")
+    private val rerunSourceTasks: Boolean = project.properties.containsKey("rerunSourceTasksForBenchmark")
+    private val rerunLargeOutputTasks: Boolean = project.properties.containsKey("rerunLargeOutputTasksForBenchmark")
     private var startTime: Long = -1L
 
     override fun onStart() {
@@ -28,14 +30,21 @@ class RemoteCacheEstimation(
         }
         project.gradle.addBuildListener(listener)
         // Re-run all source tasks for benchmarking purposes
-        project.allprojects {
-            tasks.withType(SourceTask::class.java).configureEach {
-                outputs.upToDateWhen { false }
-            }
-            // Look up tasks by name so we don't depend on the Android Plugin.
-            // If the task has a different build type (not debug), it likely won't work here though.
-            tasks.matching { it.name == "processDebugResources" || it.name == "mergeDebugJavaResource" || it.name == "mergeDebugAssets" || it.name == "mergeDebugResources" || it.name == "bundleLibResDebug" || it.name == "packageDebugResources" }.configureEach {
-                outputs.upToDateWhen { false }
+        if (rerunSourceTasks || rerunLargeOutputTasks) {
+            project.allprojects {
+                if (rerunSourceTasks) {
+                    tasks.withType(SourceTask::class.java).configureEach {
+                        outputs.upToDateWhen { false }
+                    }
+                }
+                if (rerunLargeOutputTasks) {
+                    // Look up tasks by name so we don't depend on the Android Plugin.
+                    // If the task has a different build type (not debug), it likely won't work here though.
+                    tasks.matching { it.name == "processDebugResources" || it.name == "mergeDebugJavaResource" || it.name == "mergeDebugAssets" || it.name == "mergeDebugResources" || it.name == "bundleLibResDebug" || it.name == "packageDebugResources" || it.name == "mergeDebugNativeLibs" || it.name == "generateDebugUnitTestStubRFile" }
+                        .configureEach {
+                            outputs.upToDateWhen { false }
+                        }
+                }
             }
         }
     }
@@ -56,7 +65,7 @@ class RemoteCacheEstimation(
         if (cacheSizeBytes == 0) {
             return Finish.FinishMessage(
                 """
-                = Remote Build Cache Benchmark Report = 
+                = Remote Build Cache Benchmark Report =
                 This build did not generate any cached artifacts.
                 """.trimIndent()
             )
@@ -85,15 +94,15 @@ class RemoteCacheEstimation(
             Forced re-execution of ${buildOperations.tasksRan()} tasks in order to calculate local execution duration.
             Executed tasks created compressed artifacts of size ${twoDigits.format(cacheSizeMB)} MB
             Total task execution time was ${twoDigits.format(executionTimeSec)} s
-           
+
             In order for a remote build cache to save you time, you would need a connection speed to your node of at least ${twoDigits.format(minBuildCacheSpeed)} MB/s.
             Check a build scan to see your connection speed to the build cache node.
             Build cache node throughput may be different than your internet connection speed.
-            
+
             A 1 MB/s connection would save you ${twoDigits.format(oneMBSavings)} s.
             A 2 MB/s connection would save you ${twoDigits.format(twoMBSavings)} s.
             A 10 MB/s connection would save you ${twoDigits.format(tenMBSavings)} s.
-            
+
             Note: This is an estimate. Real world performance may vary. This estimate does not take in to account time spent decompressing cached artifacts or roundtrip communication time to the cache node.
             """.trimIndent()
         )
