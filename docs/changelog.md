@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.3.5
-* More control over which tasks are re-run in remote cache benchmark.
+## 0.4.0
+* More control over which tasks are re-run in remote cache benchmark. See README.md for more information.
+* Use Gradle Properties for lazy configuration and future configuration caching support.
 
 ## 0.3.4
 * Correctly calculate download speeds for build cache and remote repositories.

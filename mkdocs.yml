@@ -1,0 +1,36 @@
+# pip install -r requirements.txt
+# mkdocs serve
+
+
+extra:
+  doctor:
+    current_release: '0.3.4'
+    next_release: '0.4.0'
+
+site_name: Gradle Doctor
+site_url: https://runningcode.github.io/fladle/
+repo_name: Gradle Doctor
+repo_url: https://github.com/runningcode/gradle-doctor/
+site_description: The Right Prescription for your Gradle Build
+site_author: Nelson Osacky
+
+nav:
+  - Home: index.md
+  - Configuration: configuration.md
+  - Changelog: changelog.md
+  - Remote Cache Benchmark: remote-cache.md
+  - Releasing: releasing.md
+
+theme:
+  name: 'material'
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+
+plugins:
+  - search
+  - markdownextradata: {}
