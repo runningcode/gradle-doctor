@@ -60,24 +60,22 @@ class DoctorPlugin : Plugin<Project> {
         val appPluginProjects = mutableSetOf<Project>()
 
         target.subprojects project@{
-            afterEvaluate {
+            tasks.withType(SourceTask::class.java).configureEach {
                 if (extension.failOnEmptyDirectories.get()) {
                     // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
-                    tasks.withType(SourceTask::class.java).configureEach {
-                        doFirst {
-                            source.visit {
-                                if (file.isDirectory && file.listFiles().isEmpty()) {
-                                    throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
-                                }
+                    doFirst {
+                        source.visit {
+                            if (file.isDirectory && file.listFiles().isEmpty()) {
+                                throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
                             }
                         }
                     }
                 }
-                // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
+            }
+            // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
+            tasks.withType(Test::class.java).configureEach {
                 if (!extension.enableTestCaching.get()) {
-                    tasks.withType(Test::class.java).configureEach {
-                        outputs.upToDateWhen { false }
-                    }
+                    outputs.upToDateWhen { false }
                 }
             }
             plugins.whenPluginAdded plugin@{
