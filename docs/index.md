@@ -26,7 +26,7 @@ apply plugin: "com.osacky.doctor"
 * Easily disable test caching. Tests may not declare all inputs causing [false positives](https://github.com/gradle/gradle/issues/9151). [Needed until Gradle implements a sandbox.](https://github.com/gradle/gradle/issues/9210)
 * Disable assembling all apps in repository simultaneously.
 * Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
-* Benchmarking remote build cache connection speed.
+* [Benchmarking remote build cache connection speed](remote-cache).
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.

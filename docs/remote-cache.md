@@ -1,18 +1,41 @@
-## Remote Build Cache Benchmark
+# Remote Build Cache Benchmark
 
-[How fast does my internet connection need to be in order to benefit from the Gradle Remote Build Cache Part 1](https://medium.com/swlh/how-fast-does-my-internet-need-to-be-to-use-the-gradle-remote-build-cache-part-1-4acaa6f9a2fa)
+### More information
+How fast does my internet connection need to be in order to benefit from the Gradle Remote Build Cache?
 
-[How fast does my internet connection need to be in order to benefit from the Gradle Remote Build Cache Part 2](https://medium.com/@runningcode/how-fast-does-my-internet-need-to-be-to-use-the-gradle-remote-build-cache-part-2-1bc2b171f19)
+Read [Part 1](https://medium.com/swlh/how-fast-does-my-internet-need-to-be-to-use-the-gradle-remote-build-cache-part-1-4acaa6f9a2fa) and [Part 2](https://medium.com/@runningcode/how-fast-does-my-internet-need-to-be-to-use-the-gradle-remote-build-cache-part-2-1bc2b171f19)
 
 
-To start the benchmark, run a Gradle task that you would like to profile with the flag `-PbenchmarkRemoteCache`.
+## Basic Benchmark
+To start the benchmark, run a Gradle task that you would like to profile with the flag
+```
+-PbenchmarkRemoteCache
+```
+
 To force tasks to rerun for the benchmark, use `-PrerunSourceTasksForBenchmark` and `-PrerunLargeOutputTasksForBenchmark` to control which tasks are forced to re-run as part of the benchmark.
-You can also omit those flags and measure the individual performance of certains tasks by marking the tasks with `outputs.upToDateWhen { false }`.
 
-For example:
-`./gradlew :app:assembleDebug -PbenchmarkRemoteCache -PrerunSourceTasksForBenchmark -PrerunLargeOutputTasksForBenchmark`
+Example full benchmark scenario:
+``` bash
+./gradlew :app:assembleDebug -PbenchmarkRemoteCache -PrerunSourceTasksForBenchmark -PrerunLargeOutputTasksForBenchmark`
+```
 
-The result will be output like so:
+
+## Customized Benchmark Scenario
+You can also omit the rerun properties in order to measure the individual performance of specific tasks by forcing tasks to rerun with `outputs.upToDateWhen { false }`. For example:
+``` groovy
+tasks.withType(SourceTask).configureEach {
+  outputs.upToDateWhen { false }
+}
+```
+
+Then run the specific benchmark scenario like so:
+``` bash
+./gradlew :app:assembleDebug -PbenchmarkRemoteCache`
+```
+
+
+## Benchmark Result Report
+This is an example remote cache benchmark report.
 ```
 =============================== Gradle Doctor Prescriptions ============================================
 | = Remote Build Cache Benchmark Report =                                                              |
