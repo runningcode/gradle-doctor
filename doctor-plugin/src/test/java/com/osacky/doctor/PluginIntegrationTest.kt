@@ -315,6 +315,33 @@ class PluginIntegrationTest constructor(private val version: String) {
         assertThat(result.output).contains("Empty src dir found. This causes build cache misses. Run the following command to fix it.")
     }
 
+    @Test
+    fun testDontFailOnEmptyDirectoriesWhenDisabled() {
+        assumeSupportedVersion()
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |  ensureJavaHomeMatches = false
+                    |  failOnEmptyDirectories = false
+                    |}
+                """.trimMargin("|")
+        )
+        val fixtureName = "java-fixture"
+        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
+        testProjectRoot.setupFixture(fixtureName)
+        testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
+
+        val result = createRunner()
+            .withArguments("assemble")
+            .build()
+
+        assertThat(result.output).contains("SUCCESS")
+    }
+
     private fun createRunner(): GradleRunner {
         return GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
