@@ -7,7 +7,7 @@ git pull
 git checkout -b release_{{ doctor.next_release }}
 ```
 
-* Update `version` in `buildSrc/build.gradle.kts` (remove `-SNAPSHOT`)
+* Update `version` in `doctor-plugin/build.gradle.kts` (remove `-SNAPSHOT`)
 ```kotlin
 version = "{{ doctor.next_release }}"
 ```

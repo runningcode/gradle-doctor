@@ -2,7 +2,8 @@
 
 ## 0.4.0
 * More control over which tasks are re-run in remote cache benchmark. See README.md for more information.
-* Use Gradle Properties for lazy configuration and future configuration caching support.
+* Use Gradle Properties for lazy configuration and future configuration caching support. (Breaking API change)
+* Fix performance by not using `afterEvaluate`.
 
 ## 0.3.4
 * Correctly calculate download speeds for build cache and remote repositories.
