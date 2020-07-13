@@ -55,7 +55,7 @@ git checkout master
 git pull
 git merge --no-ff release_{{ doctor.next_release }}
 ```
-* Update `version` in `buildSrc/build.gradle.kts` (increase version and add `-SNAPSHOT`)
+* Update `version` in `doctor-plugin/build.gradle.kts` (increase version and add `-SNAPSHOT`)
 ```kotlin
 version = "REPLACE_WITH_NEXT_VERSION_NUMBER-SNAPSHOT"
 ```
