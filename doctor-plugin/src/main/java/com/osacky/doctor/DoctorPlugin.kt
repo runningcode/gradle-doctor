@@ -7,6 +7,7 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,6 +18,7 @@ import org.gradle.util.GradleVersion
 import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import java.io.File
 
 class DoctorPlugin : Plugin<Project> {
 
@@ -59,14 +61,28 @@ class DoctorPlugin : Plugin<Project> {
 
         val appPluginProjects = mutableSetOf<Project>()
 
-        target.subprojects project@{
+        target.allprojects project@{
             tasks.withType(SourceTask::class.java).configureEach {
                 if (extension.failOnEmptyDirectories.get()) {
                     // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
                     doFirst {
                         source.visit {
-                            if (file.isDirectory && file.listFiles().isEmpty()) {
-                                throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
+                            checkNotEmpty(file)
+                        }
+                    }
+                }
+            }
+
+            tasks.withType(DefaultTask::class.java).configureEach {
+                if (extension.failOnEmptyDirectories.get()) {
+                    doFirst {
+                        inputs.files.forEach { inputFile ->
+                            // Ignore generated and intermediate inputs in the build directory.
+                            if (!inputFile.path.contains("/build/")) {
+                                checkNotEmpty(inputFile)
+                                fileTree(inputFile).visit {
+                                    checkNotEmpty(file)
+                                }
                             }
                         }
                     }
@@ -112,6 +128,12 @@ class DoctorPlugin : Plugin<Project> {
                 """.trimMargin("|")
                 throw GradleException(pillBoxPrinter.createPill(errorMessage))
             }
+        }
+    }
+
+    private fun checkNotEmpty(file: File) {
+        if (file.isDirectory && file.listFiles().isEmpty()) {
+            throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
         }
     }
 

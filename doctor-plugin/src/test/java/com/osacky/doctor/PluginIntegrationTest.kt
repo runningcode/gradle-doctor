@@ -15,7 +15,7 @@ import java.io.File
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
-    val agpVersion = "3.5.3"
+    val agpVersion = "3.6.3"
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
@@ -289,6 +289,72 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     @Test
+    fun testFailOnEmptySrcRoot() {
+        assumeCanRunAndroidBuild()
+        writeBuildGradle(
+            """
+                    |buildscript {
+                    |  repositories {
+                    |    google()
+                    |  }
+                    |  dependencies {
+                    |    classpath ('com.android.tools.build:gradle:$agpVersion')
+                    |  }
+                    |}
+                    |
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |
+                    |repositories {
+                    |  google()
+                    |  mavenCentral()
+                    |}
+                    |
+                    |apply plugin: 'com.android.application'
+                    |
+                    |android {
+                    |  compileSdkVersion 28
+                    |}
+                    |
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |  ensureJavaHomeMatches = false
+                    |  failOnEmptyDirectories = true
+                    |}
+                """.trimMargin("|")
+        )
+        testProjectRoot.newFile("settings.gradle")
+        val mainSrcRoot = testProjectRoot.newFolder("src", "main")
+        createFileInFolder(mainSrcRoot, "AndroidManifest.xml", "<manifest package=\"com.foo\"/>")
+        testProjectRoot.newFolder("src", "main", "res")
+        val folder = testProjectRoot.newFolder("src", "main", "java", "com", "foo")
+        File(folder, "TheClass.java").writeText(
+            """package com.foo;
+            class TheClass {
+            }
+            """.trimIndent()
+        )
+        val result = createRunner()
+            .withArguments("assembleDebug")
+            .forwardOutput()
+            .buildAndFail()
+
+        assertThat(result.output).contains("Empty src dir found. This causes build cache misses. Run the following command to fix it.")
+        assertThat(result.output).containsMatch("rmdir \\S+/src/main/res")
+
+        // Create a nested folder and check if that one is empty too.
+        testProjectRoot.newFolder("src", "main", "res", "values-es")
+
+        val subDir = createRunner()
+            .withArguments("assembleDebug")
+            .forwardOutput()
+            .buildAndFail()
+        assertThat(subDir.output).contains("Empty src dir found. This causes build cache misses. Run the following command to fix it.")
+        assertThat(subDir.output).containsMatch("rmdir \\S+/src/main/res/values-es")
+    }
+
+    @Test
     fun testFailOnEmptyDirectories() {
         assumeSupportedVersion()
         writeBuildGradle(
@@ -313,6 +379,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             .buildAndFail()
 
         assertThat(result.output).contains("Empty src dir found. This causes build cache misses. Run the following command to fix it.")
+        assertThat(result.output).containsMatch("rmdir \\S+/src/main/java/com/foo")
     }
 
     @Test
