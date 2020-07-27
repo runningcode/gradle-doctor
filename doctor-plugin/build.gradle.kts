@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13")
