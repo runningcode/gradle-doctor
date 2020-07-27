@@ -4,11 +4,10 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 buildscript {
   repositories {
     mavenCentral()
-    google()
   }
 
   dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")
     classpath("com.osacky.doctor:doctor-plugin:1.0")
   }
 }
@@ -16,12 +15,11 @@ buildscript {
 allprojects {
   repositories {
     mavenCentral()
-    google()
   }
 }
 
 plugins {
-  id("com.github.ben-manes.versions") version "0.28.0"
+  id("com.github.ben-manes.versions") version "0.29.0"
 }
 
 apply(plugin = "idea")
