@@ -26,7 +26,7 @@
        */
       GCWarningThreshold = 0.10f
       /**
-       * Print a warning to the console if we spend more than this amount of time with Dagger annoation processors.
+       * Print a warning to the console if we spend more than this amount of time with Dagger annotation processors.
        */
       daggerThreshold = 5000
       /**
@@ -68,7 +68,7 @@
        */
       GCWarningThreshold.set(0.10f)
       /**
-       * Print a warning to the console if we spend more than this amount of time with Dagger annoation processors.
+       * Print a warning to the console if we spend more than this amount of time with Dagger annotation processors.
        */
       daggerThreshold.set(5000)
       /**
