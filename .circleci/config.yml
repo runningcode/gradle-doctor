@@ -2,15 +2,23 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2.1
+version: 2
 jobs:
   build:
     docker:
-      - image: circleci/android:api-28
+      # specify the version you desire here
+      - image: circleci/openjdk:8-jdk
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
 
     working_directory: ~/repo
 
     environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
       TERM: dumb
 
     steps:
@@ -18,48 +26,17 @@ jobs:
 
       # Download and cache dependencies
       - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-      - run: ./gradlew checkPlugin
-      - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/test-results/junit/
-            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
-          when: always
-      - store_test_results:
-          path: ~/test-results
-      - store_artifacts:
-          path: ~/test-results/junit
+      - run: gradle dependencies
+
       - save_cache:
           paths:
-            - ~/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}
-  deploy:
-    docker:
-      - image: circleci/android:api-28
-    working_directory: ~/repo
-    environment:
-      TERM: dumb
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-    steps:
-      - checkout
-      - run: ./gradlew publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
-
-workflows:
-  version: 2.1
-  build-and-deploy:
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      # run tests!
+      - run: gradle test
