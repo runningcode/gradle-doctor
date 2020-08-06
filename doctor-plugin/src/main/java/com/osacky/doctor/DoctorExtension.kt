@@ -25,7 +25,7 @@ open class DoctorExtension(objects: ObjectFactory) {
      */
     val GCWarningThreshold = objects.property<Float>().convention(0.10f)
     /**
-     * Print a warning to the console if we spend more than this amount of time with Dagger annoation processors.
+     * Print a warning to the console if we spend more than this amount of time with Dagger annotation processors.
      */
     val daggerThreshold = objects.property<Int>().convention(5000)
     /**
