@@ -9,7 +9,7 @@ class SlowNetworkPrinter(private val type: String) {
         return """
                     Detected a slow download speed downloading from $type.
                     $megabytesDownloaded MB downloaded in $secondsDownloading s
-                    Total speed from cache = $totalSpeedFormatted MB/s
+                    Total speed from $type = $totalSpeedFormatted MB/s
         """.trimIndent()
     }
 
