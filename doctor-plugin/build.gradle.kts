@@ -82,39 +82,46 @@ publishing {
         }
     }
     publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
-            pom {
-                name.set("Gradle Doctor")
-                description.set("The right prescription for your Gradle build.")
-                url.set("https://github.com/runningcode/gradle-doctor")
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("runningcode")
-                        name.set("Nelson Osacky")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/runningcode/gradle-doctor.git")
-                    developerConnection.set("scm:git:ssh://github.com/runningcode/gradle-doctor.git")
-                    url.set("https://github.com/runningcode/gradle-doctor")
-                }
+        afterEvaluate {
+            named<MavenPublication>("pluginMaven") {
+                signing.sign(this)
+                artifact(tasks["sourcesJar"])
+                artifact(tasks["javadocJar"])
+                pom.configureForDoctor("Gradle Doctor")
+            }
+            named<MavenPublication>("doctor-pluginPluginMarkerMaven") {
+                signing.sign(this)
+                pom.configureForDoctor("Gradle Doctor")
             }
         }
     }
 }
 
+fun org.gradle.api.publish.maven.MavenPom.configureForDoctor(pluginName: String) {
+    name.set(pluginName)
+    description.set("The right prescription for your Gradle build.")
+    url.set("https://github.com/runningcode/gradle-doctor")
+    licenses {
+        license {
+            name.set("The Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        }
+    }
+    developers {
+        developer {
+            id.set("runningcode")
+            name.set("Nelson Osacky")
+        }
+    }
+    scm {
+        connection.set("scm:git:git://github.com/runningcode/gradle-doctor.git")
+        developerConnection.set("scm:git:ssh://github.com/runningcode/gradle-doctor.git")
+        url.set("https://github.com/runningcode/gradle-doctor")
+    }
+}
+
 signing {
-    setRequired(isReleaseBuild)
-    sign(publishing.publications["mavenJava"])
+    isRequired = isReleaseBuild
 }
 
 tasks.withType(Test::class.java).configureEach {
