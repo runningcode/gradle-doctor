@@ -51,6 +51,10 @@ buildScan {
   publishAlways()
 }
 
+tasks.register("pluginTasks").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":tasks"))
+}
+
 tasks.register("checkPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":check"))
 }
@@ -72,10 +76,10 @@ tasks.register("publishToGradlePlugin").configure {
 }
 
 tasks.register("publishToMavenCentral").configure {
-  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishMavenJavaPublicationToMavenRepository"))
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishAllPublicationsToMavenRepository"))
 }
 
 tasks.register("publishToMavenLocal").configure {
-  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishMavenJavaPublicationToMavenLocal"))
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":publishToMavenLocal"))
 }
 
