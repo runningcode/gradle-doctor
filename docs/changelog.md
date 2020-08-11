@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+* Fix confusing warning about slow connection to maven repositories.
+* Publish marker to maven central.
+
 ## 0.4.0
 * More control over which tasks are re-run in remote cache benchmark. See README.md for more information.
 * Use Gradle Properties for lazy configuration and future configuration caching support. (Breaking API change)
