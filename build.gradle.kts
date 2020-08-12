@@ -1,17 +1,6 @@
 import com.osacky.doctor.DoctorExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")
-    classpath("com.osacky.doctor:doctor-plugin:1.0")
-  }
-}
-
 allprojects {
   repositories {
     mavenCentral()
@@ -19,11 +8,10 @@ allprojects {
 }
 
 plugins {
+  kotlin("jvm") version "1.4.0-rc"
   id("com.github.ben-manes.versions") version "0.29.0"
+  id("com.osacky.doctor")
 }
-
-apply(plugin = "idea")
-apply(plugin = "com.osacky.doctor")
 
 configure<DoctorExtension> {
   disallowMultipleDaemons.set(false)
