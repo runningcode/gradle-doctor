@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+## 0.4.2
+* Fix bug when running remote build cache benchmark and specifying a custom build cache directory.
+
 ## 0.4.1
 * Fix confusing warning about slow connection to maven repositories.
 * Publish marker to maven central.
