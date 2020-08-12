@@ -7,6 +7,7 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
+import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -38,6 +39,7 @@ class DoctorPlugin : Plugin<Project> {
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension, intervalMeasurer)
         val buildCacheKey = RemoteCacheEstimation(operations, target, clock)
         val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey)
+
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
@@ -48,13 +50,27 @@ class DoctorPlugin : Plugin<Project> {
             javaHomeCheck.onStart()
         }
 
-        target.gradle.buildFinished {
+        val runnable = Runnable {
             val thingsToPrint = list.map { it.onFinish() }.filterIsInstance(Finish.FinishMessage::class.java)
             if (thingsToPrint.isEmpty()) {
-                return@buildFinished
+                return@Runnable
             }
 
             pillBoxPrinter.writePrescription(thingsToPrint.map { it.message })
+        }
+
+        if (target.gradle.shouldUseCoCaClasses()) {
+            val closeService =
+                target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
+            closeService.closeMeWhenFinished(operations)
+            closeService.closeMeWhenFinished {
+                runnable.run()
+            }
+        } else {
+            target.gradle.buildFinished {
+                operations.close()
+                runnable.run()
+            }
         }
 
         val appPluginProjects = mutableSetOf<Project>()
