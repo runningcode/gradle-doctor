@@ -109,9 +109,19 @@ class RemoteCacheEstimation(
     }
 
     private fun gradleLocalCacheDir(): File {
-        val gradleInternalCacheDir = (project.gradle as GradleInternal).settings.buildCache.local.directory as String?
+        val gradleInternalCacheDir = (project.gradle as GradleInternal).settings.buildCache.local.directory
         return if (gradleInternalCacheDir != null) {
-            File(gradleInternalCacheDir)
+            when (gradleInternalCacheDir) {
+                is File -> {
+                    gradleInternalCacheDir
+                }
+                is String -> {
+                    File(gradleInternalCacheDir)
+                }
+                else -> {
+                    throw IllegalStateException("Unexpected type for $gradleInternalCacheDir")
+                }
+            }
         } else {
             File(project.gradle.gradleUserHomeDir, "caches/build-cache-1")
         }
