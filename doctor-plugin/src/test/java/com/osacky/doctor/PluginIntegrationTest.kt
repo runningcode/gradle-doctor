@@ -160,7 +160,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """.trimIndent()
         )
 
-        writeFileToName(
+        testProjectRoot.writeFileToName(
             "settings.gradle",
             """
             include 'app-one'
@@ -237,7 +237,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """.trimIndent()
         )
 
-        writeFileToName(
+        testProjectRoot.writeFileToName(
             "settings.gradle",
             """
             include 'app-one'
@@ -362,11 +362,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     private fun writeBuildGradle(build: String) {
-        writeFileToName("build.gradle", build)
-    }
-
-    private fun writeFileToName(fileName: String, contents: String) {
-        testProjectRoot.newFile(fileName).writeText(contents)
+        testProjectRoot.writeBuildGradle(build)
     }
 
     private fun createFileInFolder(folder: File, fileName: String, contents: String) {

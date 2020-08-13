@@ -16,7 +16,7 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
-class BuildOperations(gradle: Gradle) : OperationEvents {
+class BuildOperations(private val gradle: Gradle) : OperationEvents, AutoCloseable {
 
     // TODO move this out of this class
     private val snapshotIdsMap = HashMap<OperationIdentifier, SnapshotTaskInputsBuildOperationType.Result>()
@@ -51,10 +51,7 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
     }
 
     init {
-        gradle.buildOperationListenerManger.addListener(listener)
-        gradle.buildFinished {
-            gradle.buildOperationListenerManger.removeListener(listener)
-        }
+        gradle.buildOperationListenerManager.addListener(listener)
     }
 
     // TODO move this out of this class
@@ -76,11 +73,15 @@ class BuildOperations(gradle: Gradle) : OperationEvents {
         return executeTaskIdsMap.entries.filter { it.value.skipMessage == null }.size
     }
 
-    private val Gradle.buildOperationListenerManger get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
+    private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
     override fun starts(): Observable<OperationStartEvent> = starts.hide()
 
     override fun finishes(): Observable<OperationFinishEvent> = finishes.hide()
 
     override fun progress(): Observable<OperationProgressEvent> = progress.hide()
+
+    override fun close() {
+        gradle.buildOperationListenerManager.removeListener(listener)
+    }
 }
