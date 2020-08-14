@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.4.3
+* Experimental Configuration Cache support. Note: it is not fully supported, but it will not generate warnings.
+
 ## 0.4.2
 * Fix bug when running remote build cache benchmark and specifying a custom build cache directory.
 
