@@ -2,6 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
+    // Keep at 1.3.72 until https://github.com/pinterest/ktlint/issues/771 is resolved.
     kotlin("jvm") version "1.3.72"
     id("com.gradle.plugin-publish") version "0.12.0"
     id("org.jmailen.kotlinter") version "2.4.1"
@@ -17,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13")
