@@ -31,7 +31,7 @@ class DoctorPlugin : Plugin<Project> {
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
-        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
+        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter, target.logger)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)

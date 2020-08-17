@@ -20,8 +20,10 @@ class TestDaggerTime {
                     }
                     doctor {
                       disallowMultipleDaemons = false
-                      daggerThreshold = 100
-                      ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                      javaHome {
+                        daggerThreshold = 100
+                        ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                      }
                     }
             """.trimIndent()
         )
@@ -75,8 +77,10 @@ class TestDaggerTime {
                     apply plugin: 'com.soundcloud.delect'
                     doctor {
                       disallowMultipleDaemons = false
-                      daggerThreshold = 100
-                      ensureJavaHomeMatches = false
+                      javaHome {
+                        daggerThreshold = 100
+                        ensureJavaHomeMatches = false
+                      }
                     }
             """.trimIndent()
         )
