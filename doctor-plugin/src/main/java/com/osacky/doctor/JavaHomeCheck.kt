@@ -13,7 +13,7 @@ class JavaHomeCheck(
     private val logger: Logger
 ) : BuildStartFinishListener {
     override fun onStart() {
-        val extraMessage = extension.javaHomeHandler.extraMessage.orNull
+        val extraMessage = extension.javaHomeHandler.extraMessage.get()
         val failOnError = extension.javaHomeHandler.failOnError.get()
 
         if (extension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaHome == null) {
