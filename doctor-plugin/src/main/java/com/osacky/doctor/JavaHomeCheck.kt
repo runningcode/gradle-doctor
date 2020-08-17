@@ -6,12 +6,16 @@ import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 import org.gradle.internal.jvm.Jvm
 import java.io.File
+import java.util.Collections
 
 class JavaHomeCheck(
     private val extension: DoctorExtension,
     private val pillBoxPrinter: PillBoxPrinter,
     private val logger: Logger
 ) : BuildStartFinishListener {
+
+    private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
+
     override fun onStart() {
         val extraMessage = extension.javaHomeHandler.extraMessage.get()
         val failOnError = extension.javaHomeHandler.failOnError.get()
@@ -32,7 +36,7 @@ class JavaHomeCheck(
             if (failOnError) {
                 throw GradleException(pill)
             } else {
-                logger.error(pill)
+                recordedErrors.add(pill)
             }
         }
         if (extension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
@@ -52,12 +56,15 @@ class JavaHomeCheck(
             if (failOnError) {
                 throw GradleException(pill)
             } else {
-                logger.error(pill)
+                recordedErrors.add(pill)
             }
         }
     }
 
     override fun onFinish(): Finish {
+        if (recordedErrors.isNotEmpty()) {
+            logger.error(recordedErrors.joinToString("\n\n"))
+        }
         return Finish.None
     }
 
