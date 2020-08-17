@@ -14,7 +14,7 @@ class JavaHomeCheck(
 ) : BuildStartFinishListener {
     override fun onStart() {
         val extraMessage = extension.javaHomeHandler.extraMessage.orNull
-        val failOnError = extension.javaHomeHandler.failOnError.getOrElse(true)
+        val failOnError = extension.javaHomeHandler.failOnError.get()
 
         if (extension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaHome == null) {
             val message = buildString {
