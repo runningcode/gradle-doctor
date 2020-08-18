@@ -7,6 +7,7 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
+import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -82,7 +83,8 @@ class DoctorPlugin : Plugin<Project> {
                     doFirst {
                         source.visit {
                             if (file.isDirectory && file.listFiles().isEmpty()) {
-                                throw IllegalStateException("Empty src dir found. This causes build cache misses. Run the following command to fix it.\nrmdir ${file.absolutePath}")
+                                val farthestEmptyParent = file.farthestEmptyParent()
+                                throw IllegalStateException("Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\nrmdir ${farthestEmptyParent.absolutePath}")
                             }
                         }
                     }

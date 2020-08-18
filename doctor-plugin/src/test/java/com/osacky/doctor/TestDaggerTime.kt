@@ -48,7 +48,7 @@ class TestDaggerTime {
             | Use Dagger Reflect to skip Dagger Annotation processing:                                             |
             |                                                                                                      |
             | buildscript {                                                                                        |
-            |   classpath 'com.soundcloud.delect:delect-plugin:0.2.0'                                              |
+            |   classpath 'com.soundcloud.delect:delect-plugin:0.3.0'                                              |
             | }                                                                                                    |
             | apply plugin: 'com.soundcloud.delect'                                                                |
             |                                                                                                      |
