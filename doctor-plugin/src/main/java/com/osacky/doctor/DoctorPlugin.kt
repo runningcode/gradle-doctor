@@ -7,8 +7,8 @@ import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
-import com.osacky.doctor.internal.shouldUseCoCaClasses
 import com.osacky.doctor.internal.farthestEmptyParent
+import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project

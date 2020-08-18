@@ -312,7 +312,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             .withArguments("assemble")
             .buildAndFail()
 
-        assertThat(result.output).contains("Empty src dir found. This causes build cache misses. Run the following command to fix it.")
+        assertThat(result.output).contains("Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.")
     }
 
     @Test

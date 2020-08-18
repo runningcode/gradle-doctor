@@ -51,16 +51,16 @@ class JavaAnnotationTime(
         Use Dagger Reflect to skip Dagger Annotation processing:
 
         buildscript {
-          classpath 'com.soundcloud.delect:delect-plugin:0.2.0'
+          classpath 'com.soundcloud.delect:delect-plugin:0.3.0'
         }
         apply plugin: 'com.soundcloud.delect'
-        
+
         For more information: https://github.com/soundcloud/delect#usage
         """.trimIndent()
 
     private val enableReflectMessage =
         """
-        Enable to Dagger Reflect to save yourself some time.                           
+        Enable to Dagger Reflect to save yourself some time.
         echo "dagger.reflect=true" >> ~/.gradle/gradle.properties
         """.trimIndent()
 
