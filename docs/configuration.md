@@ -10,14 +10,6 @@
        */
       disallowMultipleDaemons = false
       /**
-       * Ensure that we are using JAVA_HOME to build with this Gradle.
-       */
-      ensureJavaHomeMatches = true
-      /**
-       * Ensure we have JAVA_HOME set.
-       */
-      ensureJavaHomeIsSet = true
-      /**
        * Show a message if the download speed is less than this many megabytes / sec.
        */
       downloadSpeedWarningThreshold = .5f
@@ -42,6 +34,27 @@
        * Do not allow building all apps simultaneously. This is likely not what the user intended.
        */
       allowBuildingAllAndroidAppsSimultaneously = false
+      
+      /** Configuration properties relating to JAVA_HOME */
+      javaHome {
+        /**
+         * Ensure that we are using JAVA_HOME to build with this Gradle.
+         */
+        ensureJavaHomeMatches = true
+        /**
+         * Ensure we have JAVA_HOME set.
+         */
+        ensureJavaHomeIsSet = true
+        /**
+         * Fail on any `JAVA_HOME` issues.
+         */
+        failOnError.set(true)
+        /**
+         * Extra message text, if any, to show with the Gradle Doctor message. This is useful if you have a wiki page or
+         * other instructions that you want to link for developers on your team if they encounter an issue.
+         */
+        extraMessage.set("Here's an extra message to show.")
+      }
     }
     ```
 === "Kotlin"
@@ -51,14 +64,6 @@
        * Throw an exception when multiple Gradle Daemons are running.
        */
       disallowMultipleDaemons.set(false)
-      /**
-       * Ensure that we are using JAVA_HOME to build with this Gradle.
-       */
-      ensureJavaHomeMatches.set(true)
-      /**
-       * Ensure we have JAVA_HOME set.
-       */
-      ensureJavaHomeIsSet.set(true)
       /**
        * Show a message if the download speed is less than this many megabytes / sec.
        */
@@ -84,6 +89,27 @@
        * Do not allow building all apps simultaneously. This is likely not what the user intended.
        */
       allowBuildingAllAndroidAppsSimultaneously.set(false)
+      
+      /** Configuration properties relating to JAVA_HOME */
+      javaHome {
+        /**
+         * Ensure that we are using JAVA_HOME to build with this Gradle.
+         */
+        ensureJavaHomeMatches.set(true)
+        /**
+         * Ensure we have JAVA_HOME set.
+         */
+        ensureJavaHomeIsSet.set(true)
+        /**
+         * Fail on any `JAVA_HOME` issues.
+         */
+        failOnError.set(true)
+        /**
+         * Extra message text, if any, to show with the Gradle Doctor message. This is useful if you have a wiki page or
+         * other instructions that you want to link for developers on your team if they encounter an issue.
+         */
+        extraMessage.set("Here's an extra message to show.")
+      }
     }
     ```
 

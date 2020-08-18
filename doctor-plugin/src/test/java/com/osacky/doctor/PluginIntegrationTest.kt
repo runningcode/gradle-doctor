@@ -38,7 +38,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -58,7 +60,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -77,7 +81,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = true
-                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -115,7 +121,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |doctor {
                     |  javaHome {
                     |    disallowMultipleDaemons = false
-                    |    ensureJavaHomeMatches = true
+                    |    javaHome {
+                    |      ensureJavaHomeMatches = true
+                    |    }
                     |  }
                     |}
                 """.trimMargin("|")
@@ -221,7 +229,9 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
-              ensureJavaHomeMatches = false
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
             }
             """.trimIndent()
         )
@@ -298,7 +308,9 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
-              ensureJavaHomeMatches = false
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
             }
             """.trimIndent()
         )
@@ -364,7 +376,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |  failOnEmptyDirectories = true
                     |}
                 """.trimMargin("|")
@@ -391,7 +405,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |  failOnEmptyDirectories = false
                     |}
                 """.trimMargin("|")

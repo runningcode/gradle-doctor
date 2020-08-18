@@ -17,7 +17,7 @@ class JavaHomeCheck(
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
 
     override fun onStart() {
-        val extraMessage = extension.javaHomeHandler.extraMessage.get()
+        val extraMessage = extension.javaHomeHandler.extraMessage.orNull
         val failOnError = extension.javaHomeHandler.failOnError.get()
 
         if (extension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaHome == null) {

@@ -15,11 +15,13 @@ plugins {
 
 configure<DoctorExtension> {
   disallowMultipleDaemons.set(false)
-  ensureJavaHomeMatches.set(!providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent)
   GCWarningThreshold.set(0.01f)
   enableTestCaching.set(false)
   downloadSpeedWarningThreshold.set(2.0f)
   daggerThreshold.set(100)
+  javaHome {
+    ensureJavaHomeMatches.set(!providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent)
+  }
 }
 
 tasks.withType(Test::class.java).configureEach {

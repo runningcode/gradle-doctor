@@ -68,5 +68,6 @@ abstract class JavaHomeHandler @Inject constructor(objects: ObjectFactory) {
      * Extra message text, if any, to show with the Gradle Doctor message. This is useful if you have a wiki page or
      * other instructions that you want to link for developers on your team if they encounter an issue.
      */
-    val extraMessage = objects.property<String>().convention(null)
+    @Suppress("CAST_NEVER_SUCCEEDS") // Cast is for overload ambiguity
+    val extraMessage = objects.property<String>().convention(null as? String)
 }
