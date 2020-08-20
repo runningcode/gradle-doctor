@@ -127,6 +127,7 @@ signing {
 
 tasks.withType(Test::class.java).configureEach {
     jvmArgs("-XX:+HeapDumpOnOutOfMemoryError")
+    maxHeapSize = "1G"
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
     }
