@@ -1,0 +1,29 @@
+name: "Build Gradle Doctor"
+on: [push, pull_request]
+jobs:
+  validation:
+    name: "Building"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: gradle/wrapper-validation-action@v1
+    - uses: burrunan/gradle-cache-action@v1
+      name: Build Gradle Doctor
+      # Extra environment variables for Gradle execution (regular GitHub Actions feature)
+      # Note: env must be outside of "with"
+      with:
+        # If you have multiple jobs, use distinct job-id in in case you want to split caches
+        # For instance, jobs with different JDK versions can't share caches
+        # RUNNER_OS is added to job-id automatically
+        job-id: jdk8
+        # Specifies arguments for Gradle execution
+        # If arguments is missing or empty, then Gradle is not executed
+        arguments: checkPlugin
+        # arguments can be multi-line for better readability
+        gradle-version: wrapper
+    - uses: burrunan/gradle-cache-action@v1
+      name: Publish Snapshot
+      if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
+      with:
+        job-id: jdk8
+        arguments: publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
