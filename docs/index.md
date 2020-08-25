@@ -1,7 +1,6 @@
 # Gradle Doctor
 
-[![CircleCI](https://circleci.com/gh/runningcode/gradle-doctor/tree/master.svg?style=svg)](https://circleci.com/gh/runningcode/gradle-doctor/tree/master)
-
+![Github Actions](https://github.com/runningcode/gradle-doctor/workflows/Build%20Gradle%20Doctor/badge.svg)
 The right prescription for your Gradle build.
 
 Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan Plugin and the Internals of Gradle](https://www.youtube.com/watch?v=lgaqS0pmUzk) to learn more about what this plugin does.

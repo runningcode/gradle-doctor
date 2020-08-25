@@ -23,7 +23,7 @@ jobs:
         gradle-version: wrapper
     - uses: burrunan/gradle-cache-action@v1
       name: Publish Snapshot
-      if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && matrix.java_version == '1.8'
+      if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
       with:
         job-id: jdk8
         arguments: publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
