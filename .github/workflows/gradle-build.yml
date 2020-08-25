@@ -25,5 +25,5 @@ jobs:
       if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
       with:
         job-id: jdk8
-        arguments: publishToMavenCentral -PsonatypeUsername=${{ secretes.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
+        arguments: publishToMavenCentral -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
         gradle-version: wrapper
