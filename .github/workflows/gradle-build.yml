@@ -14,15 +14,8 @@ jobs:
         arguments: checkPlugin
         gradle-version: wrapper
     - uses: burrunan/gradle-cache-action@v1
-      name: Check Stuff
-      if: ${{ github.ref == 'refs/heads/main' }}
-      with:
-        job-id: jdk8
-        arguments: help
-        gradle-version: wrapper
-    - uses: burrunan/gradle-cache-action@v1
       name: Publish Snapshot
-      if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
       with:
         job-id: jdk8
         arguments: publishToMavenCentral -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
