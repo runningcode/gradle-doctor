@@ -1,4 +1,4 @@
-name: "Build Gradle Doctor"
+name: "CI"
 on: [push, pull_request]
 jobs:
   validation:
@@ -8,7 +8,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: gradle/wrapper-validation-action@v1
     - uses: burrunan/gradle-cache-action@v1
-      name: Build Gradle Doctor
+      name: Check Gradle Doctor
       # Extra environment variables for Gradle execution (regular GitHub Actions feature)
       # Note: env must be outside of "with"
       with:
@@ -23,7 +23,7 @@ jobs:
         gradle-version: wrapper
     - uses: burrunan/gradle-cache-action@v1
       name: Publish Snapshot
-      if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+      if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
       with:
         job-id: jdk8
         arguments: publishToMavenCentral -PsonatypeUsername=$SONATYPE_USERNAME -PsonatypePassword=$SONATYPE_PASSWORD
