@@ -1,0 +1,22 @@
+name: "CI"
+on: [push, pull_request]
+jobs:
+  validation:
+    name: "Building"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: gradle/wrapper-validation-action@v1
+    - uses: burrunan/gradle-cache-action@v1
+      name: Check Gradle Doctor
+      with:
+        job-id: jdk8
+        arguments: checkPlugin
+        gradle-version: wrapper
+    - uses: burrunan/gradle-cache-action@v1
+      name: Publish Snapshot
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
+      with:
+        job-id: jdk8
+        arguments: publishToMavenCentral -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
+        gradle-version: wrapper
