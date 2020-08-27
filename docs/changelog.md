@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 0.5.0 (Unreleased)
+## 0.5.0
 * Check for farthest empty parent for reporting file to remove [#105](https://github.com/runningcode/gradle-doctor/pull/105). [Fixes #96](https://github.com/runningcode/gradle-doctor/issues/96) Thanks [ZacSweers](https://github.com/ZacSweers)
 
 !!! Warning "Breaking API change"
