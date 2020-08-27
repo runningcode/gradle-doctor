@@ -1,7 +1,6 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
-import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import com.osacky.doctor.internal.twoDigits
 import org.gradle.BuildListener
@@ -49,9 +48,9 @@ class RemoteCacheEstimation(
         }
     }
 
-    override fun onFinish(): Finish {
+    override fun onFinish(): List<String> {
         if (!benchmarkBuildCache) {
-            return Finish.None
+            return emptyList()
         }
         project.gradle.removeListener(listener)
 
@@ -63,7 +62,7 @@ class RemoteCacheEstimation(
         }
 
         if (cacheSizeBytes == 0) {
-            return Finish.FinishMessage(
+            return listOf(
                 """
                 = Remote Build Cache Benchmark Report =
                 This build did not generate any cached artifacts.
@@ -88,7 +87,7 @@ class RemoteCacheEstimation(
         val twoMBSavings = executionTimeSec - twoMBTime
         val tenMBSavings = executionTimeSec - tenMBTime
 
-        return Finish.FinishMessage(
+        return listOf(
             """
             = Remote Build Cache Benchmark Report =
             Forced re-execution of ${buildOperations.tasksRan()} tasks in order to calculate local execution duration.

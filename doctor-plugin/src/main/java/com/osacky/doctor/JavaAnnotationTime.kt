@@ -1,6 +1,5 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.Finish
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -37,13 +36,13 @@ class JavaAnnotationTime(
         add(disposable)
     }
 
-    override fun onFinish(): Finish {
+    override fun onFinish(): List<String> {
         disposable.dispose()
         if (totalDaggerTime > doctorExtension.daggerThreshold.get()) {
             val message = if (containsDelect()) enableReflectMessage else applyDelectPlugin
-            return Finish.FinishMessage("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\n$message")
+            return listOf("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\n$message")
         }
-        return Finish.None
+        return emptyList()
     }
 
     private val applyDelectPlugin =

@@ -1,7 +1,6 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
-import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
@@ -31,7 +30,7 @@ class BuildCacheConnectionMeasurer(
             }
     }
 
-    override fun onFinish(): Finish {
+    override fun onFinish(): List<String> {
         // Dispose first before summing byte totals otherwise we get crazy NPEs?
         disposable.dispose()
 
@@ -42,17 +41,17 @@ class BuildCacheConnectionMeasurer(
 
             // Don't do anything if we didn't download anything.
             if (totalBytes == 0 || totalTime == 0L) {
-                return Finish.None
+                return emptyList()
             }
 
             // Only print time if we downloaded at least one megabyte
             if (totalBytes > ONE_MEGABYTE) {
                 val totalSpeed = (totalBytes / totalTime) / 1024f
                 if (totalSpeed < extension.downloadSpeedWarningThreshold.get()) {
-                    return Finish.FinishMessage(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
+                    return listOf(slowNetworkPrinter.obtainMessage(totalBytes, totalTime, totalSpeed))
                 }
             }
-            return Finish.None
+            return emptyList()
         }
     }
 

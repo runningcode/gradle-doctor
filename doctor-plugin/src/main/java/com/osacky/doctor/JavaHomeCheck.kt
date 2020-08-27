@@ -1,17 +1,14 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
-import org.gradle.api.logging.Logger
 import org.gradle.internal.jvm.Jvm
 import java.io.File
 import java.util.Collections
 
 class JavaHomeCheck(
     private val extension: DoctorExtension,
-    private val pillBoxPrinter: PillBoxPrinter,
-    private val logger: Logger
+    private val pillBoxPrinter: PillBoxPrinter
 ) : BuildStartFinishListener {
 
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
@@ -61,11 +58,8 @@ class JavaHomeCheck(
         }
     }
 
-    override fun onFinish(): Finish {
-        if (recordedErrors.isNotEmpty()) {
-            logger.error(recordedErrors.joinToString("\n\n"))
-        }
-        return Finish.None
+    override fun onFinish(): List<String> {
+        return recordedErrors.toList()
     }
 
     private val environmentJavaHome = System.getenv("JAVA_HOME")

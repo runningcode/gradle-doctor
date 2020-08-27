@@ -48,6 +48,10 @@ gradlePlugin {
     }
 }
 
+kotlinter {
+  indentSize = 4
+}
+
 
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
