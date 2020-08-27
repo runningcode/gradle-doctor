@@ -1,7 +1,6 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.DaemonCheck
-import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
 
@@ -30,5 +29,5 @@ class BuildDaemonChecker(private val extension: DoctorExtension, private val dae
         }
     }
 
-    override fun onFinish(): Finish = Finish.None
+    override fun onFinish(): List<String> = emptyList()
 }

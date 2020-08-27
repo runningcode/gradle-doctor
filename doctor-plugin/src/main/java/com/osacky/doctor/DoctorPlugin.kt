@@ -3,7 +3,6 @@ package com.osacky.doctor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.DirtyBeanCollector
-import com.osacky.doctor.internal.Finish
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
@@ -32,7 +31,7 @@ class DoctorPlugin : Plugin<Project> {
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
-        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter, target.logger)
+        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val operations = BuildOperations(target.gradle)
         val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)
@@ -52,12 +51,12 @@ class DoctorPlugin : Plugin<Project> {
         }
 
         val runnable = Runnable {
-            val thingsToPrint = list.map { it.onFinish() }.filterIsInstance(Finish.FinishMessage::class.java)
+            val thingsToPrint: List<String> = list.flatMap { it.onFinish() }
             if (thingsToPrint.isEmpty()) {
                 return@Runnable
             }
 
-            pillBoxPrinter.writePrescription(thingsToPrint.map { it.message })
+            pillBoxPrinter.writePrescription(thingsToPrint)
         }
 
         if (target.gradle.shouldUseCoCaClasses()) {

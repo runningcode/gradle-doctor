@@ -1,8 +1,10 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.Finish
-
 interface BuildStartFinishListener {
     fun onStart()
-    fun onFinish(): Finish
+    /**
+     * Called when the build is finished to perform any clean up actions
+     * @return A list of warnings to print out at the end of the build.
+     */
+    fun onFinish(): List<String>
 }
