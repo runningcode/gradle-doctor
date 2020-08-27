@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.5.0 (Unreleased)
+* Check for farthest empty parent for reporting file to remove [#105](https://github.com/runningcode/gradle-doctor/pull/105). [Fixes #96](https://github.com/runningcode/gradle-doctor/issues/96) Thanks [ZacSweers](https://github.com/ZacSweers)
+
+!!! Warning "Breaking API change"
+    Add more granularity to `JAVA_HOME` checks [#104](https://github.com/runningcode/gradle-doctor/pull/104). [Fixes #98](https://github.com/runningcode/gradle-doctor/issues/98) Thanks [ZacSweers](https://github.com/ZacSweers)
+
+
 ## 0.4.3
 * Experimental Configuration Cache support. Note: it is not fully supported, but it will not generate warnings.
 
