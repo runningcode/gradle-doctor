@@ -18,8 +18,10 @@ class ConfigurationCacheTest {
                     |  id "com.osacky.doctor"
                     |}
                     |doctor {
-                    |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    disallowMultipleDaemons = false
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |}
                 """.trimMargin("|")
         )

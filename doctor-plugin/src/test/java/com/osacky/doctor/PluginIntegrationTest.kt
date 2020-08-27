@@ -38,7 +38,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -58,7 +60,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -77,7 +81,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = true
-                    |  ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -113,8 +119,12 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  id "com.osacky.doctor"
                     |}
                     |doctor {
-                    |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = true
+                    |  javaHome {
+                    |    disallowMultipleDaemons = false
+                    |    javaHome {
+                    |      ensureJavaHomeMatches = true
+                    |    }
+                    |  }
                     |}
                 """.trimMargin("|")
         )
@@ -132,6 +142,70 @@ class PluginIntegrationTest constructor(private val version: String) {
                 |  """
                 .trimMargin("|")
         )
+    }
+
+    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
+    @Test @Ignore
+    fun testJavaHomeNotSetWithConsoleError() {
+        assumeSupportedVersion()
+
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |doctor {
+                    |  javaHome {
+                    |    disallowMultipleDaemons = false
+                    |    ensureJavaHomeMatches = true
+                    |    failOnError = false
+                    |  }
+                    |}
+                """.trimMargin("|")
+        )
+        testProjectRoot.newFile("settings.gradle")
+
+        val result = createRunner()
+            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+            .withArguments("tasks")
+            .buildAndFail()
+        // Still prints the error
+        assertThat(result.output).contains(
+            """
+                |> =============================== Gradle Doctor Prescriptions ============================================
+                |  | Gradle is not using JAVA_HOME.                                                                       |
+                |  | JAVA_HOME is foo                                                                                     |
+                |  """
+                .trimMargin("|")
+        )
+    }
+
+    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
+    @Test @Ignore
+    fun testJavaHomeNotSetWithCustomMessage() {
+        assumeSupportedVersion()
+
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |}
+                    |doctor {
+                    |  javaHome {
+                    |    disallowMultipleDaemons = false
+                    |    ensureJavaHomeMatches = true
+                    |    extraMessage = "Check for more details here!"
+                    |  }
+                    |}
+                """.trimMargin("|")
+        )
+        testProjectRoot.newFile("settings.gradle")
+
+        val result = createRunner()
+            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+            .withArguments("tasks")
+            .buildAndFail()
+        assertThat(result.output).contains("Check for more details here!")
     }
 
     @Test
@@ -155,7 +229,9 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
-              ensureJavaHomeMatches = false
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
             }
             """.trimIndent()
         )
@@ -232,7 +308,9 @@ class PluginIntegrationTest constructor(private val version: String) {
             }
             doctor {
               disallowMultipleDaemons = false
-              ensureJavaHomeMatches = false
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
             }
             """.trimIndent()
         )
@@ -298,7 +376,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |  failOnEmptyDirectories = true
                     |}
                 """.trimMargin("|")
@@ -325,7 +405,9 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |}
                     |doctor {
                     |  disallowMultipleDaemons = false
-                    |  ensureJavaHomeMatches = false
+                    |  javaHome {
+                    |    ensureJavaHomeMatches = false
+                    |  }
                     |  failOnEmptyDirectories = false
                     |}
                 """.trimMargin("|")
