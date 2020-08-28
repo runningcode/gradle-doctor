@@ -31,11 +31,10 @@ class JavaHomeCheck(
                     appendln(extraMessage)
                 }
             }
-            val pill = pillBoxPrinter.createPill(message)
             if (failOnError) {
-                throw GradleException(pill)
+                throw GradleException(pillBoxPrinter.createPill(message))
             } else {
-                recordedErrors.add(pill)
+                recordedErrors.add(message)
             }
         }
         if (extension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
@@ -51,11 +50,10 @@ class JavaHomeCheck(
                     appendln(extraMessage)
                 }
             }
-            val pill = pillBoxPrinter.createPill(message)
             if (failOnError) {
-                throw GradleException(pill)
+                throw GradleException(pillBoxPrinter.createPill(message))
             } else {
-                recordedErrors.add(pill)
+                recordedErrors.add(message)
             }
         }
     }
