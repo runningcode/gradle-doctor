@@ -11,6 +11,8 @@ class JavaHomeCheck(
     private val pillBoxPrinter: PillBoxPrinter
 ) : BuildStartFinishListener {
 
+    private val environmentJavaHome: String? = System.getenv("JAVA_HOME")
+    private val gradleJavaHome = Jvm.current().javaHome
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
 
     override fun onStart() {
@@ -29,17 +31,16 @@ class JavaHomeCheck(
                     appendln(extraMessage)
                 }
             }
-            val pill = pillBoxPrinter.createPill(message)
             if (failOnError) {
-                throw GradleException(pill)
+                throw GradleException(pillBoxPrinter.createPill(message))
             } else {
-                recordedErrors.add(pill)
+                recordedErrors.add(message)
             }
         }
         if (extension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
             val message = buildString {
                 appendln("Gradle is not using JAVA_HOME.")
-                appendln("JAVA_HOME is ${environmentJavaHome.toFile().toPath().toAbsolutePath()}")
+                appendln("JAVA_HOME is ${environmentJavaHome?.toFile()?.toPath()?.toAbsolutePath()}")
                 appendln("Gradle is using ${gradleJavaHome.toPath().toAbsolutePath()}")
                 appendln("This can slow down your build significantly when switching from Android Studio to the terminal.")
                 appendln("To fix: Project Structure -> JDK Location.")
@@ -49,11 +50,10 @@ class JavaHomeCheck(
                     appendln(extraMessage)
                 }
             }
-            val pill = pillBoxPrinter.createPill(message)
             if (failOnError) {
-                throw GradleException(pill)
+                throw GradleException(pillBoxPrinter.createPill(message))
             } else {
-                recordedErrors.add(pill)
+                recordedErrors.add(message)
             }
         }
     }
@@ -61,9 +61,6 @@ class JavaHomeCheck(
     override fun onFinish(): List<String> {
         return recordedErrors.toList()
     }
-
-    private val environmentJavaHome = System.getenv("JAVA_HOME")
-    private val gradleJavaHome = Jvm.current().javaHome
 
     private fun isGradleUsingJavaHome(): Boolean {
         // Follow symlinks when checking that java home matches.
