@@ -32,7 +32,7 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.6"
+  gradleVersion = "6.6.1"
 }
 
 buildScan {

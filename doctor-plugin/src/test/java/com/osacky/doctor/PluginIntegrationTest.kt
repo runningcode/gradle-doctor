@@ -248,7 +248,8 @@ class PluginIntegrationTest constructor(private val version: String) {
         val folder = File(testProjectRoot.root, "app-one")
         createFileInFolder(srcFolder, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.one\"/>")
         createFileInFolder(
-            folder, "build.gradle",
+            folder,
+            "build.gradle",
             """
             apply plugin: 'com.android.application'
 
@@ -261,7 +262,8 @@ class PluginIntegrationTest constructor(private val version: String) {
         val folder2 = File(testProjectRoot.root, "app-two")
         createFileInFolder(srcFolder2, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.two\"/>")
         createFileInFolder(
-            folder2, "build.gradle",
+            folder2,
+            "build.gradle",
             """
             apply plugin: 'com.android.application'
 
@@ -327,7 +329,8 @@ class PluginIntegrationTest constructor(private val version: String) {
         val folder = File(testProjectRoot.root, "app-one")
         createFileInFolder(srcFolder, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.one\"/>")
         createFileInFolder(
-            folder, "build.gradle",
+            folder,
+            "build.gradle",
             """
             apply plugin: 'com.android.application'
 
@@ -340,7 +343,8 @@ class PluginIntegrationTest constructor(private val version: String) {
         val folder2 = File(testProjectRoot.root, "app-two")
         createFileInFolder(srcFolder2, "AndroidManifest.xml", "<manifest package=\"com.foo.bar.two\"/>")
         createFileInFolder(
-            folder2, "build.gradle",
+            folder2,
+            "build.gradle",
             """
             apply plugin: 'com.android.application'
 
