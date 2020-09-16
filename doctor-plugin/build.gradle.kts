@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
     id("com.gradle.plugin-publish") version "0.12.0"
     id("org.jmailen.kotlinter") version "3.0.2"
     `maven-publish`
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13")
