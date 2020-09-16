@@ -8,7 +8,7 @@ allprojects {
 }
 
 plugins {
-  kotlin("jvm") version "1.4.0"
+  kotlin("jvm") version "1.4.10"
   id("com.github.ben-manes.versions") version "0.29.0"
   id("com.osacky.doctor")
 }
@@ -32,7 +32,7 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.6.1"
+  gradleVersion = "6.7-rc-1"
 }
 
 buildScan {
