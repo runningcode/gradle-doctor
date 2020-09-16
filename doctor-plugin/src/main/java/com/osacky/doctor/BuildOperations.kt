@@ -23,6 +23,8 @@ class BuildOperations : OperationEvents, BuildOperationListener {
     private val progress: PublishSubject<OperationProgressEvent> = PublishSubject.create()
     private val finishes: PublishSubject<OperationFinishEvent> = PublishSubject.create()
 
+    private val slowerFromCacheCollector = SlowerFromCacheCollector()
+
     override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
         starts.onNext(startEvent)
     }
@@ -37,6 +39,7 @@ class BuildOperations : OperationEvents, BuildOperationListener {
 
     override fun finished(buildOperation: BuildOperationDescriptor, finishEvent: OperationFinishEvent) {
         finishes.onNext(finishEvent)
+        slowerFromCacheCollector.onEvent(buildOperation, finishEvent)
 
         if (finishEvent.result is ExecuteTaskBuildOperationType.Result) {
             executeTaskIdsMap[buildOperation.id!!] = finishEvent.result as ExecuteTaskBuildOperationType.Result
@@ -44,6 +47,10 @@ class BuildOperations : OperationEvents, BuildOperationListener {
         if (finishEvent.result is SnapshotTaskInputsBuildOperationType.Result) {
             snapshotIdsMap[buildOperation.parentId!!] = finishEvent.result as SnapshotTaskInputsBuildOperationType.Result
         }
+    }
+
+    fun slowerFromCacheCollector(): SlowerFromCacheCollector {
+        return slowerFromCacheCollector
     }
 
     // TODO move this out of this class

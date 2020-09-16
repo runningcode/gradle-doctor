@@ -20,6 +20,7 @@ nav:
   - Changelog: changelog.md
   - Remote Cache Benchmark: remote-cache.md
   - Releasing: releasing.md
+  - Slower From Cache: slower-from-cache.md
 
 theme:
   name: 'material'
