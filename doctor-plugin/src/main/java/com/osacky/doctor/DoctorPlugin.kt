@@ -45,7 +45,8 @@ class DoctorPlugin : Plugin<Project> {
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector)
+        val jetifierWarning = JetifierWarning(extension, target)
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning)
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()

@@ -42,6 +42,11 @@ open class DoctorExtension(objects: ObjectFactory) {
     val allowBuildingAllAndroidAppsSimultaneously = objects.property<Boolean>().convention(false)
 
     /**
+     * Warn if using Android Jetifier
+     */
+    val warnWhenJetifierEnabled = objects.property<Boolean>().convention(true)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {
