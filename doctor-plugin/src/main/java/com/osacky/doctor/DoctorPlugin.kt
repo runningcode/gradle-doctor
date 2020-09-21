@@ -11,9 +11,15 @@ import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.GradleInternal
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
+import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
+import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.util.GradleVersion
 import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -33,11 +39,11 @@ class DoctorPlugin : Plugin<Project> {
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
-        val operations = BuildOperations(target.gradle)
-        val javaAnnotationTime = JavaAnnotationTime(operations, extension, target.buildscript.configurations)
-        val downloadSpeedMeasurer = DownloadSpeedMeasurer(operations, extension, intervalMeasurer)
-        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(operations, extension, intervalMeasurer)
-        val buildCacheKey = RemoteCacheEstimation(operations, target, clock)
+        val buildOperations = getOperationEvents(target)
+        val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension, target.buildscript.configurations)
+        val downloadSpeedMeasurer = DownloadSpeedMeasurer(buildOperations, extension, intervalMeasurer)
+        val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
+        val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
         val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey)
 
         garbagePrinter.onStart()
@@ -50,28 +56,7 @@ class DoctorPlugin : Plugin<Project> {
             javaHomeCheck.onStart()
         }
 
-        val runnable = Runnable {
-            val thingsToPrint: List<String> = list.flatMap { it.onFinish() }
-            if (thingsToPrint.isEmpty()) {
-                return@Runnable
-            }
-
-            pillBoxPrinter.writePrescription(thingsToPrint)
-        }
-
-        if (target.gradle.shouldUseCoCaClasses()) {
-            val closeService =
-                target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
-            closeService.closeMeWhenFinished(operations)
-            closeService.closeMeWhenFinished {
-                runnable.run()
-            }
-        } else {
-            target.gradle.buildFinished {
-                operations.close()
-                runnable.run()
-            }
-        }
+        registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations)
 
         val appPluginProjects = mutableSetOf<Project>()
 
@@ -132,6 +117,35 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
+    private fun registerBuildFinishActions(
+        list: List<BuildStartFinishListener>,
+        pillBoxPrinter: PillBoxPrinter,
+        target: Project,
+        buildOperations: OperationEvents
+    ) {
+        val runnable = Runnable {
+            val thingsToPrint: List<String> = list.flatMap { it.onFinish() }
+            if (thingsToPrint.isEmpty()) {
+                return@Runnable
+            }
+
+            pillBoxPrinter.writePrescription(thingsToPrint)
+        }
+
+        if (target.gradle.shouldUseCoCaClasses()) {
+            val closeService =
+                target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
+            closeService.closeMeWhenFinished {
+                runnable.run()
+            }
+        } else {
+            target.gradle.buildFinished {
+                runnable.run()
+                target.gradle.buildOperationListenerManager.removeListener(buildOperations as BuildOperationListener)
+            }
+        }
+    }
+
     private fun ensureAppliedInProjectRoot(target: Project) {
         if (target.parent != null) {
             throw GradleException("Gradle Doctor must be applied in the project root.")
@@ -143,4 +157,19 @@ class DoctorPlugin : Plugin<Project> {
             throw GradleException("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
         }
     }
+
+    private fun getOperationEvents(target: Project): OperationEvents {
+        return if (target.gradle.shouldUseCoCaClasses()) {
+            val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {}
+            val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
+            buildEventListenerRegistry.onOperationCompletion(listenerService)
+            listenerService.get().getOperations()
+        } else {
+            val ops = BuildOperations()
+            target.gradle.buildOperationListenerManager.addListener(ops)
+            ops
+        }
+    }
+
+    private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 }

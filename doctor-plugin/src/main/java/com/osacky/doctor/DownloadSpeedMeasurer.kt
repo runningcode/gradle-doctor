@@ -10,7 +10,7 @@ import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
 import java.util.Collections
 
 class DownloadSpeedMeasurer(
-    private val buildOperations: BuildOperations,
+    private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer
 ) : BuildStartFinishListener {

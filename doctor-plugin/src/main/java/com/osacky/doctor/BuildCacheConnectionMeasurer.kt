@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import java.util.Collections
 
 class BuildCacheConnectionMeasurer(
-    private val buildOperations: BuildOperations,
+    private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer
 ) : BuildStartFinishListener {
