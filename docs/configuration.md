@@ -34,7 +34,11 @@
        * Do not allow building all apps simultaneously. This is likely not what the user intended.
        */
       allowBuildingAllAndroidAppsSimultaneously = false
-      
+      /**
+       * Warn if using Android Jetifier. It slows down builds.
+       */
+      warnWhenJetifierEnabled = true
+
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
         /**
@@ -58,7 +62,7 @@
     }
     ```
 === "Kotlin"
-    ``` groovy
+    ``` kotlin
     configure<DoctorExtension> {
       /**
        * Throw an exception when multiple Gradle Daemons are running.
@@ -89,7 +93,11 @@
        * Do not allow building all apps simultaneously. This is likely not what the user intended.
        */
       allowBuildingAllAndroidAppsSimultaneously.set(false)
-      
+      /**
+       * Warn if using Android Jetifier. It slows down builds.
+       */
+      warnWhenJetifierEnabled.set(true)
+
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
         /**

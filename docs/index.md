@@ -1,22 +1,28 @@
 # Gradle Doctor
 
 ![Github Actions](https://github.com/runningcode/gradle-doctor/workflows/CI/badge.svg)
+
 The right prescription for your Gradle build.
 
 Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan Plugin and the Internals of Gradle](https://www.youtube.com/watch?v=lgaqS0pmUzk) to learn more about what this plugin does.
 
 ## Usage
+1. Apply the Gradle Plugin to the root of your project.
+2. The Gradle Doctor will print suggestions for your build as you run regular tasks.
 
-``` groovy
-buildscript {
-  dependencies {
-    classpath "com.osacky.doctor:doctor-plugin:{{ doctor.current_release }}"
-  }
-}
-
-// Must be applied in the project root.
-apply plugin: "com.osacky.doctor"
-```
+=== "Groovy"
+    ``` groovy
+    plugins {
+      id "com.osacky.doctor" version "0.5.1"
+    }
+    ```
+=== "Kotlin"
+    ``` kotlin
+    plugins {
+      id("com.osacky.doctor") version "0.5.1"
+    }
+    ```
+[For legacy plugin application, see the Gradle Plugin Portal.](https://plugins.gradle.org/plugin/com.osacky.doctor)
 
 ## Features
 * Configurable warnings for build speed problems
@@ -26,6 +32,7 @@ apply plugin: "com.osacky.doctor"
 * Disable assembling all apps in repository simultaneously.
 * Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
 * [Benchmarking remote build cache connection speed](remote-cache).
+* [Warnings for negative avoidance saving tasks.](slower-from-cache)
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.
