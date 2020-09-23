@@ -44,13 +44,15 @@ class DoctorPlugin : Plugin<Project> {
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey)
+        val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector)
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
         downloadSpeedMeasurer.onStart()
         buildCacheConnectionMeasurer.onStart()
         buildCacheKey.onStart()
+        slowerFromCacheCollector.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
