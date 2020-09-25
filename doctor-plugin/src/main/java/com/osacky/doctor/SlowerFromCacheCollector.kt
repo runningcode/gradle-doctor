@@ -7,7 +7,7 @@ import org.gradle.internal.operations.OperationFinishEvent
 /**
  * Keeps track of which classes were slower to fetch from the cache than to re-run locally.
  */
-class SlowerFromCacheCollector : BuildStartFinishListener {
+class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
 
     private val longerTaskList = mutableListOf<String>()
 
@@ -31,4 +31,6 @@ class SlowerFromCacheCollector : BuildStartFinishListener {
         }
         return listOf("The following operations were slower to pull from the cache than to rerun:\n${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them. For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
     }
+
+    override fun getTag(): String = "negative-savings"
 }

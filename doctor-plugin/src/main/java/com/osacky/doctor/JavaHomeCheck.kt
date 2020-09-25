@@ -9,7 +9,7 @@ import java.util.Collections
 class JavaHomeCheck(
     private val extension: DoctorExtension,
     private val pillBoxPrinter: PillBoxPrinter
-) : BuildStartFinishListener {
+) : BuildStartFinishListener, HasBuildScanTag {
 
     private val environmentJavaHome: String? = System.getenv("JAVA_HOME")
     private val gradleJavaHome = Jvm.current().javaHome
@@ -71,4 +71,6 @@ class JavaHomeCheck(
     }
 
     private fun String.toFile() = File(this)
+
+    override fun getTag(): String = "java-home"
 }

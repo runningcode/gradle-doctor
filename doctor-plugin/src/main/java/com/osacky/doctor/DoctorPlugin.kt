@@ -8,6 +8,7 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
+import com.osacky.scan.api.ScanApi
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -59,7 +60,8 @@ class DoctorPlugin : Plugin<Project> {
             javaHomeCheck.onStart()
         }
 
-        registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations)
+        val buildScanApi = ScanApi(target)
+        registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations, buildScanApi)
 
         val appPluginProjects = mutableSetOf<Project>()
 
@@ -124,13 +126,21 @@ class DoctorPlugin : Plugin<Project> {
         list: List<BuildStartFinishListener>,
         pillBoxPrinter: PillBoxPrinter,
         target: Project,
-        buildOperations: OperationEvents
+        buildOperations: OperationEvents,
+        buildScanApi: ScanApi
     ) {
         val runnable = Runnable {
-            val thingsToPrint: List<String> = list.flatMap { it.onFinish() }
+            val thingsToPrint: List<String> = list.flatMap {
+                val messages = it.onFinish()
+                if (messages.isNotEmpty() && it is HasBuildScanTag) {
+                    buildScanApi.tag(it.getTag())
+                }
+                messages
+            }
             if (thingsToPrint.isEmpty()) {
                 return@Runnable
             }
+            buildScanApi.tag("doctor")
 
             pillBoxPrinter.writePrescription(thingsToPrint)
         }

@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
+    implementation("com.osacky.scans:extensions")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13")

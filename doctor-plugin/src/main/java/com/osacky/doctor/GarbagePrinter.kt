@@ -8,7 +8,7 @@ class GarbagePrinter(
     private val clock: Clock,
     private val collector: DirtyBeanCollector,
     private val extension: DoctorExtension
-) : BuildStartFinishListener {
+) : BuildStartFinishListener, HasBuildScanTag {
 
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTimeMillis()
@@ -38,4 +38,6 @@ class GarbagePrinter(
         }
         return emptyList()
     }
+
+    override fun getTag(): String = "high-gc"
 }
