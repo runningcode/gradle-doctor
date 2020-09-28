@@ -1,8 +1,11 @@
 # Changelog
 
 ## Unreleased
+
+## 0.6.0
 * Add warning [when Android Jetifier is enabled.](https://github.com/runningcode/gradle-doctor/pull/118)
 * Print tasks with [negative avoidance savings from the cache.](https://github.com/runningcode/gradle-doctor/pull/117) [Fixes #86](https://github.com/runningcode/gradle-doctor/issues/86)
+* Add build scan tags to [easily search for builds.](https://github.com/runningcode/gradle-doctor/pull/119)
 
 ## 0.5.1
 * Fix bugs in JAVA_HOME check [#110](https://github.com/runningcode/gradle-doctor/pull/110). Thanks [ZacSweers](https://github.com/ZacSweers)

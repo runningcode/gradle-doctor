@@ -14,7 +14,14 @@ internal class SlowerFromCacheCollectorTest {
     fun fasterToReExecuteTaskWarned() {
         underTest.onEvent(descriptorWithName("fasterToReExecute"), finishWithTime(5))
 
-        assertThat(underTest.onFinish()).containsExactly("The following operations were slower to pull from the cache than to rerun:\nfasterToReExecute\nConsider disabling caching them. For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
+        assertThat(underTest.onFinish()).containsExactly("The following operations were slower to pull from the cache than to rerun:\nfasterToReExecute\nConsider disabling caching them.\nFor more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
+    }
+
+    @Test
+    fun noWarningWhenSameAsCache() {
+        underTest.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(6))
+
+        assertThat(underTest.onFinish()).isEmpty()
     }
 
     @Test

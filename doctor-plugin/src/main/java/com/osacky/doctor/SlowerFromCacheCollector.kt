@@ -16,7 +16,7 @@ class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
         if (executeResult is ExecuteTaskBuildOperationType.Result) {
             val duration = finishEvent.endTime - finishEvent.startTime
             // If the current execution took longer than the original execution, let's print out a warning.
-            if (executeResult.originExecutionTime != null && executeResult.originExecutionTime!! <= duration) {
+            if (executeResult.originExecutionTime != null && executeResult.originExecutionTime!! < duration) {
                 longerTaskList.add(buildOperation.displayName)
             }
         }
@@ -29,7 +29,11 @@ class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
         if (longerTaskList.isEmpty()) {
             return emptyList()
         }
-        return listOf("The following operations were slower to pull from the cache than to rerun:\n${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them. For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
+        return listOf(
+            "The following operations were slower to pull from the cache than to rerun:\n" +
+                "${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them.\n" +
+                "For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/"
+        )
     }
 
     override fun getTag(): String = "negative-savings"
