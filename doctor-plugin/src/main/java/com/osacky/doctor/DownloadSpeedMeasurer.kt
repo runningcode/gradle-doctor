@@ -13,7 +13,7 @@ class DownloadSpeedMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer
-) : BuildStartFinishListener {
+) : BuildStartFinishListener, HasBuildScanTag {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
@@ -63,4 +63,6 @@ class DownloadSpeedMeasurer(
             }
         }
     }
+
+    override fun getTag(): String = "slow-maven-connection"
 }

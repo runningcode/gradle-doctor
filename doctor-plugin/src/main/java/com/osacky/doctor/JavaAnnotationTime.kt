@@ -10,7 +10,7 @@ class JavaAnnotationTime(
     private val operationEvents: OperationEvents,
     private val doctorExtension: DoctorExtension,
     private val buildscriptConfiguration: ConfigurationContainer
-) : BuildStartFinishListener {
+) : BuildStartFinishListener, HasBuildScanTag {
     private var totalDaggerTime = 0
 
     private val disposable = CompositeDisposable()
@@ -66,4 +66,6 @@ class JavaAnnotationTime(
     private fun containsDelect(): Boolean {
         return buildscriptConfiguration.getByName("classpath").incoming.dependencies.find { it.group == "com.soundcloud.delect" } != null
     }
+
+    override fun getTag(): String = "long-dagger-time"
 }

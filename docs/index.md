@@ -33,6 +33,7 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 * Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
 * [Benchmarking remote build cache connection speed](remote-cache).
 * [Warnings for negative avoidance saving tasks.](slower-from-cache)
+* Build scan tags to easily find builds with warnings.
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.

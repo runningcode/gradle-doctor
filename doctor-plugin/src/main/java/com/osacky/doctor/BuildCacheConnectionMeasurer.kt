@@ -14,7 +14,7 @@ class BuildCacheConnectionMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer
-) : BuildStartFinishListener {
+) : BuildStartFinishListener, HasBuildScanTag {
 
     private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
@@ -72,4 +72,6 @@ class BuildCacheConnectionMeasurer(
             val zero = ExternalDownloadEvent(0, 0, 0)
         }
     }
+
+    override fun getTag(): String = "slow-build-cache-connection"
 }
