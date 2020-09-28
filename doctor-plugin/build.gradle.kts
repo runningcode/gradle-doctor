@@ -14,11 +14,12 @@ version = "0.5.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
-    implementation("com.osacky.scans:extensions")
+    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.4.1")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     testImplementation(gradleTestKit())
     testImplementation("junit:junit:4.13")
