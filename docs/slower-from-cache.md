@@ -45,5 +45,5 @@ remote caching of tasks. A workaround is to disable the cache entry being placed
     }
     ```
 
-See [Remote Build Cache Benchmark](remote-cache) for more information on estimating whether it is beneficial
+See [Remote Build Cache Benchmark](../remote-cache) for more information on estimating whether it is beneficial
 to remotely cache tasks.
