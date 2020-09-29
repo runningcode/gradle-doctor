@@ -13,13 +13,13 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 === "Groovy"
     ``` groovy
     plugins {
-      id "com.osacky.doctor" version "0.5.1"
+      id "com.osacky.doctor" version "{{ doctor.current_release }}"
     }
     ```
 === "Kotlin"
     ``` kotlin
     plugins {
-      id("com.osacky.doctor") version "0.5.1"
+      id("com.osacky.doctor") version "{{ doctor.current_release }}"
     }
     ```
 [For legacy plugin application, see the Gradle Plugin Portal.](https://plugins.gradle.org/plugin/com.osacky.doctor)
