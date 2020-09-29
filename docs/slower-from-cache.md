@@ -1,4 +1,4 @@
-# Slower From Cache
+# Slower From Cache (Negative Savings)
 
 Some tasks may be slower to pull from the Gradle Build cache.
 In general, tasks that are computationally cheap but expensive on the disk are not good candidates to be cached.

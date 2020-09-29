@@ -19,8 +19,9 @@ nav:
   - Configuration: configuration.md
   - Changelog: changelog.md
   - Remote Cache Benchmark: remote-cache.md
-  - Releasing: releasing.md
   - Slower From Cache: slower-from-cache.md
+  - Build Scan Tags: scan-tags.md
+  - Releasing: releasing.md
 
 theme:
   name: 'material'
