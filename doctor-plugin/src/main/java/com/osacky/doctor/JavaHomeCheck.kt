@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.PillBoxPrinter
+import com.osacky.doctor.internal.ScanApi
 import org.gradle.api.GradleException
 import org.gradle.internal.jvm.Jvm
 import java.io.File
@@ -72,5 +73,7 @@ class JavaHomeCheck(
 
     private fun String.toFile() = File(this)
 
-    override fun getTag(): String = "java-home"
+    override fun addCustomValues(buildScanApi: ScanApi) {
+        buildScanApi.tag("doctor-java-home")
+    }
 }
