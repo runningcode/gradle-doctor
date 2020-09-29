@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -67,5 +68,7 @@ class JavaAnnotationTime(
         return buildscriptConfiguration.getByName("classpath").incoming.dependencies.find { it.group == "com.soundcloud.delect" } != null
     }
 
-    override fun getTag(): String = "long-dagger-time"
+    override fun addCustomValues(buildScanApi: ScanApi) {
+        buildScanApi.tag("doctor-long-dagger-time")
+    }
 }

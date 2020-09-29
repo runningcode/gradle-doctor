@@ -133,7 +133,7 @@ class DoctorPlugin : Plugin<Project> {
             val thingsToPrint: List<String> = list.flatMap {
                 val messages = it.onFinish()
                 if (messages.isNotEmpty() && it is HasBuildScanTag) {
-                    buildScanApi.tag(it.getTag())
+                    it.addCustomValues(buildScanApi)
                 }
                 messages
             }

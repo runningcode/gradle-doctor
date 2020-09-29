@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.ScanApi
 import java.text.NumberFormat
 
 class GarbagePrinter(
@@ -39,5 +40,7 @@ class GarbagePrinter(
         return emptyList()
     }
 
-    override fun getTag(): String = "high-gc"
+    override fun addCustomValues(buildScanApi: ScanApi) {
+        buildScanApi.tag("doctor-high-gc")
+    }
 }

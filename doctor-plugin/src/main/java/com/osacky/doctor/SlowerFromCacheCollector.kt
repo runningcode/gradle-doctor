@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.ScanApi
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.OperationFinishEvent
@@ -17,7 +18,7 @@ class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
             val duration = finishEvent.endTime - finishEvent.startTime
             // If the current execution took longer than the original execution, let's print out a warning.
             if (executeResult.originExecutionTime != null && executeResult.originExecutionTime!! < duration) {
-                longerTaskList.add(buildOperation.displayName)
+                longerTaskList.add(buildOperation.name)
             }
         }
     }
@@ -36,5 +37,8 @@ class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
         )
     }
 
-    override fun getTag(): String = "negative-savings"
+    override fun addCustomValues(buildScanApi: ScanApi) {
+        buildScanApi.tag("doctor-negative-savings")
+        buildScanApi.value("doctor-negative-savings-tasks", longerTaskList.joinToString(separator = "\n"))
+    }
 }

@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.DownloadSpeedMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.IntervalMeasurer
+import com.osacky.doctor.internal.ScanApi
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import io.reactivex.rxjava3.disposables.Disposable
@@ -64,5 +65,7 @@ class DownloadSpeedMeasurer(
         }
     }
 
-    override fun getTag(): String = "slow-maven-connection"
+    override fun addCustomValues(buildScanApi: ScanApi) {
+        buildScanApi.tag("doctor-slow-maven-connection")
+    }
 }
