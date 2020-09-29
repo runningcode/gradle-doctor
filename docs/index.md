@@ -31,9 +31,9 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 * Easily disable test caching. Tests may not declare all inputs causing [false positives](https://github.com/gradle/gradle/issues/9151). [Needed until Gradle implements a sandbox.](https://github.com/gradle/gradle/issues/9210)
 * Disable assembling all apps in repository simultaneously.
 * Fail build when empty src directories are found. [Empty src directories](https://github.com/gradle/gradle/issues/2463) cause [cache misses](https://developers.soundcloud.com/blog/dagger-reflect).
-* [Benchmarking remote build cache connection speed](/remote-cache).
-* [Warnings for negative avoidance saving tasks.](/slower-from-cache)
-* [Build scan tags to easily find and categorize builds with warnings](/scan-tags).
+* [Benchmarking remote build cache connection speed](remote-cache).
+* [Warnings for negative avoidance saving tasks.](slower-from-cache)
+* [Build scan tags to easily find and categorize builds with warnings](scan-tags).
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.
