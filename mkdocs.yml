@@ -16,6 +16,7 @@ site_author: Nelson Osacky
 
 nav:
   - Home: index.md
+  - Java Home: java-home.md
   - Configuration: configuration.md
   - Changelog: changelog.md
   - Remote Cache Benchmark: remote-cache.md
