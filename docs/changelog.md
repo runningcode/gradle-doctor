@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.6.1
+* [Add build scan values for negative avoidance savings tasks.](https://github.com/runningcode/gradle-doctor/pull/121)
+* Prefix build scan tags with `doctor-` for easier searchability use wildcard `doctor-*` to find all build scans with doctor prescriptions.
+
 ## 0.6.0
 * Add warning [when Android Jetifier is enabled.](https://github.com/runningcode/gradle-doctor/pull/118)
 * Print tasks with [negative avoidance savings from the cache.](https://github.com/runningcode/gradle-doctor/pull/117) [Fixes #86](https://github.com/runningcode/gradle-doctor/issues/86)
