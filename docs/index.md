@@ -39,6 +39,3 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 * Warn when build spends more than 10% of the time garbage collecting.
 * Warn when connection to maven repositories is slowing down the build.
 * Warn when build cache connection speed is slowing down the build.
-
-Here are the configuration options with their defaults:
-
