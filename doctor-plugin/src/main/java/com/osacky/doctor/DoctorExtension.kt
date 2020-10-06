@@ -47,6 +47,14 @@ open class DoctorExtension(objects: ObjectFactory) {
     val warnWhenJetifierEnabled = objects.property<Boolean>().convention(true)
 
     /**
+     * Negative Avoidance Savings Threshold
+     * By default the Gradle Doctor will print out a warning when a task is slower to pull from the cache than to
+     * re-execute. There is some variance in the amount of time a task can take when several tasks are running
+     * concurrently. In order to account for this there is a threshold above which
+     */
+    val negativeAvoidanceThreshold = objects.property<Int>().convention(500)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {

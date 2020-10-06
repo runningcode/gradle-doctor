@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.PublishSubject
 import org.gradle.api.internal.tasks.SnapshotTaskInputsBuildOperationType
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
+import org.gradle.api.provider.Property
 import org.gradle.internal.hash.HashCode
 import org.gradle.internal.logging.events.StyledTextOutputEvent
 import org.gradle.internal.operations.BuildOperationDescriptor
@@ -13,7 +14,7 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
-class BuildOperations : OperationEvents, BuildOperationListener {
+class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEvents, BuildOperationListener {
 
     // TODO move this out of this class
     private val snapshotIdsMap = HashMap<OperationIdentifier, SnapshotTaskInputsBuildOperationType.Result>()
@@ -23,7 +24,7 @@ class BuildOperations : OperationEvents, BuildOperationListener {
     private val progress: PublishSubject<OperationProgressEvent> = PublishSubject.create()
     private val finishes: PublishSubject<OperationFinishEvent> = PublishSubject.create()
 
-    private val slowerFromCacheCollector = SlowerFromCacheCollector()
+    private val slowerFromCacheCollector = SlowerFromCacheCollector(negativeAvoidanceThreshold)
 
     override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
         starts.onNext(startEvent)

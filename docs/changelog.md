@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.6.2
+* [Add threshold for negative avoidance savings.](https://github.com/runningcode/gradle-doctor/pull/126)
+
 ## 0.6.1
 * [Add build scan values for negative avoidance savings tasks.](https://github.com/runningcode/gradle-doctor/pull/121)
 * Prefix build scan tags with `doctor-` for easier searchability use wildcard `doctor-*` to find all build scans with doctor prescriptions.
