@@ -40,7 +40,7 @@ class DoctorPlugin : Plugin<Project> {
         val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
-        val buildOperations = getOperationEvents(target)
+        val buildOperations = getOperationEvents(target, extension)
         val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension, target.buildscript.configurations)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
@@ -171,14 +171,16 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
-    private fun getOperationEvents(target: Project): OperationEvents {
+    private fun getOperationEvents(target: Project, extension: DoctorExtension): OperationEvents {
         return if (target.gradle.shouldUseCoCaClasses()) {
-            val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {}
+            val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
+                this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
+            }
             val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
             buildEventListenerRegistry.onOperationCompletion(listenerService)
             listenerService.get().getOperations()
         } else {
-            val ops = BuildOperations()
+            val ops = BuildOperations(extension.negativeAvoidanceThreshold)
             target.gradle.buildOperationListenerManager.addListener(ops)
             ops
         }

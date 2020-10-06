@@ -38,6 +38,13 @@
        * Warn if using Android Jetifier. It slows down builds.
        */
       warnWhenJetifierEnabled = true
+       /**
+        * Negative Avoidance Savings Threshold
+        * By default the Gradle Doctor will print out a warning when a task is slower to pull from the cache than to
+        * re-execute. There is some variance in the amount of time a task can take when several tasks are running
+        * concurrently. In order to account for this there is a threshold above which
+        */
+      negativeAvoidanceThreshold = 500
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
@@ -97,6 +104,13 @@
        * Warn if using Android Jetifier. It slows down builds.
        */
       warnWhenJetifierEnabled.set(true)
+       /**
+        * Negative Avoidance Savings Threshold
+        * By default the Gradle Doctor will print out a warning when a task is slower to pull from the cache than to
+        * re-execute. There is some variance in the amount of time a task can take when several tasks are running
+        * concurrently. In order to account for this there is a threshold above which
+        */
+      negativeAvoidanceThreshold.set(500)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {

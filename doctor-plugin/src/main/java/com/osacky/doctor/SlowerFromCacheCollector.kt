@@ -2,13 +2,14 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.ScanApi
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
+import org.gradle.api.provider.Provider
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.OperationFinishEvent
 
 /**
  * Keeps track of which classes were slower to fetch from the cache than to re-run locally.
  */
-class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
+class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<Int>) : BuildStartFinishListener, HasBuildScanTag {
 
     private val longerTaskList = mutableListOf<String>()
 
@@ -17,8 +18,11 @@ class SlowerFromCacheCollector : BuildStartFinishListener, HasBuildScanTag {
         if (executeResult is ExecuteTaskBuildOperationType.Result) {
             val duration = finishEvent.endTime - finishEvent.startTime
             // If the current execution took longer than the original execution, let's print out a warning.
-            if (executeResult.originExecutionTime != null && executeResult.originExecutionTime!! < duration) {
-                longerTaskList.add(buildOperation.name)
+            if (executeResult.originExecutionTime != null) {
+                val threshold = negativeAvoidanceThreshold.get()
+                if (executeResult.originExecutionTime!! + threshold < duration) {
+                    longerTaskList.add(buildOperation.name)
+                }
             }
         }
     }

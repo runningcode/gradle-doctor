@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.OperationFinishEvent
@@ -8,7 +9,7 @@ import org.junit.Test
 
 internal class SlowerFromCacheCollectorTest {
 
-    val underTest = SlowerFromCacheCollector()
+    val underTest = SlowerFromCacheCollector(Providers.of(0))
 
     @Test
     fun fasterToReExecuteTaskWarned() {
@@ -31,8 +32,24 @@ internal class SlowerFromCacheCollectorTest {
         assertThat(underTest.onFinish()).isEmpty()
     }
 
-    fun finishWithTime(originExecutionTime: Long): OperationFinishEvent {
-        return OperationFinishEvent(0, 6, null, Result(originExecutionTime))
+    @Test
+    fun noWarningWhenUnderThreshold() {
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000))
+        thresholdCollector.onEvent(descriptorWithName("longButUnderThreshold"), finishWithTime(200))
+
+        assertThat(thresholdCollector.onFinish()).isEmpty()
+    }
+
+    @Test
+    fun warningWhenAboveThreshold() {
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000))
+        thresholdCollector.onEvent(descriptorWithName("fasterFromCacheAboveThreshold"), finishWithTime(10, 1020))
+
+        assertThat(thresholdCollector.onFinish()).containsExactly("The following operations were slower to pull from the cache than to rerun:\nfasterFromCacheAboveThreshold\nConsider disabling caching them.\nFor more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
+    }
+
+    fun finishWithTime(originExecutionTime: Long, thisExecutionTime: Long = 6): OperationFinishEvent {
+        return OperationFinishEvent(0, thisExecutionTime, null, Result(originExecutionTime))
     }
 
     fun descriptorWithName(name: String): BuildOperationDescriptor {
