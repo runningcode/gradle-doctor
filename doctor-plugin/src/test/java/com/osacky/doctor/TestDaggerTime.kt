@@ -22,8 +22,9 @@ class TestDaggerTime {
                       disallowMultipleDaemons = false
                       javaHome {
                         daggerThreshold = 100
-                        ensureJavaHomeMatches = !System.getenv().containsKey("CI")
+                        ensureJavaHomeMatches = false
                       }
+                      warnWhenNotUsingParallelGC = false
                     }
             """.trimIndent()
         )
@@ -81,6 +82,7 @@ class TestDaggerTime {
                         daggerThreshold = 100
                         ensureJavaHomeMatches = false
                       }
+                      warnWhenNotUsingParallelGC = false
                     }
             """.trimIndent()
         )

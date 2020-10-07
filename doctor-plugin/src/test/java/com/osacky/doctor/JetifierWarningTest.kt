@@ -25,6 +25,7 @@ class JetifierWarningTest {
                     |  javaHome {
                     |    ensureJavaHomeMatches = false
                     |  }
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -53,6 +54,7 @@ class JetifierWarningTest {
                     |  javaHome {
                     |    ensureJavaHomeMatches = false
                     |  }
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                 """.trimMargin("|")
         )

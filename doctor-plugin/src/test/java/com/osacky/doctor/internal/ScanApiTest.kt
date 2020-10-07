@@ -27,6 +27,7 @@ class ScanApiTest {
                     |    disallowMultipleDaemons = false
                     |    ensureJavaHomeMatches = false
                     |  }
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                     |new ScanApi(project).tag("hello")
                 """.trimMargin("|")
