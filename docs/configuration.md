@@ -42,7 +42,8 @@
         * Negative Avoidance Savings Threshold
         * By default the Gradle Doctor will print out a warning when a task is slower to pull from the cache than to
         * re-execute. There is some variance in the amount of time a task can take when several tasks are running
-        * concurrently. In order to account for this there is a threshold above which
+        * concurrently. In order to account for this there is a threshold you can set. When the difference is above the
+        * threshold, a warning is displayed.
         */
       negativeAvoidanceThreshold = 500
 
@@ -108,7 +109,8 @@
         * Negative Avoidance Savings Threshold
         * By default the Gradle Doctor will print out a warning when a task is slower to pull from the cache than to
         * re-execute. There is some variance in the amount of time a task can take when several tasks are running
-        * concurrently. In order to account for this there is a threshold above which
+        * concurrently. In order to account for this there is a threshold you can set. When the difference is above the
+        * threshold, a warning is displayed.
         */
       negativeAvoidanceThreshold.set(500)
 
