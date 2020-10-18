@@ -33,7 +33,7 @@ class ConfigurationCacheTest {
             .forwardOutput()
             .withArguments("assemble", "--configuration-cache")
             .withProjectDir(testProjectRoot.root)
-            .withGradleVersion("6.6")
+            .withGradleVersion("6.7")
             .withPluginClasspath()
 
         val result = runner.build()
