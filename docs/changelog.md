@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.6.3
+* Fix ClassCastException caused by race condition. [PR](https://github.com/runningcode/gradle-doctor/pull/129)
+
 ## 0.6.2
 * [Add threshold for negative avoidance savings.](https://github.com/runningcode/gradle-doctor/pull/126)
 
