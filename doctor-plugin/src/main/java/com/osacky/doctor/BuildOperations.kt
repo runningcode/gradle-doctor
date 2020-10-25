@@ -13,11 +13,13 @@ import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
+import java.util.concurrent.ConcurrentHashMap
 
 class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEvents, BuildOperationListener {
 
     // TODO move this out of this class
-    private val snapshotIdsMap = HashMap<OperationIdentifier, SnapshotTaskInputsBuildOperationType.Result>()
+    // When multiple threads are accessing this HashMap, a ClassCastException may be thrown.
+    private val snapshotIdsMap = ConcurrentHashMap<OperationIdentifier, SnapshotTaskInputsBuildOperationType.Result>()
     private val executeTaskIdsMap = HashMap<OperationIdentifier, ExecuteTaskBuildOperationType.Result>()
 
     private val starts: PublishSubject<OperationStartEvent> = PublishSubject.create()
