@@ -4,8 +4,8 @@
 
 extra:
   doctor:
-    current_release: '0.6.2'
-    next_release: '0.6.3'
+    current_release: '0.6.3'
+    next_release: '0.6.4'
 
 site_name: Gradle Doctor
 site_url: https://runningcode.github.io/fladle/
