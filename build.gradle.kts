@@ -32,7 +32,7 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.7"
+  gradleVersion = "6.7.1"
 }
 
 buildScan {
@@ -59,6 +59,10 @@ tasks.register("formatKotlinPlugin").configure {
 
 tasks.register("testPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":test"))
+}
+
+tasks.register("intTestPlugin").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":integrationTest"))
 }
 
 tasks.register("publishToGradlePlugin").configure {

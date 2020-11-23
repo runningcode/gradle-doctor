@@ -18,7 +18,7 @@ package com.osacky.doctor.internal
 import java.io.File
 import java.util.Properties
 
-internal fun androidHome(): String {
+fun androidHome(): String {
     val env = System.getenv("ANDROID_HOME")
     if (env != null) {
         return env.withInvariantPathSeparators()
@@ -39,4 +39,4 @@ internal fun androidHome(): String {
     )
 }
 
-internal fun String.withInvariantPathSeparators() = replace("\\", "/")
+fun String.withInvariantPathSeparators() = replace("\\", "/")
