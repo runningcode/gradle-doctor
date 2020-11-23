@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.4.20"
     id("com.gradle.plugin-publish") version "0.12.0"
     id("org.jmailen.kotlinter") version "3.2.0"
     `maven-publish`
