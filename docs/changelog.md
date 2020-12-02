@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 0.7.0
 * Don't check for empty source directories in Gradle 6.8. Gradle now ignores them by default. [PR](https://github.com/runningcode/gradle-doctor/pull/136)
 * Warn when not using parallel GC in java 9+. [Fixes #125](https://github.com/runningcode/gradle-doctor/issues/125) [PR](xxx)
 * Remove redundant "doctor" build scan tag.
