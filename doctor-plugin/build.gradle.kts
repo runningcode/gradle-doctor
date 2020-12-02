@@ -18,17 +18,18 @@ repositories {
     gradlePluginPortal()
 }
 
+val parallelGCTest by sourceSets.creating
 val integrationTest by sourceSets.creating
 
 gradlePlugin {
-    testSourceSets(integrationTest, sourceSets.test.get())
+    testSourceSets(integrationTest, parallelGCTest, sourceSets.test.get())
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.4.1")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.20")
+    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.5")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
-    "integrationTestImplementation"(project)
+    "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
     testFixturesApi("junit:junit:4.13")
@@ -61,7 +62,6 @@ gradlePlugin {
 kotlinter {
   indentSize = 4
 }
-
 
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
@@ -150,9 +150,27 @@ val integrationTestTask = task<Test>("integrationTest") {
 tasks.check { dependsOn(integrationTestTask) }
 
 tasks.withType(Test::class.java).configureEach {
-    jvmArgs("-XX:+HeapDumpOnOutOfMemoryError")
     maxHeapSize = "1G"
     testLogging {
         events = setOf(TestLogEvent.SKIPPED, TestLogEvent.FAILED, TestLogEvent.PASSED)
     }
 }
+
+val java8Int = tasks.register<Test>("java8IntegrationTest") {
+    group = "verification"
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    })
+    testClassesDirs = parallelGCTest.output.classesDirs
+    classpath = parallelGCTest.runtimeClasspath
+}
+val java11Int = tasks.register<Test>("java11IntegrationTest") {
+    group = "verification"
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    })
+    testClassesDirs = parallelGCTest.output.classesDirs
+    classpath = parallelGCTest.runtimeClasspath
+}
+
+tasks.check.configure { dependsOn(java8Int, java11Int)}

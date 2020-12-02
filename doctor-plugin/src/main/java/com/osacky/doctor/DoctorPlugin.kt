@@ -47,7 +47,8 @@ class DoctorPlugin : Plugin<Project> {
         val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
         val jetifierWarning = JetifierWarning(extension, target)
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning)
+        val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC)
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
@@ -58,6 +59,7 @@ class DoctorPlugin : Plugin<Project> {
         target.afterEvaluate {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
+            javaElevenGC.onStart()
         }
 
         val buildScanApi = ScanApi(target)

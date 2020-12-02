@@ -46,6 +46,10 @@
         * threshold, a warning is displayed.
         */
       negativeAvoidanceThreshold = 500
+      /**
+       * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
+       */
+      warnWhenNotUsingParallelGC = true
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
@@ -113,6 +117,10 @@
         * threshold, a warning is displayed.
         */
       negativeAvoidanceThreshold.set(500)
+       /**
+        * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
+        */
+      warnWhenNotUsingParallelGC.set(true)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {

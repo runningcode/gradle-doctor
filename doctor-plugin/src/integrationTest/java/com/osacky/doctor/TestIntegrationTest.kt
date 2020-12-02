@@ -23,6 +23,7 @@ class TestIntegrationTest {
                     |    ensureJavaHomeMatches = false
                     |  }
                     |  failOnEmptyDirectories = true
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -54,6 +55,7 @@ class TestIntegrationTest {
                     |    ensureJavaHomeMatches = false
                     |  }
                     |  failOnEmptyDirectories = true
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                 """.trimMargin("|")
         )

@@ -22,6 +22,7 @@ class ConfigurationCacheTest {
                     |    disallowMultipleDaemons = false
                     |    ensureJavaHomeMatches = false
                     |  }
+                    |  warnWhenNotUsingParallelGC = false
                     |}
                 """.trimMargin("|")
         )

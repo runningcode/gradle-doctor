@@ -34,6 +34,7 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 * [Benchmarking remote build cache connection speed](remote-cache).
 * [Warnings for negative avoidance saving tasks.](slower-from-cache)
 * [Build scan tags to easily find and categorize builds with warnings](scan-tags).
+* Warn when not using Parallel GC in Java 9+.
 
 ### Configurable Warnings
 * Warn when build spends more than 10% of the time garbage collecting.

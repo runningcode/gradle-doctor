@@ -56,6 +56,11 @@ open class DoctorExtension(objects: ObjectFactory) {
     val negativeAvoidanceThreshold = objects.property<Int>().convention(500)
 
     /**
+     * Warn when not using parallel GC.
+     */
+    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(true)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {
