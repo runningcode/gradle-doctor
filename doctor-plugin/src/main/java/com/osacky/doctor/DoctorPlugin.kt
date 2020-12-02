@@ -67,7 +67,7 @@ class DoctorPlugin : Plugin<Project> {
 
         target.subprojects project@{
             tasks.withType(SourceTask::class.java).configureEach {
-                if (extension.failOnEmptyDirectories.get()) {
+                if (!gradleIgnoresEmptyDirectories() && extension.failOnEmptyDirectories.get()) {
                     // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
                     doFirst {
                         source.visit {
@@ -184,6 +184,14 @@ class DoctorPlugin : Plugin<Project> {
             target.gradle.buildOperationListenerManager.addListener(ops)
             ops
         }
+    }
+
+    /**
+     * Gradle now ignores empty directories starting in 6.8
+     * https://docs.gradle.org/6.8-rc-1/release-notes.html#performance-improvements
+     **/
+    private fun gradleIgnoresEmptyDirectories(): Boolean {
+        return GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
     }
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
