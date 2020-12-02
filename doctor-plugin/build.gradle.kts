@@ -18,28 +18,18 @@ repositories {
     gradlePluginPortal()
 }
 
-sourceSets {
-    create("intTest") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
-}
+val integrationTest by sourceSets.creating
 
-val intTestImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
-}
-
-val intTestRuntimeResource by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
+gradlePlugin {
+    testSourceSets(integrationTest, sourceSets.test.get())
 }
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.4.1")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
-    intTestImplementation(testFixtures(project))
-    intTestRuntimeResource(testFixtures(project))
+    "integrationTestImplementation"(project)
+    "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
     testFixturesApi("junit:junit:4.13")
     testFixturesApi("com.google.truth:truth:1.0.1")
@@ -149,17 +139,15 @@ signing {
     isRequired = isReleaseBuild
 }
 
-configurations["intTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
-
-val integrationTest = task<Test>("integrationTest") {
+val integrationTestTask = task<Test>("integrationTest") {
     description = "Runs integration tests."
     group = "verification"
 
-    testClassesDirs = sourceSets["intTest"].output.classesDirs
-    classpath = intTestRuntimeResource + sourceSets["intTest"].runtimeClasspath
+    testClassesDirs = integrationTest.output.classesDirs
+    classpath = integrationTest.runtimeClasspath
 }
 
-tasks.check { dependsOn(integrationTest) }
+tasks.check { dependsOn(integrationTestTask) }
 
 tasks.withType(Test::class.java).configureEach {
     jvmArgs("-XX:+HeapDumpOnOutOfMemoryError")
