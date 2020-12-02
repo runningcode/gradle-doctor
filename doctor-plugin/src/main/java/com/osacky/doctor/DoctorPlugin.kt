@@ -140,7 +140,6 @@ class DoctorPlugin : Plugin<Project> {
             if (thingsToPrint.isEmpty()) {
                 return@Runnable
             }
-            buildScanApi.tag("doctor")
 
             pillBoxPrinter.writePrescription(thingsToPrint)
         }
