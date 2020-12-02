@@ -7,6 +7,7 @@ plugins {
     id("org.jmailen.kotlinter") version "3.2.0"
     `maven-publish`
     signing
+    `java-test-fixtures`
 }
 
 group = "com.osacky.doctor"
@@ -17,14 +18,32 @@ repositories {
     gradlePluginPortal()
 }
 
+sourceSets {
+    create("intTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+val intTestImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
+
+val intTestRuntimeResource by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.10")
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.4.1")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
-    testImplementation(gradleTestKit())
-    testImplementation("junit:junit:4.13")
-    testImplementation("com.google.truth:truth:1.0.1")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    intTestImplementation(testFixtures(project))
+    intTestRuntimeResource(testFixtures(project))
+    testFixturesApi(gradleTestKit())
+    testFixturesApi("junit:junit:4.13")
+    testFixturesApi("com.google.truth:truth:1.0.1")
+    testFixturesApi("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
 pluginBundle {
@@ -129,6 +148,18 @@ fun org.gradle.api.publish.maven.MavenPom.configureForDoctor(pluginName: String)
 signing {
     isRequired = isReleaseBuild
 }
+
+configurations["intTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["intTest"].output.classesDirs
+    classpath = intTestRuntimeResource + sourceSets["intTest"].runtimeClasspath
+}
+
+tasks.check { dependsOn(integrationTest) }
 
 tasks.withType(Test::class.java).configureEach {
     jvmArgs("-XX:+HeapDumpOnOutOfMemoryError")

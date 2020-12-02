@@ -61,6 +61,10 @@ tasks.register("testPlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":test"))
 }
 
+tasks.register("intTestPlugin").configure {
+  dependsOn(gradle.includedBuild("doctor-plugin").task(":integrationTest"))
+}
+
 tasks.register("publishToGradlePlugin").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":publishPlugins"))
 }
