@@ -8,7 +8,7 @@ extra:
     next_release: '0.7.1'
 
 site_name: Gradle Doctor
-site_url: https://runningcode.github.io/fladle/
+site_url: https://runningcode.github.io/gradle-doctor/
 repo_name: Gradle Doctor
 repo_url: https://github.com/runningcode/gradle-doctor/
 site_description: The Right Prescription for your Gradle Build
