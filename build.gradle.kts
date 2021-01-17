@@ -1,15 +1,9 @@
 import com.osacky.doctor.DoctorExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-allprojects {
-  repositories {
-    mavenCentral()
-  }
-}
-
 plugins {
-  kotlin("jvm") version "1.4.20"
-  id("com.github.ben-manes.versions") version "0.33.0"
+  kotlin("jvm") version "1.4.21"
+  id("com.github.ben-manes.versions") version "0.36.0"
   id("com.osacky.doctor")
 }
 
@@ -32,7 +26,7 @@ tasks.withType(Test::class.java).configureEach {
 
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = "6.7.1"
+  gradleVersion = "6.8"
 }
 
 buildScan {
