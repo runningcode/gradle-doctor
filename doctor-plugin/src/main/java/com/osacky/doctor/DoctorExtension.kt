@@ -66,6 +66,12 @@ open class DoctorExtension(objects: ObjectFactory) {
     fun javaHome(action: Action<JavaHomeHandler>) {
         action.execute(javaHomeHandler)
     }
+
+    val slowerFromCacheCallback = objects.property<SlowerFromCacheCallback?>().convention(null)
+}
+
+interface SlowerFromCacheCallback {
+    fun onSlowerFromCache(longerTaskList: List<String>)
 }
 
 abstract class JavaHomeHandler @Inject constructor(objects: ObjectFactory) {

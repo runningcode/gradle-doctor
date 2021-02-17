@@ -1,6 +1,9 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.internal.operations.BuildOperationDescriptor
@@ -9,13 +12,22 @@ import org.junit.Test
 
 internal class SlowerFromCacheCollectorTest {
 
-    val underTest = SlowerFromCacheCollector(Providers.of(0))
+    private val underTest = SlowerFromCacheCollector(Providers.of(0), Providers.ofNullable(null))
 
     @Test
     fun fasterToReExecuteTaskWarned() {
         underTest.onEvent(descriptorWithName("fasterToReExecute"), finishWithTime(5))
 
         assertThat(underTest.onFinish()).containsExactly("The following operations were slower to pull from the cache than to rerun:\nfasterToReExecute\nConsider disabling caching them.\nFor more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
+    }
+
+    @Test
+    fun fasterToReExecuteTaskWarnedWithCallback() {
+        val callback: SlowerFromCacheCallback = mock()
+        val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
+        collector.onEvent(descriptorWithName("fasterToReExecute"), finishWithTime(5))
+
+        verify(callback).onSlowerFromCache(listOf("fasterToReExecute"))
     }
 
     @Test
@@ -26,6 +38,15 @@ internal class SlowerFromCacheCollectorTest {
     }
 
     @Test
+    fun noWarningWhenSameAsCacheWithCallback() {
+        val callback: SlowerFromCacheCallback = mock()
+        val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
+        collector.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(6))
+
+        verify(callback, never())
+    }
+
+    @Test
     fun noWarningWhenFasterFromCache() {
         underTest.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(200))
 
@@ -33,26 +54,53 @@ internal class SlowerFromCacheCollectorTest {
     }
 
     @Test
+    fun noWarningWhenFasterFromCacheWithCallback() {
+        val callback: SlowerFromCacheCallback = mock()
+        val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
+        collector.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(200))
+
+        verify(callback, never())
+    }
+
+    @Test
     fun noWarningWhenUnderThreshold() {
-        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000))
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.ofNullable(null))
         thresholdCollector.onEvent(descriptorWithName("longButUnderThreshold"), finishWithTime(200))
 
         assertThat(thresholdCollector.onFinish()).isEmpty()
     }
 
     @Test
+    fun noWarningWhenUnderThresholdWithCallback() {
+        val callback: SlowerFromCacheCallback = mock()
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.of(callback))
+        thresholdCollector.onEvent(descriptorWithName("longButUnderThreshold"), finishWithTime(200))
+
+        verify(callback, never())
+    }
+
+    @Test
     fun warningWhenAboveThreshold() {
-        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000))
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.ofNullable(null))
         thresholdCollector.onEvent(descriptorWithName("fasterFromCacheAboveThreshold"), finishWithTime(10, 1020))
 
         assertThat(thresholdCollector.onFinish()).containsExactly("The following operations were slower to pull from the cache than to rerun:\nfasterFromCacheAboveThreshold\nConsider disabling caching them.\nFor more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/")
     }
 
-    fun finishWithTime(originExecutionTime: Long, thisExecutionTime: Long = 6): OperationFinishEvent {
+    @Test
+    fun warningWhenAboveThresholdWithCallback() {
+        val callback: SlowerFromCacheCallback = mock()
+        val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.of(callback))
+        thresholdCollector.onEvent(descriptorWithName("fasterFromCacheAboveThreshold"), finishWithTime(10, 1020))
+
+        verify(callback).onSlowerFromCache(listOf("fasterFromCacheAboveThreshold"))
+    }
+
+    private fun finishWithTime(originExecutionTime: Long, thisExecutionTime: Long = 6): OperationFinishEvent {
         return OperationFinishEvent(0, thisExecutionTime, null, Result(originExecutionTime))
     }
 
-    fun descriptorWithName(name: String): BuildOperationDescriptor {
+    private fun descriptorWithName(name: String): BuildOperationDescriptor {
         return BuildOperationDescriptor.displayName(name)
             .build()
     }

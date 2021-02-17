@@ -14,10 +14,11 @@ abstract class BuildOperationListenerService : BuildService<BuildOperationListen
 
     interface Params : BuildServiceParameters {
         fun getNegativeAvoidanceThreshold(): Property<Int>
+        fun getSlowerFromCacheCallback(): Property<SlowerFromCacheCallback?>
     }
 
     // Needs to be created within the service since the lifecycle of the BuildService is controlled by Gradle.
-    private val buildOperations = BuildOperations(parameters.getNegativeAvoidanceThreshold())
+    private val buildOperations = BuildOperations(parameters.getNegativeAvoidanceThreshold(), parameters.getSlowerFromCacheCallback())
 
     override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
         buildOperations.started(buildOperation, startEvent)
