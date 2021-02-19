@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
@@ -26,6 +27,7 @@ internal class SlowerFromCacheCollectorTest {
         val callback: SlowerFromCacheCallback = mock()
         val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
         collector.onEvent(descriptorWithName("fasterToReExecute"), finishWithTime(5))
+        collector.onFinish()
 
         verify(callback).onSlowerFromCache(listOf("fasterToReExecute"))
     }
@@ -42,8 +44,9 @@ internal class SlowerFromCacheCollectorTest {
         val callback: SlowerFromCacheCallback = mock()
         val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
         collector.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(6))
+        collector.onFinish()
 
-        verify(callback, never())
+        verify(callback, never()).onSlowerFromCache(any())
     }
 
     @Test
@@ -58,8 +61,9 @@ internal class SlowerFromCacheCollectorTest {
         val callback: SlowerFromCacheCallback = mock()
         val collector = SlowerFromCacheCollector(Providers.of(0), Providers.of(callback))
         collector.onEvent(descriptorWithName("fasterFromCache"), finishWithTime(200))
+        collector.onFinish()
 
-        verify(callback, never())
+        verify(callback, never()).onSlowerFromCache(any())
     }
 
     @Test
@@ -75,8 +79,9 @@ internal class SlowerFromCacheCollectorTest {
         val callback: SlowerFromCacheCallback = mock()
         val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.of(callback))
         thresholdCollector.onEvent(descriptorWithName("longButUnderThreshold"), finishWithTime(200))
+        thresholdCollector.onFinish()
 
-        verify(callback, never())
+        verify(callback, never()).onSlowerFromCache(any())
     }
 
     @Test
@@ -92,6 +97,7 @@ internal class SlowerFromCacheCollectorTest {
         val callback: SlowerFromCacheCallback = mock()
         val thresholdCollector = SlowerFromCacheCollector(Providers.of(1000), Providers.of(callback))
         thresholdCollector.onEvent(descriptorWithName("fasterFromCacheAboveThreshold"), finishWithTime(10, 1020))
+        thresholdCollector.onFinish()
 
         verify(callback).onSlowerFromCache(listOf("fasterFromCacheAboveThreshold"))
     }
