@@ -34,9 +34,7 @@ class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<
         if (longerTaskList.isEmpty()) {
             return emptyList()
         }
-        if (slowerFromCacheCallback.isPresent) {
-            slowerFromCacheCallback.get().onSlowerFromCache(longerTaskList)
-        }
+        slowerFromCacheCallback.orNull?.onSlowerFromCache(longerTaskList)
         return listOf(
             "The following operations were slower to pull from the cache than to rerun:\n" +
                 "${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them.\n" +
