@@ -61,6 +61,15 @@ open class DoctorExtension(objects: ObjectFactory) {
     val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(true)
 
     /**
+     * Throws an error when the `Delete` or `clean` task has dependencies.
+     * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
+     * output. This can lead to build failures or just strangeness with seemingly straightforward builds
+     * (e.g., gradle clean build).
+     * http://github.com/gradle/gradle/issues/2488
+     */
+    val disallowCleanTaskDependencies = objects.property<Boolean>().convention(true)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {

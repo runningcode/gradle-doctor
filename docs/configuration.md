@@ -50,6 +50,15 @@
        * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
        */
       warnWhenNotUsingParallelGC = true
+      /**
+       * Throws an error when the `Delete` or `clean` task has dependencies.
+       * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
+       * output. This can lead to build failures or just strangeness with seemingly straightforward builds
+       * (e.g., gradle clean build).
+       * http://github.com/gradle/gradle/issues/2488
+       */
+      val disallowCleanTaskDependencies = true
+
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
@@ -121,6 +130,14 @@
         * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
         */
       warnWhenNotUsingParallelGC.set(true)
+       /**
+        * Throws an error when the `Delete` or `clean` task has dependencies.
+        * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
+        * output. This can lead to build failures or just strangeness with seemingly straightforward builds
+        * (e.g., gradle clean build).
+        * http://github.com/gradle/gradle/issues/2488
+        */
+        val disallowCleanTaskDependencies.set(true)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
