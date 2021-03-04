@@ -174,3 +174,8 @@ val java11Int = tasks.register<Test>("java11IntegrationTest") {
 }
 
 tasks.check.configure { dependsOn(java8Int, java11Int)}
+
+tasks.withType<ValidatePlugins>().configureEach {
+    failOnWarning.set(true)
+    enableStricterValidation.set(true)
+}
