@@ -14,6 +14,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
@@ -21,6 +22,7 @@ import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
 import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -66,6 +68,8 @@ class DoctorPlugin : Plugin<Project> {
         registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations, buildScanApi)
 
         val appPluginProjects = mutableSetOf<Project>()
+
+        ensureNoCleanTaskDependenciesIfNeeded(target, extension, pillBoxPrinter)
 
         target.subprojects project@{
             tasks.withType(SourceTask::class.java).configureEach {
@@ -156,6 +160,28 @@ class DoctorPlugin : Plugin<Project> {
             target.gradle.buildFinished {
                 runnable.run()
                 target.gradle.buildOperationListenerManager.removeListener(buildOperations as BuildOperationListener)
+            }
+        }
+    }
+
+    private fun ensureNoCleanTaskDependenciesIfNeeded(target: Project, extension: DoctorExtension, pillBoxPrinter: PillBoxPrinter) {
+        target.allprojects {
+            // We use afterEvaluate in case other plugins configure the Delete task. We want our configuration to happen last.
+            afterEvaluate {
+                tasks.withType(Delete::class).configureEach {
+                    if (extension.disallowCleanTaskDependencies.get() && dependsOn.isNotEmpty()) {
+                        val taskDependencies = dependsOn.map { it.toString() }
+                        throw IllegalArgumentException(
+                            pillBoxPrinter.createPill(
+                                """
+                            Adding dependencies to the clean task could cause unexpected build outcomes.
+                            Please remove the dependency from $this on the following tasks: $taskDependencies. 
+                            See github.com/gradle/gradle/issues/2488 for more information.
+                                """.trimIndent()
+                            )
+                        )
+                    }
+                }
             }
         }
     }

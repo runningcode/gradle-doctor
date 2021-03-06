@@ -66,11 +66,73 @@ class TestIntegrationTest {
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
-            .withGradleVersion("6.8-rc-1")
+            .withGradleVersion("6.8")
             .withPluginClasspath()
             .withArguments("assemble")
             .build()
 
         assertThat(result.output).contains("SUCCESS")
+    }
+
+    @Test
+    fun cleanDependencyFailsBuild() {
+        projectWithCleanDependency(disallowCleanTaskDependencies = true)
+
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectRoot.root)
+            .withPluginClasspath()
+            .withArguments("clean")
+            .buildAndFail()
+
+        assertThat(result.output).contains(
+            """
+       |   > =============================== Gradle Doctor Prescriptions ============================================
+       |     | Adding dependencies to the clean task could cause unexpected build outcomes.                         |
+       |     | Please remove the dependency from task ':clean' on the following tasks: [foo].                       |
+       |     | See github.com/gradle/gradle/issues/2488 for more information.                                       |
+       |     ========================================================================================================
+        """.trimMargin("|")
+        )
+    }
+
+    @Test
+    fun cleanDependencyDisabledSucceeds() {
+        projectWithCleanDependency(disallowCleanTaskDependencies = false)
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectRoot.root)
+            .withPluginClasspath()
+            .withArguments("clean")
+            .build()
+
+        assertThat(result.output).contains("BUILD SUCCESSFUL")
+    }
+
+    fun projectWithCleanDependency(disallowCleanTaskDependencies: Boolean) {
+        testProjectRoot.writeBuildGradle(
+            """
+                plugins {
+                  id "com.osacky.doctor"
+                  id 'java-library'
+                }
+                doctor {
+                  disallowMultipleDaemons = false
+                  javaHome {
+                    ensureJavaHomeMatches = false
+                  }
+                  warnWhenNotUsingParallelGC = false
+                  disallowCleanTaskDependencies = $disallowCleanTaskDependencies
+                }
+                
+                tasks.register('foo') {
+                  doFirst {
+                    println 'foo'
+                  }
+                }
+                tasks.withType(Delete).configureEach {
+                  println 'configuring delete'
+                  dependsOn 'foo'
+                }
+            """.trimIndent()
+        )
     }
 }
