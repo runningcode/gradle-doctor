@@ -60,6 +60,7 @@ class DoctorPlugin : Plugin<Project> {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
             javaElevenGC.onStart()
+            buildOperations.slowerFromCacheCollector().slowerFromCacheCallback = extension.slowerCallback
         }
 
         val buildScanApi = ScanApi(target)
@@ -176,13 +177,12 @@ class DoctorPlugin : Plugin<Project> {
         return if (target.gradle.shouldUseCoCaClasses()) {
             val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
                 this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
-                this.parameters.getSlowerFromCacheCallback().set(extension.slowerFromCacheCallback)
             }
             val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
             buildEventListenerRegistry.onOperationCompletion(listenerService)
             listenerService.get().getOperations()
         } else {
-            val ops = BuildOperations(extension.negativeAvoidanceThreshold, extension.slowerFromCacheCallback)
+            val ops = BuildOperations(extension.negativeAvoidanceThreshold)
             target.gradle.buildOperationListenerManager.addListener(ops)
             ops
         }

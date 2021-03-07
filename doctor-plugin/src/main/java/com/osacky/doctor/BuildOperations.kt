@@ -15,7 +15,7 @@ import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 import java.util.concurrent.ConcurrentHashMap
 
-class BuildOperations(negativeAvoidanceThreshold: Property<Int>, slowerFromCacheCallback: Property<SlowerFromCacheCallback?>) : OperationEvents, BuildOperationListener {
+class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEvents, BuildOperationListener {
 
     // TODO move this out of this class
     // When multiple threads are accessing this HashMap, a ClassCastException may be thrown.
@@ -26,7 +26,7 @@ class BuildOperations(negativeAvoidanceThreshold: Property<Int>, slowerFromCache
     private val progress: PublishSubject<OperationProgressEvent> = PublishSubject.create()
     private val finishes: PublishSubject<OperationFinishEvent> = PublishSubject.create()
 
-    private val slowerFromCacheCollector = SlowerFromCacheCollector(negativeAvoidanceThreshold, slowerFromCacheCallback)
+    private val slowerFromCacheCollector = SlowerFromCacheCollector(negativeAvoidanceThreshold)
 
     override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
         starts.onNext(startEvent)

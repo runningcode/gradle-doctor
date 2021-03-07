@@ -1,6 +1,7 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.ScanApi
+import org.gradle.api.Action
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.api.provider.Provider
 import org.gradle.internal.operations.BuildOperationDescriptor
@@ -9,9 +10,10 @@ import org.gradle.internal.operations.OperationFinishEvent
 /**
  * Keeps track of which classes were slower to fetch from the cache than to re-run locally.
  */
-class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<Int>, private val slowerFromCacheCallback: Provider<SlowerFromCacheCallback?>) : BuildStartFinishListener, HasBuildScanTag {
+class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<Int>) : BuildStartFinishListener, HasBuildScanTag {
 
     private val longerTaskList = mutableListOf<String>()
+    var slowerFromCacheCallback : Action<List<String>>? = null
 
     fun onEvent(buildOperation: BuildOperationDescriptor, finishEvent: OperationFinishEvent) {
         val executeResult = finishEvent.result
@@ -34,7 +36,7 @@ class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<
         if (longerTaskList.isEmpty()) {
             return emptyList()
         }
-        slowerFromCacheCallback.orNull?.onSlowerFromCache(longerTaskList)
+        slowerFromCacheCallback?.execute(longerTaskList)
         return listOf(
             "The following operations were slower to pull from the cache than to rerun:\n" +
                 "${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them.\n" +
