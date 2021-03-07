@@ -13,7 +13,7 @@ import org.gradle.internal.operations.OperationFinishEvent
 class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<Int>) : BuildStartFinishListener, HasBuildScanTag {
 
     private val longerTaskList = mutableListOf<String>()
-    var slowerFromCacheCallback : Action<List<String>>? = null
+    var slowerFromCacheCallback: Action<List<String>>? = null
 
     fun onEvent(buildOperation: BuildOperationDescriptor, finishEvent: OperationFinishEvent) {
         val executeResult = finishEvent.result
