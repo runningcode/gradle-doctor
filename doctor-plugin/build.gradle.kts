@@ -2,9 +2,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.4.31"
     id("com.gradle.plugin-publish") version "0.12.0"
-    id("org.jmailen.kotlinter") version "3.2.0"
+    id("org.jmailen.kotlinter") version "3.3.0"
     `maven-publish`
     signing
     `java-test-fixtures`
@@ -26,13 +26,13 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.31")
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.5.2")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
-    testFixturesApi("junit:junit:4.13")
+    testFixturesApi("junit:junit:4.13.2")
     testFixturesApi("com.google.truth:truth:1.0.1")
     testFixturesApi("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
@@ -139,15 +139,13 @@ signing {
     isRequired = isReleaseBuild
 }
 
-val integrationTestTask = task<Test>("integrationTest") {
+val integrationTestTask = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests."
     group = "verification"
 
     testClassesDirs = integrationTest.output.classesDirs
     classpath = integrationTest.runtimeClasspath
 }
-
-tasks.check { dependsOn(integrationTestTask) }
 
 tasks.withType(Test::class.java).configureEach {
     maxHeapSize = "1G"
@@ -173,7 +171,7 @@ val java11Int = tasks.register<Test>("java11IntegrationTest") {
     classpath = parallelGCTest.runtimeClasspath
 }
 
-tasks.check.configure { dependsOn(java8Int, java11Int)}
+tasks.check.configure { dependsOn(java8Int, java11Int, integrationTestTask)}
 
 tasks.withType<ValidatePlugins>().configureEach {
     failOnWarning.set(true)
