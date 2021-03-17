@@ -18,7 +18,7 @@ class JetifierWarning(private val doctorExtension: DoctorExtension, private val 
 
                 To disable this warning, configure the Gradle Doctor extension:
                 doctor {
-                  warnWhenJetifierEnable.set(false)
+                  warnWhenJetifierEnabled.set(false)
                 }
                 """.trimIndent()
             )

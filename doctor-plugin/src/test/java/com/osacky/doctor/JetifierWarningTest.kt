@@ -11,7 +11,7 @@ class JetifierWarningTest {
     @get:Rule
     val testProjectRoot = TemporaryFolder()
 
-    val jetifierWarning = "Jetifier was enabled which means your builds are slower by 4-20%."
+    private val jetifierWarning = "Jetifier was enabled which means your builds are slower by 4-20%."
 
     @Test
     fun testJetifierEnabledShowsWarning() {
@@ -37,9 +37,22 @@ class JetifierWarningTest {
             .withProjectDir(testProjectRoot.root)
             .build()
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
-        assertThat(result.output).contains("Gradle Doctor Prescriptions")
-        assertThat(result.output).contains(jetifierWarning)
+        assertThat(result.output).contains(
+            """
+                =============================== Gradle Doctor Prescriptions ============================================
+                | Jetifier was enabled which means your builds are slower by 4-20%.                                    |
+                | Here's an article to help you disable it:                                                            |
+                | https://adambennett.dev/2020/08/disabling-jetifier/                                                  |
+                |                                                                                                      |
+                | To disable this warning, configure the Gradle Doctor extension:                                      |
+                | doctor {                                                                                             |
+                |   warnWhenJetifierEnabled.set(false)                                                                 |
+                | }                                                                                                    |
+                ========================================================================================================
+
+                BUILD SUCCESSFUL
+            """.trimIndent()
+        )
     }
 
     @Test
