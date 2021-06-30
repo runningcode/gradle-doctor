@@ -57,7 +57,7 @@
        * (e.g., gradle clean build).
        * http://github.com/gradle/gradle/issues/2488
        */
-      val disallowCleanTaskDependencies = true
+      disallowCleanTaskDependencies = true
 
 
       /** Configuration properties relating to JAVA_HOME */
