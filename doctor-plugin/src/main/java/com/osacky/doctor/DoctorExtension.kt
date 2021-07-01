@@ -9,6 +9,7 @@ import javax.inject.Inject
 open class DoctorExtension(objects: ObjectFactory) {
 
     internal val javaHomeHandler = objects.newInstance<JavaHomeHandler>()
+    var slowerCallback: Action<List<String>>? = null
 
     /**
      * Throw an exception when multiple Gradle Daemons are running.
@@ -74,6 +75,10 @@ open class DoctorExtension(objects: ObjectFactory) {
      */
     fun javaHome(action: Action<JavaHomeHandler>) {
         action.execute(javaHomeHandler)
+    }
+
+    fun slowerFromCacheCallback(callback: Action<List<String>>) {
+        slowerCallback = callback
     }
 }
 

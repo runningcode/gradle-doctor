@@ -62,6 +62,7 @@ class DoctorPlugin : Plugin<Project> {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
             javaElevenGC.onStart()
+            buildOperations.slowerFromCacheCollector().slowerFromCacheCallback = extension.slowerCallback
         }
 
         val buildScanApi = ScanApi(target)

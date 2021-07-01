@@ -13,6 +13,12 @@ configure<DoctorExtension> {
   enableTestCaching.set(false)
   downloadSpeedWarningThreshold.set(2.0f)
   daggerThreshold.set(100)
+  slowerFromCacheCallback( object: Action<List<String>> {
+    override fun execute(t: List<String>) {
+      println(t)
+    }
+
+  })
   javaHome {
     ensureJavaHomeMatches.set(!providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent)
   }
