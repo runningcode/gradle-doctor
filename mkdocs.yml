@@ -4,8 +4,8 @@
 
 extra:
   doctor:
-    current_release: '0.7.0'
-    next_release: '0.7.1'
+    current_release: '0.7.1'
+    next_release: '0.7.2'
 
 site_name: Gradle Doctor
 site_url: https://runningcode.github.io/gradle-doctor/
