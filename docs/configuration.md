@@ -84,7 +84,7 @@
     ```
 === "Kotlin"
     ``` kotlin
-    configure<DoctorExtension> {
+    doctor {
       /**
        * Throw an exception when multiple Gradle Daemons are running.
        */
