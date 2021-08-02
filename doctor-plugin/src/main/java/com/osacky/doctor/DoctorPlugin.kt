@@ -5,10 +5,10 @@ import com.osacky.doctor.internal.DaemonCheck
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
-import com.osacky.doctor.internal.ScanApi
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
+import com.osacky.scan.tag.ScanApi
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project

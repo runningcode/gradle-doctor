@@ -28,6 +28,7 @@ gradlePlugin {
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
+    implementation("com.osacky.tagger:tagger-lib:0.1")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))

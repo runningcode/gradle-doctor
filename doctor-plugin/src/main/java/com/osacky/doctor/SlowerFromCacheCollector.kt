@@ -1,6 +1,6 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.ScanApi
+import com.osacky.scan.tag.ScanApi
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.api.provider.Provider
 import org.gradle.internal.operations.BuildOperationDescriptor

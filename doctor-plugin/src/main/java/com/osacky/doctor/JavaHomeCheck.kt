@@ -1,7 +1,7 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.PillBoxPrinter
-import com.osacky.doctor.internal.ScanApi
+import com.osacky.scan.tag.ScanApi
 import org.gradle.api.GradleException
 import org.gradle.internal.jvm.Jvm
 import java.io.File
