@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.4.32"
+    kotlin("jvm") version "1.5.21"
     id("com.gradle.plugin-publish") version "0.14.0"
     id("org.jmailen.kotlinter") version "3.3.0"
     `maven-publish`
@@ -26,8 +26,8 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.1")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
+    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
