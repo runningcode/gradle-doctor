@@ -1,6 +1,6 @@
 package com.osacky.doctor
 
-import com.osacky.scan.tag.ScanApi
+import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.api.artifacts.ConfigurationContainer

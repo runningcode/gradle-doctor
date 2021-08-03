@@ -6,4 +6,4 @@ dependencies {
     testImplementation("junit:junit:4.13")
 }
 
-com.osacky.scan.tag.ScanApi(project).tag("test-tag")
+com.osacky.tagger.ScanApi(project).tag("test-tag")

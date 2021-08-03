@@ -4,7 +4,7 @@ import com.osacky.doctor.DownloadSpeedMeasurer.ExternalDownloadEvent.Companion.f
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
-import com.osacky.scan.tag.ScanApi
+import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
