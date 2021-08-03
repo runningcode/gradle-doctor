@@ -2,7 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
-import com.osacky.doctor.internal.ScanApi
+import com.osacky.tagger.ScanApi
 import java.text.NumberFormat
 
 class GarbagePrinter(

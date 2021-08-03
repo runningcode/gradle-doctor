@@ -1,6 +1,6 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.ScanApi
+import com.osacky.tagger.ScanApi
 
 interface HasBuildScanTag {
 
