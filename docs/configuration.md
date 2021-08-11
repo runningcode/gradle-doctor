@@ -137,7 +137,7 @@
         * (e.g., gradle clean build).
         * http://github.com/gradle/gradle/issues/2488
         */
-        val disallowCleanTaskDependencies.set(true)
+       disallowCleanTaskDependencies.set(true)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
