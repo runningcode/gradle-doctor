@@ -40,7 +40,7 @@ class JavaGCFlagChecker(
      * There is no straightforward Java version API in Java 8.
      */
     private fun getJavaVersion(): Int {
-        var version = System.getProperty("java.version")
+        var version = System.getProperty("java.specification.version")
         if (version.startsWith("1.")) {
             version = version.substring(2, 3)
         } else {
