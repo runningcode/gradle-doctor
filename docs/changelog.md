@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.7.2
+* Fix [exception when using Java 17 EA](https://github.com/runningcode/gradle-doctor/issues/168) [PR](https://github.com/runningcode/gradle-doctor/pull/169) Thanks [ZacSweers](https://github.com/ZacSweers)
 ## 0.7.1
 * Add error message for when the clean task has dependencies. [PR](https://github.com/runningcode/gradle-doctor/pull/149)
 * Fix typo in `warnWhenJetifierEnabled` error message. [PR](https://github.com/runningcode/gradle-doctor/pull/158) Thanks [kelvinharron](https://github.com/kelvinharron)
