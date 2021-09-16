@@ -2,8 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.5.21"
-    id("com.gradle.plugin-publish") version "0.14.0"
+    kotlin("jvm") version "1.5.30"
+    id("com.gradle.plugin-publish") version "0.16.0"
     id("org.jmailen.kotlinter") version "3.3.0"
     `maven-publish`
     signing
@@ -26,8 +26,7 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.6.3")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
     implementation("com.osacky.tagger:tagger-lib:0.2")
     implementation("io.reactivex.rxjava3:rxjava:3.0.2")
     "parallelGCTestImplementation"(testFixtures(project))
@@ -62,10 +61,6 @@ gradlePlugin {
 
 kotlinter {
   indentSize = 4
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
 }
 
 tasks.register<Jar>("sourcesJar") {
