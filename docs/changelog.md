@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* Fix compatibility with Java 8
 
 ## 0.7.2
 * Fix [exception when using Java 17 EA.](https://github.com/runningcode/gradle-doctor/issues/168) [PR](https://github.com/runningcode/gradle-doctor/pull/169) Thanks [ZacSweers](https://github.com/ZacSweers)
