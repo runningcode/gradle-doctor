@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 0.7.3
 * Fix [compatiblity with Java 8.](https://github.com/runningcode/gradle-doctor/issues/171)
 
 ## 0.7.2
