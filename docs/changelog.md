@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* [Skip multiple daemons check on non-Unix machines, not supported yet](https://github.com/runningcode/gradle-doctor/issues/84)
+
 ## 0.7.3
 * Fix [compatiblity with Java 8.](https://github.com/runningcode/gradle-doctor/issues/171)
 

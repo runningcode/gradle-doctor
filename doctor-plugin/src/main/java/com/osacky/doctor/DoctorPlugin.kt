@@ -1,11 +1,13 @@
 package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
-import com.osacky.doctor.internal.DaemonCheck
+import com.osacky.doctor.internal.DaemonChecker
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
+import com.osacky.doctor.internal.UnixDaemonChecker
+import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
 import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
 import com.osacky.tagger.ScanApi
@@ -23,6 +25,8 @@ import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
+import org.gradle.nativeplatform.platform.OperatingSystem
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.util.GradleVersion
 import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -36,10 +40,11 @@ class DoctorPlugin : Plugin<Project> {
 
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
+        val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
         val clock: Clock = SystemClock()
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
-        val daemonChecker = BuildDaemonChecker(extension, DaemonCheck(), pillBoxPrinter)
+        val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val buildOperations = getOperationEvents(target, extension)
@@ -195,6 +200,13 @@ class DoctorPlugin : Plugin<Project> {
     private fun ensureMinimumSupportedGradleVersion() {
         if (GradleVersion.current() < GradleVersion.version("5.2")) {
             throw GradleException("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
+        }
+    }
+
+    private fun createDaemonChecker(operatingSystem: OperatingSystem): DaemonChecker {
+        return when {
+            operatingSystem.isLinux || operatingSystem.isMacOsX -> UnixDaemonChecker()
+            else -> UnsupportedOsDaemonChecker
         }
     }
 
