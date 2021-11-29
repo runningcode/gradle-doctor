@@ -40,32 +40,9 @@ class JavaAnnotationTime(
     override fun onFinish(): List<String> {
         disposable.dispose()
         if (totalDaggerTime > doctorExtension.daggerThreshold.get()) {
-            val message = if (containsDelect()) enableReflectMessage else applyDelectPlugin
-            return listOf("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.\n$message")
+            return listOf("This build spent ${totalDaggerTime / 1000f} s in Dagger Annotation Processors.")
         }
         return emptyList()
-    }
-
-    private val applyDelectPlugin =
-        """
-        Use Dagger Reflect to skip Dagger Annotation processing:
-
-        buildscript {
-          classpath 'com.soundcloud.delect:delect-plugin:0.3.0'
-        }
-        apply plugin: 'com.soundcloud.delect'
-
-        For more information: https://github.com/soundcloud/delect#usage
-        """.trimIndent()
-
-    private val enableReflectMessage =
-        """
-        Enable to Dagger Reflect to save yourself some time.
-        echo "dagger.reflect=true" >> ~/.gradle/gradle.properties
-        """.trimIndent()
-
-    private fun containsDelect(): Boolean {
-        return buildscriptConfiguration.getByName("classpath").incoming.dependencies.find { it.group == "com.soundcloud.delect" } != null
     }
 
     override fun addCustomValues(buildScanApi: ScanApi) {
