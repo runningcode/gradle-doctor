@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* [Support fail threshold for high GC usage](https://github.com/runningcode/gradle-doctor/issues/183)
 * [Skip multiple daemons check on non-Unix machines, not supported yet](https://github.com/runningcode/gradle-doctor/issues/84)
 
 ## 0.7.3

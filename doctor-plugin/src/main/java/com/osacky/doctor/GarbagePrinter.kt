@@ -3,6 +3,7 @@ package com.osacky.doctor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.tagger.ScanApi
+import org.gradle.api.GradleException
 import java.text.NumberFormat
 
 class GarbagePrinter(
@@ -27,7 +28,9 @@ class GarbagePrinter(
         val garbageDuration = endGarbageTime - startGarbageTime
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
-        if (buildDuration > warningThreshold && percentGarbageCollecting > extension.GCWarningThreshold.get()) {
+        val isThresholdExceeded = percentGarbageCollecting > extension.GCWarningThreshold.get()
+                || percentGarbageCollecting > extension.GCFailThreshold.get()
+        if (buildDuration > warningThreshold && isThresholdExceeded) {
             val message =
                 """
                 This build spent ${formatter.format(percentGarbageCollecting)} garbage collecting.
@@ -35,7 +38,11 @@ class GarbagePrinter(
                 Otherwise, if this is happening after several builds it could indicate a memory leak.
                 For a quick fix, restart this Gradle daemon. ./gradlew --stop
                 """.trimIndent()
-            return listOf(message)
+            return if (percentGarbageCollecting > extension.GCFailThreshold.get()) {
+                throw GradleException(message)
+            } else {
+                listOf(message)
+            }
         }
         return emptyList()
     }
