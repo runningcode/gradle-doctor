@@ -16,7 +16,7 @@ To force tasks to rerun for the benchmark, use `-PrerunSourceTasksForBenchmark` 
 
 Example full benchmark scenario:
 ``` bash
-./gradlew :app:assembleDebug -PbenchmarkRemoteCache -PrerunSourceTasksForBenchmark -PrerunLargeOutputTasksForBenchmark`
+./gradlew :app:assembleDebug -PbenchmarkRemoteCache -PrerunSourceTasksForBenchmark -PrerunLargeOutputTasksForBenchmark
 ```
 
 
@@ -30,7 +30,7 @@ tasks.withType(SourceTask).configureEach {
 
 Then run the specific benchmark scenario like so:
 ``` bash
-./gradlew :app:assembleDebug -PbenchmarkRemoteCache`
+./gradlew :app:assembleDebug -PbenchmarkRemoteCache
 ```
 
 
