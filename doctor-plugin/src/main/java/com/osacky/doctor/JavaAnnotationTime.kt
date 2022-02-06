@@ -1,16 +1,14 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.plusAssign
 import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 import org.gradle.internal.logging.events.operations.LogEventBuildOperationProgressDetails
 
 class JavaAnnotationTime(
     private val operationEvents: OperationEvents,
     private val doctorExtension: DoctorExtension,
-    private val buildscriptConfiguration: ConfigurationContainer
 ) : BuildStartFinishListener, HasBuildScanTag {
     private var totalDaggerTime = 0
 
@@ -31,10 +29,6 @@ class JavaAnnotationTime(
                     totalDaggerTime += "\\d+".toRegex().find(it.message)!!.groups[0]!!.value.toInt()
                 }
             }
-    }
-
-    infix operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
-        add(disposable)
     }
 
     override fun onFinish(): List<String> {

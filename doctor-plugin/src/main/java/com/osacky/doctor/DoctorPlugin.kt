@@ -48,14 +48,15 @@ class DoctorPlugin : Plugin<Project> {
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val buildOperations = getOperationEvents(target, extension)
-        val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension, target.buildscript.configurations)
+        val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
         val jetifierWarning = JetifierWarning(extension, target)
         val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC)
+        val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(buildOperations, target, extension)
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector)
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
@@ -65,8 +66,9 @@ class DoctorPlugin : Plugin<Project> {
         slowerFromCacheCollector.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
-            javaHomeCheck.onStart()
+//            javaHomeCheck.onStart()
             javaElevenGC.onStart()
+            kotlinCompileDaemonFallbackDetector.onStart()
         }
 
         val buildScanApi = ScanApi(target)

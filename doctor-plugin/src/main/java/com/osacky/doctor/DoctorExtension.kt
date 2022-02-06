@@ -70,6 +70,12 @@ open class DoctorExtension(objects: ObjectFactory) {
     val disallowCleanTaskDependencies = objects.property<Boolean>().convention(true)
 
     /**
+     * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
+     * https://youtrack.jetbrains.com/issue/KT-48843
+     */
+    val warnIfKotlinCompileDaemonFallback = objects.property<Boolean>().convention(true)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {
