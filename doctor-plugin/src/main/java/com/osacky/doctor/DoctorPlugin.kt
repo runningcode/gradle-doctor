@@ -66,7 +66,7 @@ class DoctorPlugin : Plugin<Project> {
         slowerFromCacheCollector.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
-//            javaHomeCheck.onStart()
+            javaHomeCheck.onStart()
             javaElevenGC.onStart()
             kotlinCompileDaemonFallbackDetector.onStart()
         }
