@@ -55,7 +55,7 @@ class DoctorPlugin : Plugin<Project> {
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
         val jetifierWarning = JetifierWarning(extension, target)
         val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
-        val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(buildOperations, target, extension)
+        val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target, extension)
         val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector)
 
         garbagePrinter.onStart()

@@ -10,10 +10,10 @@ import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.kotlin.dsl.support.serviceOf
 import java.util.concurrent.atomic.AtomicInteger
 
-class KotlinCompileDaemonFallbackDetector(private val buildOperations: BuildOperations,
-                                          private val project: Project,
-                                          private val extension: DoctorExtension
-                                          ) : BuildStartFinishListener, HasBuildScanTag {
+class KotlinCompileDaemonFallbackDetector(
+    private val project: Project,
+    private val extension: DoctorExtension
+) : BuildStartFinishListener, HasBuildScanTag {
     private val fallbackCounter = AtomicInteger(0)
     private val loggingService = project.gradle.serviceOf<LoggingManagerInternal>()
     private val failureEventListener = FailureEventListener(fallbackCounter)
@@ -30,7 +30,8 @@ class KotlinCompileDaemonFallbackDetector(private val buildOperations: BuildOper
         loggingService.removeOutputEventListener(failureEventListener)
         disposable.dispose()
         if (hasUsedFallback()) {
-            return listOf("""
+            return listOf(
+                """
                 The Kotlin Compiler Daemon failed to connect and likely won't recover on its own.
                 The fallback strategy is incredibly slow and should be avoided.
                 https://youtrack.jetbrains.com/issue/KT-48843
@@ -41,7 +42,8 @@ class KotlinCompileDaemonFallbackDetector(private val buildOperations: BuildOper
                    3. kill <pid>
                    
                 If that didn't help, check that there are no invalid JVM arguments in "kotlin.daemon.jvm.options" property except for Xmx.
-            """.trimIndent())
+                """.trimIndent()
+            )
         }
         return emptyList()
     }
@@ -65,7 +67,6 @@ class KotlinCompileDaemonFallbackDetector(private val buildOperations: BuildOper
     }
 }
 
-
 internal class FailureEventListener(
     private val fallbacksCounter: AtomicInteger,
 ) : OutputEventListener {
@@ -78,7 +79,7 @@ internal class FailureEventListener(
     }
 
     private fun isFallbackMessage(event: OutputEvent): Boolean {
-        return event is LogEvent
-                && event.message.contains("Could not connect to kotlin daemon. Using fallback strategy.")
+        return event is LogEvent &&
+            event.message.contains("Could not connect to kotlin daemon. Using fallback strategy.")
     }
 }

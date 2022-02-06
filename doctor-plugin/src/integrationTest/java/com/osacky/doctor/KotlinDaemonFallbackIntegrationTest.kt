@@ -1,6 +1,5 @@
 package com.osacky.doctor
 
-
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -12,22 +11,28 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         writeSettingsFile()
         testProjectRoot.newFolder("src/main/java/foo")
         testProjectRoot.newFolder("src/test/java/foo")
-        testProjectRoot.writeFileToName("src/main/java/Foo.kt", """
+        testProjectRoot.writeFileToName(
+            "src/main/java/Foo.kt",
+            """
                 package foo
                 class Foo {
                     fun bar() {
                         println("Hello, world!")
                     }
                 }
-            """.trimIndent())
-        testProjectRoot.writeFileToName("src/test/java/Foo.kt", """
+            """.trimIndent()
+        )
+        testProjectRoot.writeFileToName(
+            "src/test/java/Foo.kt",
+            """
                 package foo
                 class Foo {
                     fun bar() {
                         println("Hello, world!")
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         val result = assembleRunnerWithIncorrectDaemonArguments().build()
 
@@ -40,14 +45,17 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         writeKotlinBuildGradle(false)
         writeSettingsFile()
         testProjectRoot.newFolder("src/main/java/foo")
-        testProjectRoot.writeFileToName("src/main/java/foo/Foo.kt", """
+        testProjectRoot.writeFileToName(
+            "src/main/java/foo/Foo.kt",
+            """
                 package foo
                 class Foo {
                     fun bar() {
                         println("Hello, world!")
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         val result = assembleRunnerWithIncorrectDaemonArguments().build()
 
@@ -57,7 +65,8 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
 
     private fun writeSettingsFile() {
         testProjectRoot.writeFileToName(
-            "settings.gradle", """
+            "settings.gradle",
+            """
                                 pluginManagement {
                                   repositories {
                                     mavenCentral()
@@ -69,7 +78,7 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
     }
 
     private fun assembleRunnerWithIncorrectDaemonArguments() = createRunner()
-            .withArguments("check", "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup")
+        .withArguments("check", "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup")
 
     private fun writeKotlinBuildGradle(allowDaemonFallback: Boolean) {
         testProjectRoot.writeBuildGradle(
@@ -87,7 +96,7 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
                     ensureJavaHomeMatches = false
                   }
                 }
-                """.trimIndent()
+            """.trimIndent()
         )
     }
 }
