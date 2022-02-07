@@ -200,8 +200,8 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureMinimumSupportedGradleVersion() {
-        if (GradleVersion.current() < GradleVersion.version("5.2")) {
-            throw GradleException("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
+        if (GradleVersion.current() < GradleVersion.version("6.0")) {
+            throw GradleException("Must be using Gradle Version 6.0 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
         }
     }
 

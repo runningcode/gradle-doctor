@@ -15,7 +15,7 @@ import java.io.File
 
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
-    val agpVersion = "3.5.3"
+    val agpVersion = "4.1.1"
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
@@ -24,7 +24,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         fun getParams(): List<String> {
             // Keep 5.0 as minimum unsupported version and 5.1 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("5.0", "5.2", "5.6.4", "6.0.1", "6.5.1")
+            return listOf("6.0.1", "6.5.1", "7.0", "7.3.3")
         }
     }
 
@@ -69,7 +69,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         )
 
         val result = createRunner().buildAndFail()
-        assertThat(result.output).contains("Must be using Gradle Version 5.2 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
+        assertThat(result.output).contains("Must be using Gradle Version 6.0 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
     }
 
     @Test
@@ -376,6 +376,7 @@ class PluginIntegrationTest constructor(private val version: String) {
     @Test
     fun testFailOnEmptyDirectories() {
         assumeSupportedVersion()
+        assumeEmptyDirectoriesInInput()
         writeBuildGradle(
             """
                     |plugins {
@@ -440,16 +441,20 @@ class PluginIntegrationTest constructor(private val version: String) {
             .withGradleVersion(version)
     }
 
+    private fun assumeEmptyDirectoriesInInput() {
+        Assume.assumeTrue(GradleVersion.version(version) < GradleVersion.version("6.8"))
+    }
+
     private fun assumeCanRunAndroidBuild() {
         Assume.assumeTrue(GradleVersion.version("5.4") < GradleVersion.version(version))
     }
 
     private fun assumeSupportedVersion() {
-        Assume.assumeFalse("5.0" == version)
+        Assume.assumeFalse("5.6.4" == version)
     }
 
     private fun assumeUnsupportedVersion() {
-        Assume.assumeTrue(version == "5.0")
+        Assume.assumeTrue(version == "5.6.4")
     }
 
     private fun writeBuildGradle(build: String) {
