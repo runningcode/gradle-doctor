@@ -1,13 +1,18 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.sysProperty
 import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.internal.logging.events.LogEvent
 import org.gradle.internal.logging.events.OutputEvent
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.util.GradleVersion
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinCompileDaemonFallbackDetector(
@@ -60,11 +65,10 @@ class KotlinCompileDaemonFallbackDetector(
      * Copy of internal logic in GradleKotlinCompilerRunner
      */
     private fun isDaemonDisabled(project: Project): Boolean {
-        val strategy = project.providers.systemProperty("kotlin.compiler.execution.strategy")
-            .forUseAtConfigurationTime()
-            .getOrElse("daemon")
+        val strategy = sysProperty("kotlin.compiler.execution.strategy", project.providers).orElse("daemon")
         return strategy != "daemon" // "in-process", "out-of-process"
     }
+
 }
 
 internal class FailureEventListener(

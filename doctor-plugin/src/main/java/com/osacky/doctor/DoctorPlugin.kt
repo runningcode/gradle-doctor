@@ -157,7 +157,7 @@ class DoctorPlugin : Plugin<Project> {
             pillBoxPrinter.writePrescription(thingsToPrint)
         }
 
-        if (target.gradle.shouldUseCoCaClasses()) {
+        if (shouldUseCoCaClasses()) {
             val closeService =
                 target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
             closeService.closeMeWhenFinished {
@@ -200,8 +200,8 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureMinimumSupportedGradleVersion() {
-        if (GradleVersion.current() < GradleVersion.version("6.0")) {
-            throw GradleException("Must be using Gradle Version 6.0 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
+        if (GradleVersion.current() < GradleVersion.version("6.1.1")) {
+            throw GradleException("Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
         }
     }
 
@@ -213,7 +213,7 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun getOperationEvents(target: Project, extension: DoctorExtension): OperationEvents {
-        return if (target.gradle.shouldUseCoCaClasses()) {
+        return if (shouldUseCoCaClasses()) {
             val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
                 this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
             }

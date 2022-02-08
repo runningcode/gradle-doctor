@@ -40,3 +40,7 @@ Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan P
 * Warn when build spends more than 10% of the time garbage collecting.
 * Warn when connection to maven repositories is slowing down the build.
 * Warn when build cache connection speed is slowing down the build.
+
+## Supported Gradle versions
+The minimum supported Gradle version is 6.1.1.
+If using Gradle 5.x, please use Gradle Doctor version 0.7.3.
