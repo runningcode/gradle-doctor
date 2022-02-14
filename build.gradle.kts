@@ -2,8 +2,8 @@ import com.osacky.doctor.DoctorExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  kotlin("jvm") version "1.6.10"
-  id("com.github.ben-manes.versions") version "0.41.0"
+  alias(libs.plugins.kgp)
+  alias(libs.plugins.versions)
   id("com.osacky.doctor")
 }
 
