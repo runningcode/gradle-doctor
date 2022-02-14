@@ -39,7 +39,6 @@ class TestDaggerTime {
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
-            .withGradleVersion("5.6.4")
             .withArguments("assemble")
             .build()
 
