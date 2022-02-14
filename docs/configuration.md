@@ -104,6 +104,10 @@
        */
       GCWarningThreshold.set(0.10f)
       /**
+       * The level at which to fail when a build spends more than this percent garbage collecting.
+       */
+      GCFailThreshold = 0.9f
+      /**
        * Print a warning to the console if we spend more than this amount of time with Dagger annotation processors.
        */
       daggerThreshold.set(5000)
