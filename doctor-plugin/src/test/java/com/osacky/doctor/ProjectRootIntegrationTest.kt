@@ -20,7 +20,7 @@ class ProjectRootIntegrationTest {
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
-            .withGradleVersion("5.6")
+            .withGradleVersion("6.1.1")
             .withArguments("assemble")
             .buildAndFail()
 

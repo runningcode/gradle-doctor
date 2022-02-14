@@ -2,7 +2,9 @@
 
 ## Unreleased
 
+## 0.8.0
 * [Skip multiple daemons check on non-Unix machines, not supported yet](https://github.com/runningcode/gradle-doctor/issues/84)
+* [Detect Kotlin Compiler Daemon failing to connect.](https://github.com/runningcode/gradle-doctor/issues/194)
 
 ## 0.7.3
 * Fix [compatiblity with Java 8.](https://github.com/runningcode/gradle-doctor/issues/171)

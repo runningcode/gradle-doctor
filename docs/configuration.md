@@ -60,6 +60,11 @@
        * http://github.com/gradle/gradle/issues/2488
        */
       disallowCleanTaskDependencies = true
+      /**
+       * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
+       * https://youtrack.jetbrains.com/issue/KT-48843
+       */
+       warnIfKotlinCompileDaemonFallback = true
 
 
       /** Configuration properties relating to JAVA_HOME */
@@ -140,6 +145,11 @@
         * http://github.com/gradle/gradle/issues/2488
         */
        disallowCleanTaskDependencies.set(true)
+       /**
+        * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
+        * https://youtrack.jetbrains.com/issue/KT-48843
+        */
+        warnIfKotlinCompileDaemonFallback.set(true)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {

@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.6.10"
     id("com.gradle.plugin-publish") version "0.16.0"
     id("org.jmailen.kotlinter") version "3.3.0"
     `maven-publish`
@@ -26,14 +26,14 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
     implementation("com.osacky.tagger:tagger-lib:0.2")
-    implementation("io.reactivex.rxjava3:rxjava:3.0.2")
+    implementation("io.reactivex.rxjava3:rxjava:3.1.3")
     "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
     testFixturesApi("junit:junit:4.13.2")
-    testFixturesApi("com.google.truth:truth:1.0.1")
+    testFixturesApi("com.google.truth:truth:1.1.3")
     testFixturesApi("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
 }
 
