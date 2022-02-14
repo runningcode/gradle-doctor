@@ -82,6 +82,7 @@ class TestIntegrationTest {
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
             .withArguments("clean")
+            .withGradleVersion("7.3.3")
             .buildAndFail()
 
         assertThat(result.output).contains(
@@ -101,6 +102,19 @@ class TestIntegrationTest {
         val result = GradleRunner.create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
+            .withArguments("clean")
+            .build()
+
+        assertThat(result.output).contains("BUILD SUCCESSFUL")
+    }
+
+    @Test
+    fun cleanDependency74Succeeds() {
+        projectWithCleanDependency(disallowCleanTaskDependencies = true)
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectRoot.root)
+            .withPluginClasspath()
+            .withGradleVersion("7.4")
             .withArguments("clean")
             .build()
 
