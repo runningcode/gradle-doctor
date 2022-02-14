@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13")
+    testImplementation(libs.junit)
 }
 
 com.osacky.tagger.ScanApi(project).tag("test-tag")
