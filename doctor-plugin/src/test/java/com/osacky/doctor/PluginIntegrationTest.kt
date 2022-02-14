@@ -5,6 +5,8 @@ import com.osacky.doctor.internal.androidHome
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.junit.Assume
+import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -22,9 +24,9 @@ class PluginIntegrationTest constructor(private val version: String) {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun getParams(): List<String> {
-            // Keep 5.0 as minimum unsupported version and 5.1 as minimum supported version.
+            // Keep 6.0 as minimum unsupported version and 6.1 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("6.0.1", "6.1.1", "6.5.1", "7.0", "7.3.3")
+            return listOf("6.0.1", "6.1.1", "6.5.1", "7.0", "7.3.3", "7.4")
         }
     }
 
@@ -429,6 +431,72 @@ class PluginIntegrationTest constructor(private val version: String) {
 
         val result = createRunner()
             .withArguments("assemble")
+            .build()
+
+        assertThat(result.output).contains("SUCCESS")
+    }
+
+    @Test
+    fun cleanDependencyFailsBuild() {
+        assumeSupportedVersion()
+        assumeTrue(GradleVersion.version(version) < GradleVersion.version("7.4"))
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |  id 'base'
+                    |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |  javaHome {
+                    |    ensureJavaHomeIsSet = false
+                    |    ensureJavaHomeMatches = false
+                    |  }
+                    |  failOnEmptyDirectories = true
+                    |  warnWhenNotUsingParallelGC = false
+                    |}
+                    |task foo
+                    |tasks.withType(Delete).configureEach {
+                    |  dependsOn foo
+                    |}
+                """.trimMargin("|")
+        )
+
+        val result = createRunner()
+            .withArguments("clean")
+            .buildAndFail()
+
+        assertThat(result.output).contains("Adding dependencies to the clean task could cause unexpected build outcomes.")
+    }
+
+    @Test
+    fun cleanDependencySucceedsInGradle74Plus() {
+        assumeSupportedVersion()
+        assumeTrue(GradleVersion.version(version) >= GradleVersion.version("7.4"))
+        writeBuildGradle(
+            """
+                    |plugins {
+                    |  id "com.osacky.doctor"
+                    |  id 'base'
+                    |}
+                    |doctor {
+                    |  disallowMultipleDaemons = false
+                    |  javaHome {
+                    |    ensureJavaHomeIsSet = false
+                    |    ensureJavaHomeMatches = false
+                    |  }
+                    |  failOnEmptyDirectories = true
+                    |  warnWhenNotUsingParallelGC = false
+                    |}
+                    |task foo
+                    |tasks.withType(Delete).configureEach {
+                    |  dependsOn foo
+                    |}
+                """.trimMargin("|")
+        )
+
+        val result = createRunner()
+            .withArguments("clean")
             .build()
 
         assertThat(result.output).contains("SUCCESS")

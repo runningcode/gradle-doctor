@@ -172,6 +172,10 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureNoCleanTaskDependenciesIfNeeded(target: Project, extension: DoctorExtension, pillBoxPrinter: PillBoxPrinter) {
+        if (GradleVersion.current() >= GradleVersion.version("7.4")) {
+            // Gradle 7.4 has a fix for 2488 and 10889
+            return
+        }
         target.allprojects {
             // We use afterEvaluate in case other plugins configure the Delete task. We want our configuration to happen last.
             afterEvaluate {
