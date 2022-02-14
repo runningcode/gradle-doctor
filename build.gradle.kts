@@ -14,7 +14,7 @@ configure<DoctorExtension> {
   downloadSpeedWarningThreshold.set(2.0f)
   daggerThreshold.set(100)
   javaHome {
-    ensureJavaHomeMatches.set(!providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent)
+    ensureJavaHomeMatches.set(!providers.environmentVariable("CI").isPresent)
   }
 }
 
@@ -25,7 +25,7 @@ tasks.withType(Test::class.java).configureEach {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.3.3"
+  gradleVersion = "7.4"
 }
 
 buildScan {

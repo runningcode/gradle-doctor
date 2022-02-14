@@ -6,6 +6,7 @@
 * [Skip multiple daemons check on non-Unix machines, not supported yet](https://github.com/runningcode/gradle-doctor/issues/84)
 * [Detect Kotlin Compiler Daemon failing to connect.](https://github.com/runningcode/gradle-doctor/issues/194)
 * [Support fail threshold for high GC usage](https://github.com/runningcode/gradle-doctor/issues/183)
+* [Clean check is disabled in Gradle 7.4+, fixes compatibility with project isolation](https://github.com/runningcode/gradle-doctor/issues/180)
 
 ## 0.7.3
 * Fix [compatiblity with Java 8.](https://github.com/runningcode/gradle-doctor/issues/171)
