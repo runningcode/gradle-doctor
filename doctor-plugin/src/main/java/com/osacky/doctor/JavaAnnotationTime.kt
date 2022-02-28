@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.LONG_DAGGER
 import com.osacky.doctor.internal.plusAssign
 import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -40,6 +41,6 @@ class JavaAnnotationTime(
     }
 
     override fun addCustomValues(buildScanApi: ScanApi) {
-        buildScanApi.tag("doctor-long-dagger-time")
+        buildScanApi.tag(LONG_DAGGER)
     }
 }

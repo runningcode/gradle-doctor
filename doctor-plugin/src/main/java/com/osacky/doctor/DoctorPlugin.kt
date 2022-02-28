@@ -3,6 +3,7 @@ package com.osacky.doctor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonChecker
 import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.FRESH_DAEMON
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
@@ -11,6 +12,7 @@ import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
 import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
 import com.osacky.tagger.ScanApi
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,6 +27,7 @@ import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
+import org.gradle.launcher.daemon.server.scaninfo.DaemonScanInfo
 import org.gradle.nativeplatform.platform.OperatingSystem
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.util.GradleVersion
@@ -73,6 +76,8 @@ class DoctorPlugin : Plugin<Project> {
 
         val buildScanApi = ScanApi(target)
         registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations, buildScanApi)
+
+        tagFreshDaemon(target, buildScanApi)
 
         val appPluginProjects = mutableSetOf<Project>()
 
@@ -135,6 +140,14 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
+    private fun tagFreshDaemon(target: Project, buildScanApi: ScanApi) {
+        ((target.gradle as GradleInternal).services.find(DaemonScanInfo::class.java) as DaemonScanInfo?)?.let {
+            if (it.numberOfBuilds == 1) {
+                buildScanApi.tag(FRESH_DAEMON)
+            }
+        }
+    }
+
     private fun registerBuildFinishActions(
         list: List<BuildStartFinishListener>,
         pillBoxPrinter: PillBoxPrinter,
@@ -142,30 +155,17 @@ class DoctorPlugin : Plugin<Project> {
         buildOperations: OperationEvents,
         buildScanApi: ScanApi
     ) {
-        val runnable = Runnable {
-            val thingsToPrint: List<String> = list.flatMap {
-                val messages = it.onFinish()
-                if (messages.isNotEmpty() && it is HasBuildScanTag) {
-                    it.addCustomValues(buildScanApi)
-                }
-                messages
-            }
-            if (thingsToPrint.isEmpty()) {
-                return@Runnable
-            }
-
-            pillBoxPrinter.writePrescription(thingsToPrint)
-        }
+        val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
 
         if (shouldUseCoCaClasses()) {
             val closeService =
                 target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
             closeService.closeMeWhenFinished {
-                runnable.run()
+                runnable.execute(list)
             }
         } else {
             target.gradle.buildFinished {
-                runnable.run()
+                runnable.execute(list)
                 target.gradle.buildOperationListenerManager.removeListener(buildOperations as BuildOperationListener)
             }
         }
@@ -240,4 +240,22 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
+
+    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: ScanApi) : Action<List<BuildStartFinishListener>> {
+
+        override fun execute(list: List<BuildStartFinishListener>) {
+            val thingsToPrint: List<String> = list.flatMap {
+                val messages = it.onFinish()
+                if (messages.isNotEmpty() && it is HasBuildScanTag) {
+                    it.addCustomValues(buildScanApi)
+                }
+                messages
+            }
+            if (thingsToPrint.isEmpty()) {
+                return
+            }
+
+            pillBoxPrinter.writePrescription(thingsToPrint)
+        }
+    }
 }

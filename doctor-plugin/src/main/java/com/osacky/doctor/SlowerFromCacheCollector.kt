@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.NEGATIVE_SAVINGS
 import com.osacky.tagger.ScanApi
 import org.gradle.api.internal.tasks.execution.ExecuteTaskBuildOperationType
 import org.gradle.api.provider.Provider
@@ -42,7 +43,7 @@ class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<
     }
 
     override fun addCustomValues(buildScanApi: ScanApi) {
-        buildScanApi.tag("doctor-negative-savings")
+        buildScanApi.tag(NEGATIVE_SAVINGS)
         buildScanApi.value("doctor-negative-savings-tasks", longerTaskList.joinToString(separator = "\n"))
     }
 }
