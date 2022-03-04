@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.KOTLIN_COMPILE_DAEMON_FALLBACK
 import com.osacky.doctor.internal.sysProperty
 import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -51,7 +52,7 @@ class KotlinCompileDaemonFallbackDetector(
 
     override fun addCustomValues(buildScanApi: ScanApi) {
         if (hasUsedFallback()) {
-            buildScanApi.tag("doctor-kotlin-compile-daemon-fallback")
+            buildScanApi.tag(KOTLIN_COMPILE_DAEMON_FALLBACK)
         }
     }
 

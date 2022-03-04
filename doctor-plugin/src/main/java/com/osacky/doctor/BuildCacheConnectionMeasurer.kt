@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.BuildCacheConnectionMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.IntervalMeasurer
+import com.osacky.doctor.internal.SLOW_CACHE_CONNECTION
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
 import com.osacky.tagger.ScanApi
@@ -75,6 +76,6 @@ class BuildCacheConnectionMeasurer(
     }
 
     override fun addCustomValues(buildScanApi: ScanApi) {
-        buildScanApi.tag("doctor-slow-build-cache-connection")
+        buildScanApi.tag(SLOW_CACHE_CONNECTION)
     }
 }

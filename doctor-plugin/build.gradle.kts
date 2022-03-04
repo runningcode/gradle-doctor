@@ -179,3 +179,12 @@ java {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
+
+// Ensure Java 8 Compatibility
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+    }
+}
