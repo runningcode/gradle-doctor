@@ -46,7 +46,7 @@ class DoctorPlugin : Plugin<Project> {
         val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
         val clock: Clock = SystemClock()
         val intervalMeasurer = IntervalMeasurer()
-        val pillBoxPrinter = PillBoxPrinter(target.logger)
+        val pillBoxPrinter = PillBoxPrinter(target.logger, target.displayName)
         val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)

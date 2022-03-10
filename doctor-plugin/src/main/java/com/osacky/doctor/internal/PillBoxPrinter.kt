@@ -5,7 +5,7 @@ import org.gradle.api.logging.Logger
 /**
  * Prints strings inside a nicely fitted pill box.
  */
-class PillBoxPrinter(private val logger: Logger) {
+class PillBoxPrinter(private val logger: Logger, private val projectDisplayName: String) {
 
     private val messageLength = 100
     private val title = "Gradle Doctor Prescriptions"
@@ -22,7 +22,8 @@ class PillBoxPrinter(private val logger: Logger) {
     }
 
     private fun createTitle(lineLength: Int): String {
-        return " $title ".padStart(lineLength / 2 + 10, '=').padEnd(lineLength + 4, '=')
+        val text = " $title for project $projectDisplayName "
+        return "$text".padStart(lineLength / 2 + text.length / 2, '=').padEnd(lineLength + 4, '=')
     }
 
     private fun createEnding(lineLength: Int): String {
