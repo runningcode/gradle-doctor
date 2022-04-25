@@ -98,6 +98,8 @@
     doctor {
       /**
        * Throw an exception when multiple Gradle Daemons are running.
+       * 
+       * Windows is not supported yet, see https://github.com/runningcode/gradle-doctor/issues/84
        */
       disallowMultipleDaemons.set(false)
       /**
