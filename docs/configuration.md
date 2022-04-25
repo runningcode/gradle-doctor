@@ -68,7 +68,7 @@
        * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
        * https://youtrack.jetbrains.com/issue/KT-48843
        */
-       warnIfKotlinCompileDaemonFallback = true
+      warnIfKotlinCompileDaemonFallback = true
 
 
       /** Configuration properties relating to JAVA_HOME */
@@ -157,7 +157,7 @@
         * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
         * https://youtrack.jetbrains.com/issue/KT-48843
         */
-        warnIfKotlinCompileDaemonFallback.set(true)
+       warnIfKotlinCompileDaemonFallback.set(true)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {
