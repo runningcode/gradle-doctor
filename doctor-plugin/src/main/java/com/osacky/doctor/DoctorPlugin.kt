@@ -110,7 +110,6 @@ class DoctorPlugin : Plugin<Project> {
                 if (this.javaClass.name == "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin") {
                     if (VersionNumber.parse(this@project.getKotlinPluginVersion()!!).baseVersion >= VersionNumber.parse("1.3.50")) {
                         val kapt3Extension = this@project.extensions.findByType(KaptExtension::class.java)!!
-                        kapt3Extension.showProcessorTimings = true
                     }
                 }
             }
