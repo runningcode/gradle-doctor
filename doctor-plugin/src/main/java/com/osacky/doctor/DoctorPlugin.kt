@@ -31,9 +31,6 @@ import org.gradle.launcher.daemon.server.scaninfo.DaemonScanInfo
 import org.gradle.nativeplatform.platform.OperatingSystem
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.util.GradleVersion
-import org.gradle.util.VersionNumber
-import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 class DoctorPlugin : Plugin<Project> {
 
@@ -106,11 +103,6 @@ class DoctorPlugin : Plugin<Project> {
             plugins.whenPluginAdded plugin@{
                 if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
                     appPluginProjects.add(this@project)
-                }
-                if (this.javaClass.name == "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin") {
-                    if (VersionNumber.parse(this@project.getKotlinPluginVersion()!!).baseVersion >= VersionNumber.parse("1.3.50")) {
-                        val kapt3Extension = this@project.extensions.findByType(KaptExtension::class.java)!!
-                    }
                 }
             }
         }
