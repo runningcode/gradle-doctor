@@ -5,7 +5,6 @@ import com.osacky.doctor.internal.plusAssign
 import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
-import org.gradle.internal.logging.events.operations.LogEventBuildOperationProgressDetails
 
 class JavaAnnotationTime(
     private val operationEvents: OperationEvents,
@@ -22,13 +21,6 @@ class JavaAnnotationTime(
             .map { detailsList -> detailsList.filter { it.className.contains("dagger") }.sumBy { it.executionTimeInMillis.toInt() } }
             .subscribe {
                 totalDaggerTime += it
-            }
-
-        disposable += operationEvents.progressDetailsOfType(LogEventBuildOperationProgressDetails::class.java)
-            .subscribe {
-                if (it.message.contains("kapt") && it.message.contains("dagger")) {
-                    totalDaggerTime += "\\d+".toRegex().find(it.message)!!.groups[0]!!.value.toInt()
-                }
             }
     }
 
