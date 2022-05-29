@@ -1,5 +1,5 @@
 [versions]
-kotlin = "1.6.10"
+kotlin = "1.6.21"
 junit = "4.13.2"
 
 [libraries]
@@ -12,6 +12,6 @@ mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-versions = { id = "com.github.ben-manes.versions", version = "0.41.0" }
+versions = { id = "com.github.ben-manes.versions", version = "0.42.0" }
 kotlinter = { id = "org.jmailen.kotlinter", version = "3.3.0" }
 plugin-publish = { id = "com.gradle.plugin-publish", version = "0.20.0" }
