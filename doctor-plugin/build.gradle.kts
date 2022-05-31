@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.osacky.doctor"
-version = "0.8.1-SNAPSHOT"
+version = "0.8.1"
 
 repositories {
     mavenCentral()
@@ -40,7 +40,7 @@ dependencies {
 pluginBundle {
     website = "https://github.com/runningcode/gradle-doctor"
     vcsUrl = "https://github.com/runningcode/gradle-doctor"
-    tags = listOf("doctor", "android", "gradle")
+    tags = listOf("doctor", "android")
 
     mavenCoordinates {
         artifactId = "doctor-plugin"
