@@ -40,7 +40,7 @@ dependencies {
 pluginBundle {
     website = "https://github.com/runningcode/gradle-doctor"
     vcsUrl = "https://github.com/runningcode/gradle-doctor"
-    tags = listOf("doctor", "android", "gradle")
+    tags = listOf("doctor", "android")
 
     mavenCoordinates {
         artifactId = "doctor-plugin"
