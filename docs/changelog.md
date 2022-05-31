@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 0.8.1
 * [Fix compatibility with KGP 1.7.0](https://github.com/runningcode/gradle-doctor/issues/208) Thanks [ZacSweers](https://github.com/ZacSweers)
 
 ## 0.8.0
