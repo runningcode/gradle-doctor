@@ -1,18 +1,13 @@
 package com.osacky.doctor.internal
 
-import java.io.InputStream
+import org.gradle.api.Project
 
-class CliCommandExecutor {
+class CliCommandExecutor(private val project: Project) {
 
+    @Suppress("UnstableApiUsage")
     fun execute(command: Array<String>): String {
-        val process = Runtime.getRuntime().exec(command)
-        if (process.waitFor() != 0) {
-            throw RuntimeException(process.errorStream.readToString())
-        }
-        return process.inputStream.readToString()
-    }
-
-    private fun InputStream.readToString() = use {
-        it.readBytes().toString(Charsets.UTF_8).trim()
+        return project.providers.exec {
+            commandLine(*command)
+        }.standardOutput.asText.get().trim()
     }
 }
