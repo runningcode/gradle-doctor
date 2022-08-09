@@ -1,6 +1,17 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.*
+import com.osacky.doctor.internal.CliCommandExecutor
+import com.osacky.doctor.internal.Clock
+import com.osacky.doctor.internal.DaemonChecker
+import com.osacky.doctor.internal.DirtyBeanCollector
+import com.osacky.doctor.internal.FRESH_DAEMON
+import com.osacky.doctor.internal.IntervalMeasurer
+import com.osacky.doctor.internal.PillBoxPrinter
+import com.osacky.doctor.internal.SystemClock
+import com.osacky.doctor.internal.UnixDaemonChecker
+import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
+import com.osacky.doctor.internal.farthestEmptyParent
+import com.osacky.doctor.internal.shouldUseCoCaClasses
 import com.osacky.tagger.ScanApi
 import org.gradle.api.Action
 import org.gradle.api.GradleException

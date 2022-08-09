@@ -1,6 +1,10 @@
 package com.osacky.doctor
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import com.osacky.doctor.internal.CliCommandExecutor
 import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
