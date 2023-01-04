@@ -67,9 +67,11 @@ class JavaHomeCheck(
     private fun isGradleUsingJavaHome(): Boolean {
         // Follow symlinks when checking that java home matches.
         if (environmentJavaHome != null) {
-            val gradleJavaHomeBin = gradleJavaHome.toPath().toRealPath().resolve("bin")
-            val environmentJavaHomeBin = File(environmentJavaHome).toPath().resolve("bin").toRealPath()
-            return gradleJavaHomeBin == environmentJavaHomeBin
+            val gradleJavaHomePath = gradleJavaHome.toPath()
+            val environmentJavaHomePath = File(environmentJavaHome).toPath()
+            if (gradleJavaHomePath.toRealPath() != environmentJavaHomePath.toRealPath()) {
+                return gradleJavaHomePath.toRealPath().resolve("bin") == environmentJavaHomePath.resolve("bin").toRealPath()
+            }
         }
         return false
     }
