@@ -26,7 +26,7 @@ class PluginIntegrationTest constructor(private val version: String) {
         fun getParams(): List<String> {
             // Keep 6.0 as minimum unsupported version and 6.1 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("6.0.1", "6.1.1", "6.5.1", "7.0", "7.3.3", "7.4", "7.5.1")
+            return listOf("6.0.1", "6.5.1", "7.0", "7.4", "7.5.1")
         }
     }
 
