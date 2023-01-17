@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.CliCommandExecutor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonChecker
 import com.osacky.doctor.internal.DirtyBeanCollector
@@ -41,11 +42,13 @@ class DoctorPlugin : Plugin<Project> {
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
         val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
+        val cliCommandExecutor = CliCommandExecutor(target)
         val clock: Clock = SystemClock()
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
-        val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os), pillBoxPrinter)
+        val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
+        val appleRosettaTranslationCheck = AppleRosettaTranslationCheck(os, cliCommandExecutor, pillBoxPrinter)
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val buildOperations = getOperationEvents(target, extension)
         val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension)
@@ -64,6 +67,7 @@ class DoctorPlugin : Plugin<Project> {
         buildCacheConnectionMeasurer.onStart()
         buildCacheKey.onStart()
         slowerFromCacheCollector.onStart()
+        appleRosettaTranslationCheck.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
@@ -200,9 +204,12 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
-    private fun createDaemonChecker(operatingSystem: OperatingSystem): DaemonChecker {
+    private fun createDaemonChecker(
+        operatingSystem: OperatingSystem,
+        cliCommandExecutor: CliCommandExecutor
+    ): DaemonChecker {
         return when {
-            operatingSystem.isLinux || operatingSystem.isMacOsX -> UnixDaemonChecker()
+            operatingSystem.isLinux || operatingSystem.isMacOsX -> UnixDaemonChecker(cliCommandExecutor)
             else -> UnsupportedOsDaemonChecker
         }
     }
