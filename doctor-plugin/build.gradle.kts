@@ -51,14 +51,9 @@ gradlePlugin {
     }
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
-tasks.register<Jar>("javadocJar") {
-    from(tasks.javadoc)
-    archiveClassifier.set("javadoc")
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 val isReleaseBuild : Boolean = !version.toString().endsWith("SNAPSHOT")
@@ -83,8 +78,6 @@ publishing {
     publications {
         afterEvaluate {
             named<MavenPublication>("pluginMaven") {
-                artifact(tasks["sourcesJar"])
-                artifact(tasks["javadocJar"])
                 pom.configureForDoctor("Gradle Doctor")
             }
             named<MavenPublication>("doctor-pluginPluginMarkerMaven") {
