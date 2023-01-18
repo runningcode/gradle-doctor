@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise").version("3.10.1")
+  id("com.gradle.enterprise").version("3.12.2")
 }
 
 include("simple")

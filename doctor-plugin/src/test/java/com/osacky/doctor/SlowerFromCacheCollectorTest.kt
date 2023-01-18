@@ -62,6 +62,10 @@ internal class SlowerFromCacheCollectorTest {
             throw NotImplementedError()
         }
 
+        override fun getSkipReasonMessage(): String? {
+            throw NotImplementedError()
+        }
+
         override fun isActionable(): Boolean {
             throw NotImplementedError()
         }
