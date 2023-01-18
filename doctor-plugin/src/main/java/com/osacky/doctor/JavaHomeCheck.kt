@@ -42,8 +42,8 @@ class JavaHomeCheck(
         if (extension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
             val message = buildString {
                 appendln("Gradle is not using JAVA_HOME.")
-                appendln("JAVA_HOME is ${environmentJavaHome?.toFile()?.toPath()?.toAbsolutePath()}")
-                appendln("Gradle is using ${gradleJavaHome.toPath().toAbsolutePath()}")
+                appendln("JAVA_HOME is ${environmentJavaHome?.toFile()?.toPath()?.toRealPath()}")
+                appendln("Gradle is using ${gradleJavaHome.toPath().toRealPath()}")
                 appendln("This can slow down your build significantly when switching from Android Studio to the terminal.")
                 appendln("To fix: Project Structure -> JDK Location.")
                 appendln("Set this to your JAVA_HOME.")
@@ -66,8 +66,12 @@ class JavaHomeCheck(
 
     private fun isGradleUsingJavaHome(): Boolean {
         // Follow symlinks when checking that java home matches.
-        if (environmentJavaHome != null && gradleJavaHome.toPath().toRealPath() == File(environmentJavaHome).toPath().toRealPath()) {
-            return true
+        if (environmentJavaHome != null) {
+            val gradleJavaHomePath = gradleJavaHome.toPath()
+            val environmentJavaHomePath = File(environmentJavaHome).toPath()
+            if (gradleJavaHomePath.toRealPath() != environmentJavaHomePath.toRealPath()) {
+                return gradleJavaHomePath.toRealPath().resolve("bin") == environmentJavaHomePath.resolve("bin").toRealPath()
+            }
         }
         return false
     }
