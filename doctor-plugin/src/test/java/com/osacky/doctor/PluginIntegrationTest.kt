@@ -18,6 +18,7 @@ import java.io.File
 @RunWith(Parameterized::class)
 class PluginIntegrationTest constructor(private val version: String) {
     val agpVersion = "4.0.1"
+
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
@@ -107,7 +108,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  |   disallowMultipleDaemons = false                                                                    |
                     |  | }                                                                                                    |
                     |  ========================================================================================================
-                    """.trimMargin()
+                """.trimMargin()
             )
     }
 
@@ -245,7 +246,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """
             include 'app-one'
             include 'app-two'
-        """.trimMargin()
+            """.trimMargin()
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -289,7 +290,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                || tire project?                                                                                        |
                || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
                |========================================================================================================
-               """.trimMargin()
+            """.trimMargin()
         )
     }
 
@@ -327,7 +328,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """
             include 'app-one'
             include 'app-two'
-        """.trimMargin()
+            """.trimMargin()
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -371,7 +372,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                || tire project?                                                                                        |
                || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
                |========================================================================================================
-               """.trimMargin()
+            """.trimMargin()
         )
     }
 

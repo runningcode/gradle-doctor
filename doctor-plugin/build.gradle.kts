@@ -59,10 +59,6 @@ gradlePlugin {
     }
 }
 
-kotlinter {
-  indentSize = 4
-}
-
 tasks.register<Jar>("sourcesJar") {
     from(sourceSets.main.get().allSource)
     archiveClassifier.set("sources")

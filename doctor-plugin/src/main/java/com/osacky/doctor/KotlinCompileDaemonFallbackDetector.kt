@@ -68,7 +68,7 @@ class KotlinCompileDaemonFallbackDetector(
 }
 
 internal class FailureEventListener(
-    private val fallbacksCounter: AtomicInteger,
+    private val fallbacksCounter: AtomicInteger
 ) : OutputEventListener {
 
     override fun onOutput(event: OutputEvent) {
