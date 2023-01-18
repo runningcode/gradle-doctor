@@ -159,6 +159,10 @@ java {
     }
 }
 
+tasks.withType<Sign>().configureEach {
+    notCompatibleWithConfigurationCache("$name task does not support configuration caching")
+}
+
 // Ensure Java 8 Compatibility
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
     kotlinOptions {
