@@ -13,12 +13,11 @@ internal class PillBoxPrinterTest {
 
     @Test
     fun printSingleMessage() {
-
         val message =
             """
             |This is the message.
             |This is the second line.
-        """.trimMargin()
+            """.trimMargin()
 
         underTest.writePrescription(listOf(message))
         logger.inOrder {
@@ -27,7 +26,7 @@ internal class PillBoxPrinterTest {
                 """
                                 || This is the message.                                                                                 |
                                 || This is the second line.                                                                             |
-                          """.trimMargin()
+                """.trimMargin()
             )
             verify().warn("========================================================================================================")
         }
@@ -35,19 +34,18 @@ internal class PillBoxPrinterTest {
 
     @Test
     fun printMultipleMessages() {
-
         val messageOne =
             """
             |This is the message.
             |This is the second line.
-        """.trimMargin()
+            """.trimMargin()
 
         val messageTwo =
             """
             |This is the message with a really long line that is really really really long and it's odd that the sentence keeps going without saying anything
             |
             |Just another message
-        """.trimMargin()
+            """.trimMargin()
         underTest.writePrescription(listOf(messageOne, messageTwo))
         logger.inOrder {
             verify().warn("=============================== Gradle Doctor Prescriptions ============================================")
@@ -55,7 +53,7 @@ internal class PillBoxPrinterTest {
                 """
                                 || This is the message.                                                                                 |
                                 || This is the second line.                                                                             |
-        """.trimMargin()
+                """.trimMargin()
             )
             verify().warn("========================================================================================================")
             verify().warn(
@@ -64,7 +62,7 @@ internal class PillBoxPrinterTest {
                                 || sentence keeps going without saying anything                                                         |
                                 ||                                                                                                      |
                                 || Just another message                                                                                 |
-        """.trimMargin()
+                """.trimMargin()
             )
             verify().warn("========================================================================================================")
         }
@@ -75,7 +73,7 @@ internal class PillBoxPrinterTest {
         val longMessage =
             """
             |This is a really long message that will overflow from one line on to the other and looks really bad if we don't do anything about it and its also not such a well structured sentence but more of a run on.
-        """.trimMargin()
+            """.trimMargin()
         underTest.writePrescription(listOf(longMessage))
         logger.inOrder {
             verify().warn("=============================== Gradle Doctor Prescriptions ============================================")
@@ -84,7 +82,7 @@ internal class PillBoxPrinterTest {
                                 || This is a really long message that will overflow from one line on to the other and looks really bad  |
                                 || if we don't do anything about it and its also not such a well structured sentence but more of a run  |
                                 || on.                                                                                                  |
-            """.trimMargin()
+                """.trimMargin()
             )
             verify().warn("========================================================================================================")
         }

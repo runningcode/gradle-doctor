@@ -35,7 +35,6 @@ class DownloadSpeedMeasurer(
         disposable.dispose()
 
         synchronized(downloadEvents) {
-
             val totalBytes = downloadEvents.sumBy { event -> event.byteTotal.toInt() }
             val totalTime = intervalMeasurer.findTotalTime(downloadEvents.map { it.start to it.end })
 

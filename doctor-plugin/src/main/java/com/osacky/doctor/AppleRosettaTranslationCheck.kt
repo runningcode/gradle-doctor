@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.com.google.common.annotations.VisibleForTesting
 class AppleRosettaTranslationCheck(
     private val os: OperatingSystem,
     private val cliCommandExecutor: CliCommandExecutor,
-    private val pillBoxPrinter: PillBoxPrinter,
+    private val pillBoxPrinter: PillBoxPrinter
 ) : BuildStartFinishListener {
 
     @VisibleForTesting

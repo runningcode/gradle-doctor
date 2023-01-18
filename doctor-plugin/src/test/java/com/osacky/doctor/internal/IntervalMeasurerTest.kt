@@ -27,6 +27,7 @@ internal class IntervalMeasurerTest {
 
         assertThat(totalTime).isEqualTo(4)
     }
+
     @Test
     fun testNonOverlappingIntervals() {
         val totalTime = underTest.findTotalTime(listOf((0L to 1L), (0L to 1L), (4L to 6L)))
