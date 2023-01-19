@@ -37,36 +37,23 @@ dependencies {
     testFixturesApi(libs.mockito)
 }
 
-pluginBundle {
-    website = "https://github.com/runningcode/gradle-doctor"
-    vcsUrl = "https://github.com/runningcode/gradle-doctor"
-    tags = listOf("doctor", "android")
-
-    mavenCoordinates {
-        artifactId = "doctor-plugin"
-        groupId = project.group.toString()
-    }
-}
-
 gradlePlugin {
+    website.set("https://github.com/runningcode/gradle-doctor")
+    vcsUrl.set("https://github.com/runningcode/gradle-doctor")
     plugins {
         create("doctor-plugin") {
             id = "com.osacky.doctor"
             displayName = "Doctor Plugin"
             description = "The right prescription for your gradle build."
+            tags.addAll(listOf("doctor", "android"))
             implementationClass = "com.osacky.doctor.DoctorPlugin"
         }
     }
 }
 
-tasks.register<Jar>("sourcesJar") {
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
-tasks.register<Jar>("javadocJar") {
-    from(tasks.javadoc)
-    archiveClassifier.set("javadoc")
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 val isReleaseBuild : Boolean = !version.toString().endsWith("SNAPSHOT")
@@ -91,13 +78,9 @@ publishing {
     publications {
         afterEvaluate {
             named<MavenPublication>("pluginMaven") {
-                signing.sign(this)
-                artifact(tasks["sourcesJar"])
-                artifact(tasks["javadocJar"])
                 pom.configureForDoctor("Gradle Doctor")
             }
             named<MavenPublication>("doctor-pluginPluginMarkerMaven") {
-                signing.sign(this)
                 pom.configureForDoctor("Gradle Doctor")
             }
         }
@@ -174,6 +157,10 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
+}
+
+tasks.withType<Sign>().configureEach {
+    notCompatibleWithConfigurationCache("$name task does not support configuration caching")
 }
 
 // Ensure Java 8 Compatibility
