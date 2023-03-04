@@ -28,12 +28,6 @@ tasks.wrapper {
   gradleVersion = "8.0.2"
 }
 
-buildScan {
-  termsOfServiceUrl = "https://gradle.com/terms-of-service"
-  termsOfServiceAgree = "yes"
-  publishAlways()
-}
-
 tasks.register("pluginTasks").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":tasks"))
 }
