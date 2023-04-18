@@ -66,9 +66,9 @@ open class DoctorExtension(objects: ObjectFactory) {
     val negativeAvoidanceThreshold = objects.property<Int>().convention(500)
 
     /**
-     * Warn when not using parallel GC.
+     * Fail when the optimal GC/Java version is not selected (Parallel for 9-16, G1 for 17+).
      */
-    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(true)
+    val failWhenNotUsingOptimalGC = objects.property<Boolean>().convention(true)
 
     /**
      * Throws an error when the `Delete` or `clean` task has dependencies.

@@ -53,9 +53,11 @@
         */
       negativeAvoidanceThreshold = 500
       /**
-       * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
+       * Certain combinations of Java versions and their default GC are faster than others.
+       * For Java versions 9-16, the default is G1GC, but Parallel GC is faster.
+       * For Java versions 17+, G1GC is faster.
        */
-      warnWhenNotUsingParallelGC = true
+      failWhenNotUsingOptimalGC = true
       /**
        * Throws an error when the `Delete` or `clean` task has dependencies.
        * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
@@ -146,7 +148,7 @@
        /**
         * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
         */
-      warnWhenNotUsingParallelGC.set(true)
+      failWhenNotUsingOptimalGC.set(true)
        /**
         * Throws an error when the `Delete` or `clean` task has dependencies.
         * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce

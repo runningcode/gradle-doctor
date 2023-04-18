@@ -5,29 +5,56 @@ import org.gradle.api.GradleException
 import java.lang.management.ManagementFactory
 
 /**
- * Starting with Java 9, G1 is the new GC. For building software such as with Gradle, the parallel GC is faster.
+ * Certain combinations of Java versions and their default GC are faster than others.
+ * For Java versions 9-16, the default is G1GC, but Parallel GC is faster.
+ * For Java versions 17+, G1GC is faster.
  */
 class JavaGCFlagChecker(
     private val pillBoxPrinter: PillBoxPrinter,
     private val extension: DoctorExtension
 ) : BuildStartFinishListener {
 
-    private val parallelGCFlag = "-XX:+UseParallelGC"
+    companion object {
+        private const val PARALLEL_GC_FLAG = "-XX:+UseParallelGC"
+        private const val G1_GC_FLAG = "-XX:+UseG1GC"
+    }
+
     override fun onStart() {
-        if (!extension.warnWhenNotUsingParallelGC.get()) {
+        if (!extension.failWhenNotUsingOptimalGC.get()) {
             return
         }
-        if (getJavaVersion() > 9) {
-            if (!ManagementFactory.getRuntimeMXBean().inputArguments.contains(parallelGCFlag)) {
-                throw GradleException(
-                    pillBoxPrinter.createPill(
-                        """
-                   For faster builds, use the parallel GC.
-                   Add $parallelGCFlag to the org.gradle.jvmargs
-                        """.trimIndent()
-                    )
-                )
+        getJavaVersion().let {
+            when {
+                it >= 17 -> checkForG1gc()
+                it in 9..16 -> checkForParallelGc()
+                else -> { }
             }
+        }
+    }
+
+    private fun checkForG1gc() {
+        if (!ManagementFactory.getRuntimeMXBean().inputArguments.contains(G1_GC_FLAG)) {
+            throw GradleException(
+                pillBoxPrinter.createPill(
+                    """
+               For faster builds, use the G1 GC.
+               Add $G1_GC_FLAG to the org.gradle.jvmargs
+                    """.trimIndent()
+                )
+            )
+        }
+    }
+
+    private fun checkForParallelGc() {
+        if (!ManagementFactory.getRuntimeMXBean().inputArguments.contains(PARALLEL_GC_FLAG)) {
+            throw GradleException(
+                pillBoxPrinter.createPill(
+                    """
+               For faster builds, use the parallel GC.
+               Add $PARALLEL_GC_FLAG to the org.gradle.jvmargs
+                    """.trimIndent()
+                )
+            )
         }
     }
 
