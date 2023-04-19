@@ -23,7 +23,6 @@ class OptimalGCIntegrationTest : AbstractIntegrationTest() {
            """.trimMargin("|")
     }
 
-
     @Test
     fun testParallelGCWarningEnabled() {
         testProjectRoot.writeBuildGradle(
