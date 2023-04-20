@@ -25,13 +25,7 @@ tasks.withType(Test::class.java).configureEach {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.6"
-}
-
-buildScan {
-  termsOfServiceUrl = "https://gradle.com/terms-of-service"
-  termsOfServiceAgree = "yes"
-  publishAlways()
+  gradleVersion = "8.0.2"
 }
 
 tasks.register("pluginTasks").configure {

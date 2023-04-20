@@ -6,17 +6,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 8
-      uses: actions/setup-java@v3
+    - uses: actions/setup-java@v3
       with:
-        java-version: '8'
-        distribution: 'adopt'
+        java-version: '17'
+        distribution: 'temurin'
     - uses: gradle/gradle-build-action@v2
       name: Check Gradle Doctor
       with:
         arguments: checkPlugin
     - uses: gradle/gradle-build-action@v2
       name: Publish Snapshot
-      if: ${{ github.ref == 'refs/heads/master' && github.event_name != 'pull_request' }}
+      if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'runningcode/gradle-doctor'
       with:
         arguments: publishToMavenCentral -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}

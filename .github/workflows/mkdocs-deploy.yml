@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     name: Deploy docs
+    if: github.repository == 'runningcode/gradle-doctor'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master

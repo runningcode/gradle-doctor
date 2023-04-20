@@ -6,7 +6,15 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise").version("3.12.2")
+  id("com.gradle.enterprise") version "3.12.2"
+}
+
+gradleEnterprise {
+  buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+    publishAlways()
+  }
 }
 
 include("simple")
