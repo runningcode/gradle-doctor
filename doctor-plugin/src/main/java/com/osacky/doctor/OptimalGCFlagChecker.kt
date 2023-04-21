@@ -9,7 +9,7 @@ import java.lang.management.ManagementFactory
  * For Java versions 9-16, the default is G1GC, but Parallel GC is faster.
  * For Java versions 17+, G1GC is faster.
  */
-class JavaGCFlagChecker(
+class OptimalGCFlagChecker(
     private val pillBoxPrinter: PillBoxPrinter,
     private val extension: DoctorExtension
 ) : BuildStartFinishListener {

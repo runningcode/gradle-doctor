@@ -24,6 +24,7 @@ class TestDaggerTime {
                         daggerThreshold = 100
                         ensureJavaHomeMatches = false
                       }
+                      warnWhenNotUsingParallelGC = false
                       failWhenNotUsingOptimalGC = false
                     }
             """.trimIndent()
