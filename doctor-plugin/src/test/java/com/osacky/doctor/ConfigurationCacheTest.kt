@@ -23,6 +23,7 @@ class ConfigurationCacheTest {
                     |    ensureJavaHomeMatches = false
                     |  }
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )

@@ -57,9 +57,10 @@ class DoctorPlugin : Plugin<Project> {
         val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
         val jetifierWarning = JetifierWarning(extension, target)
-        val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
+        val parallelGCFlagChecker = ParallelGCFlagChecker(pillBoxPrinter, extension)
+        val optimalGCFlagChecker = OptimalGCFlagChecker(pillBoxPrinter, extension)
         val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target, extension)
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector)
+        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, parallelGCFlagChecker, kotlinCompileDaemonFallbackDetector)
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
@@ -71,7 +72,8 @@ class DoctorPlugin : Plugin<Project> {
         target.afterEvaluate {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
-            javaElevenGC.onStart()
+            parallelGCFlagChecker.onStart()
+            optimalGCFlagChecker.onStart()
             kotlinCompileDaemonFallbackDetector.onStart()
         }
 

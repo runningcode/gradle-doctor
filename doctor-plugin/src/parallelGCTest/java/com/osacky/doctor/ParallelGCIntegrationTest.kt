@@ -17,6 +17,7 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
                     doctor {
                       javaHome {
                         ensureJavaHomeMatches = false
+                        warnWhenNotUsingParallelGC = true
                       }
                     }
             """.trimIndent()
@@ -48,6 +49,7 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
                     doctor {
                       javaHome {
                         ensureJavaHomeMatches = false
+                        warnWhenNotUsingParallelGC = true
                       }
                     }
             """.trimIndent()

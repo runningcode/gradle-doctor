@@ -24,6 +24,7 @@ class TestIntegrationTest {
                     |  }
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -56,6 +57,7 @@ class TestIntegrationTest {
                     |  }
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -134,6 +136,7 @@ class TestIntegrationTest {
                     ensureJavaHomeMatches = false
                   }
                   warnWhenNotUsingParallelGC = false
+                  failWhenNotUsingOptimalGC = false
                   disallowCleanTaskDependencies = $disallowCleanTaskDependencies
                 }
                 

@@ -7,7 +7,7 @@ import java.lang.management.ManagementFactory
 /**
  * Starting with Java 9, G1 is the new GC. For building software such as with Gradle, the parallel GC is faster.
  */
-class JavaGCFlagChecker(
+class ParallelGCFlagChecker(
     private val pillBoxPrinter: PillBoxPrinter,
     private val extension: DoctorExtension
 ) : BuildStartFinishListener {

@@ -19,10 +19,11 @@ repositories {
 }
 
 val parallelGCTest by sourceSets.creating
+val optimalGCTest by sourceSets.creating
 val integrationTest by sourceSets.creating
 
 gradlePlugin {
-    testSourceSets(integrationTest, parallelGCTest, sourceSets.test.get())
+    testSourceSets(integrationTest, parallelGCTest, optimalGCTest, sourceSets.test.get())
 }
 
 dependencies {
@@ -30,6 +31,7 @@ dependencies {
     implementation(libs.tagger)
     implementation(libs.rxjava)
     "parallelGCTestImplementation"(testFixtures(project))
+    "optimalGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
     testFixturesApi(libs.junit)
@@ -134,19 +136,27 @@ val java8Int = tasks.register<Test>("java8IntegrationTest") {
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(8))
     })
-    testClassesDirs = parallelGCTest.output.classesDirs
-    classpath = parallelGCTest.runtimeClasspath
+    testClassesDirs = parallelGCTest.output.classesDirs + optimalGCTest.output.classesDirs
+    classpath = parallelGCTest.runtimeClasspath + optimalGCTest.runtimeClasspath
 }
 val java11Int = tasks.register<Test>("java11IntegrationTest") {
     group = "verification"
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(11))
     })
-    testClassesDirs = parallelGCTest.output.classesDirs
-    classpath = parallelGCTest.runtimeClasspath
+    testClassesDirs = parallelGCTest.output.classesDirs + optimalGCTest.output.classesDirs
+    classpath = parallelGCTest.runtimeClasspath + optimalGCTest.runtimeClasspath
+}
+val java17Int = tasks.register<Test>("java17IntegrationTest") {
+    group = "verification"
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    })
+    testClassesDirs = optimalGCTest.output.classesDirs
+    classpath = optimalGCTest.runtimeClasspath
 }
 
-tasks.check.configure { dependsOn(java8Int, java11Int, integrationTestTask)}
+tasks.check.configure { dependsOn(java8Int, java11Int, java17Int, integrationTestTask)}
 
 tasks.withType<ValidatePlugins>().configureEach {
     failOnWarning.set(true)

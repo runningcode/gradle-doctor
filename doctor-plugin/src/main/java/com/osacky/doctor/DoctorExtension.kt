@@ -68,7 +68,13 @@ open class DoctorExtension(objects: ObjectFactory) {
     /**
      * Warn when not using parallel GC.
      */
-    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(true)
+    @Deprecated(message = "ParallelGC is slower than G1 for Java > 11", replaceWith = ReplaceWith("failWhenNotUsingOptimalGC"))
+    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(false)
+
+    /**
+     * Fail when the optimal GC/Java version is not selected (Parallel for 9-16, G1 for 17+).
+     */
+    val failWhenNotUsingOptimalGC = objects.property<Boolean>().convention(true)
 
     /**
      * Throws an error when the `Delete` or `clean` task has dependencies.

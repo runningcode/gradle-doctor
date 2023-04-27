@@ -45,6 +45,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    ensureJavaHomeMatches = false
                     |  }
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -237,6 +238,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 ensureJavaHomeMatches = false
               }
               warnWhenNotUsingParallelGC = false
+              failWhenNotUsingOptimalGC = false
             }
             """.trimIndent()
         )
@@ -319,6 +321,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 ensureJavaHomeMatches = false
               }
               warnWhenNotUsingParallelGC = false
+              failWhenNotUsingOptimalGC = false
             }
             """.trimIndent()
         )
@@ -392,6 +395,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  }
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )
@@ -422,6 +426,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  }
                     |  failOnEmptyDirectories = false
                     |  warnWhenNotUsingParallelGC = false
+                    |  failWhenNotUsingOptimalGC = false
                     |}
                 """.trimMargin("|")
         )
