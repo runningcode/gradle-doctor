@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+* [Implement Apple Rosetta Translation Check](https://github.com/runningcode/gradle-doctor/pull/220) Thanks [Gediminas Zuckas](https://github.com/GediminasZukas)
 
 ## 0.8.1
 * [Fix compatibility with KGP 1.7.0](https://github.com/runningcode/gradle-doctor/issues/208) Thanks [ZacSweers](https://github.com/ZacSweers)
