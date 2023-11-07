@@ -30,13 +30,13 @@ Tasks that move compressed images like pngs, jpegs, or precomputed libraries are
 
 === "Groovy"
     ``` groovy
-    tasks.named("<taskname>").configure {
+    tasks.named('<taskname>').configure {
         outputs.cacheIf { false }
     }
     ```
 === "Kotlin"
     ``` kotlin
-    tasks.named('<taskname>').configure {
+    tasks.named("<taskname>").configure {
         outputs.cacheIf { false }
     }
     ```
