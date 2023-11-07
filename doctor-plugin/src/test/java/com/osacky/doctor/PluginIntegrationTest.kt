@@ -46,7 +46,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  }
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
 
         val result = createRunner().build()
@@ -68,11 +68,13 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     |  }
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
 
         val result = createRunner().buildAndFail()
-        assertThat(result.output).contains("Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
+        assertThat(
+            result.output,
+        ).contains("Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
     }
 
     @Test
@@ -89,7 +91,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
                     |  }
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         val result = createRunner().buildAndFail()
         assertThat(result.output)
@@ -108,7 +110,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  |   disallowMultipleDaemons = false                                                                    |
                     |  | }                                                                                                    |
                     |  ========================================================================================================
-                """.trimMargin()
+                """.trimMargin(),
             )
     }
 
@@ -130,21 +132,22 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    }
                     |  }
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         testProjectRoot.newFile("settings.gradle")
 
-        val result = createRunner()
-            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
-            .withArguments("tasks")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withArguments("tasks")
+                .buildAndFail()
         assertThat(result.output).contains(
             """
                 |> =============================== Gradle Doctor Prescriptions ============================================
                 |  | Gradle is not using JAVA_HOME.                                                                       |
                 |  | JAVA_HOME is foo                                                                                     |
                 |  """
-                .trimMargin("|")
+                .trimMargin("|"),
         )
     }
 
@@ -165,14 +168,15 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    failOnError = false
                     |  }
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         testProjectRoot.newFile("settings.gradle")
 
-        val result = createRunner()
-            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
-            .withArguments("tasks")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withArguments("tasks")
+                .buildAndFail()
         // Still prints the error
         assertThat(result.output).contains(
             """
@@ -180,7 +184,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 |  | Gradle is not using JAVA_HOME.                                                                       |
                 |  | JAVA_HOME is foo                                                                                     |
                 |  """
-                .trimMargin("|")
+                .trimMargin("|"),
         )
     }
 
@@ -201,14 +205,15 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |    extraMessage = "Check for more details here!"
                     |  }
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         testProjectRoot.newFile("settings.gradle")
 
-        val result = createRunner()
-            .withEnvironment(mapOf("JAVA_HOME" to "foo"))
-            .withArguments("tasks")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withArguments("tasks")
+                .buildAndFail()
         assertThat(result.output).contains("Check for more details here!")
     }
 
@@ -238,7 +243,7 @@ class PluginIntegrationTest constructor(private val version: String) {
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         testProjectRoot.writeFileToName(
@@ -246,7 +251,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """
             include 'app-one'
             include 'app-two'
-            """.trimMargin()
+            """.trimMargin(),
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -261,7 +266,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             android {
               compileSdkVersion 28
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
         val srcFolder2 = testProjectRoot.newFolder("app-two", "src", "main")
         val folder2 = File(testProjectRoot.root, "app-two")
@@ -275,11 +280,12 @@ class PluginIntegrationTest constructor(private val version: String) {
             android {
               compileSdkVersion 28
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
-        val result = createRunner()
-            .withArguments("assembleDebug")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withArguments("assembleDebug")
+                .buildAndFail()
         assertThat(result.output).contains(
             """
                |=============================== Gradle Doctor Prescriptions ============================================
@@ -290,7 +296,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                || tire project?                                                                                        |
                || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
                |========================================================================================================
-            """.trimMargin()
+            """.trimMargin(),
         )
     }
 
@@ -320,7 +326,7 @@ class PluginIntegrationTest constructor(private val version: String) {
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         testProjectRoot.writeFileToName(
@@ -328,7 +334,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             """
             include 'app-one'
             include 'app-two'
-            """.trimMargin()
+            """.trimMargin(),
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -343,7 +349,7 @@ class PluginIntegrationTest constructor(private val version: String) {
             android {
               compileSdkVersion 28
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
         val srcFolder2 = testProjectRoot.newFolder("app-two", "src", "main")
         val folder2 = File(testProjectRoot.root, "app-two")
@@ -357,11 +363,12 @@ class PluginIntegrationTest constructor(private val version: String) {
             android {
               compileSdkVersion 28
             }
-            """.trimIndent()
+            """.trimIndent(),
         )
-        val result = createRunner()
-            .withArguments("installDebug")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withArguments("installDebug")
+                .buildAndFail()
         assertThat(result.output).contains(
             """
                |=============================== Gradle Doctor Prescriptions ============================================
@@ -372,7 +379,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                || tire project?                                                                                        |
                || Next time try "Sync Project with Gradle Files" (Gradle Elephant with Arrow).                         |
                |========================================================================================================
-            """.trimMargin()
+            """.trimMargin(),
         )
     }
 
@@ -393,16 +400,17 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         val fixtureName = "java-fixture"
         testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
-        val result = createRunner()
-            .withArguments("assemble")
-            .buildAndFail()
+        val result =
+            createRunner()
+                .withArguments("assemble")
+                .buildAndFail()
 
         assertThat(result.output).contains("Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.")
     }
@@ -423,16 +431,17 @@ class PluginIntegrationTest constructor(private val version: String) {
                     |  failOnEmptyDirectories = false
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         val fixtureName = "java-fixture"
         testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
-        val result = createRunner()
-            .withArguments("assemble")
-            .build()
+        val result =
+            createRunner()
+                .withArguments("assemble")
+                .build()
 
         assertThat(result.output).contains("SUCCESS")
     }
@@ -464,7 +473,11 @@ class PluginIntegrationTest constructor(private val version: String) {
         testProjectRoot.writeBuildGradle(build)
     }
 
-    private fun createFileInFolder(folder: File, fileName: String, contents: String) {
+    private fun createFileInFolder(
+        folder: File,
+        fileName: String,
+        contents: String,
+    ) {
         File(folder, fileName).writeText(contents)
     }
 }

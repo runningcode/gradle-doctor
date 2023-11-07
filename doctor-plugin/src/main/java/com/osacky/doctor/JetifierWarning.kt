@@ -3,13 +3,15 @@ package com.osacky.doctor
 import org.gradle.api.Project
 
 class JetifierWarning(private val doctorExtension: DoctorExtension, private val project: Project) : BuildStartFinishListener {
-
     override fun onStart() {
     }
 
     override fun onFinish(): List<String> {
-        val isJetifierEnabled = project.findProperty(jetifierGradleProperty) as String?
-        if (doctorExtension.warnWhenJetifierEnabled.get() && isJetifierEnabled != null && isJetifierEnabled == "true") {
+        val isJetifierEnabled = project.findProperty(JETIFIER_GRADLE_PROPERTY) as String?
+        if (doctorExtension.warnWhenJetifierEnabled.get() &&
+            isJetifierEnabled != null &&
+            isJetifierEnabled == "true"
+        ) {
             return listOf(
                 """
                 Jetifier was enabled which means your builds are slower by 4-20%.
@@ -20,7 +22,7 @@ class JetifierWarning(private val doctorExtension: DoctorExtension, private val 
                 doctor {
                   warnWhenJetifierEnabled.set(false)
                 }
-                """.trimIndent()
+                """.trimIndent(),
             )
         } else {
             return emptyList()
@@ -28,6 +30,6 @@ class JetifierWarning(private val doctorExtension: DoctorExtension, private val 
     }
 
     companion object {
-        const val jetifierGradleProperty = "android.enableJetifier"
+        const val JETIFIER_GRADLE_PROPERTY = "android.enableJetifier"
     }
 }

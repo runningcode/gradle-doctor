@@ -7,9 +7,8 @@ import org.gradle.api.GradleException
 class BuildDaemonChecker(
     private val extension: DoctorExtension,
     private val daemonCheck: DaemonChecker,
-    private val pillBoxPrinter: PillBoxPrinter
+    private val pillBoxPrinter: PillBoxPrinter,
 ) : BuildStartFinishListener {
-
     override fun onStart() {
         if (extension.disallowMultipleDaemons.get()) {
             val errorMessage = daemonCheck.check()

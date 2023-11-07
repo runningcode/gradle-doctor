@@ -11,10 +11,12 @@ import org.gradle.internal.operations.OperationFinishEvent
  * Keeps track of which classes were slower to fetch from the cache than to re-run locally.
  */
 class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<Int>) : BuildStartFinishListener, HasBuildScanTag {
-
     private val longerTaskList = mutableListOf<String>()
 
-    fun onEvent(buildOperation: BuildOperationDescriptor, finishEvent: OperationFinishEvent) {
+    fun onEvent(
+        buildOperation: BuildOperationDescriptor,
+        finishEvent: OperationFinishEvent,
+    ) {
         val executeResult = finishEvent.result
         if (executeResult is ExecuteTaskBuildOperationType.Result) {
             val duration = finishEvent.endTime - finishEvent.startTime
@@ -38,7 +40,7 @@ class SlowerFromCacheCollector(private val negativeAvoidanceThreshold: Provider<
         return listOf(
             "The following operations were slower to pull from the cache than to rerun:\n" +
                 "${longerTaskList.joinToString(separator = "\n")}\nConsider disabling caching them.\n" +
-                "For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/"
+                "For more information see: https://runningcode.github.io/gradle-doctor/slower-from-cache/",
         )
     }
 

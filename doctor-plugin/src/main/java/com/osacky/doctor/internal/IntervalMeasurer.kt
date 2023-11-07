@@ -3,7 +3,6 @@ package com.osacky.doctor.internal
 import kotlin.math.max
 
 class IntervalMeasurer {
-
     /**
      * Find the total time elapsed based on the union of the time intervals.
      * This is based on the following Stackoverflow answer but converted to Kotlin:

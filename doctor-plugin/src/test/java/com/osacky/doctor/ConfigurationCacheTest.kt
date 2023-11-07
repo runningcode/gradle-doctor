@@ -24,18 +24,19 @@ class ConfigurationCacheTest {
                     |  }
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
         val fixtureName = "java-fixture"
         testProjectRoot.writeFileToName("settings.gradle", "include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
 
-        val runner = GradleRunner.create()
-            .forwardOutput()
-            .withArguments("assemble", "--configuration-cache")
-            .withProjectDir(testProjectRoot.root)
-            .withGradleVersion("6.7")
-            .withPluginClasspath()
+        val runner =
+            GradleRunner.create()
+                .forwardOutput()
+                .withArguments("assemble", "--configuration-cache")
+                .withProjectDir(testProjectRoot.root)
+                .withGradleVersion("6.7")
+                .withPluginClasspath()
 
         val result = runner.build()
 

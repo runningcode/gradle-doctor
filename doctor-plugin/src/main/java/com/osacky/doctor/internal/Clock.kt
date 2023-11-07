@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 interface Clock {
     fun upTime(): Long
+
     fun upTimeMillis(): Long
 }
 

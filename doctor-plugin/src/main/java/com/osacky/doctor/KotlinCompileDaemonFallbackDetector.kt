@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinCompileDaemonFallbackDetector(
     private val project: Project,
-    private val extension: DoctorExtension
+    private val extension: DoctorExtension,
 ) : BuildStartFinishListener, HasBuildScanTag {
     private val fallbackCounter = AtomicInteger(0)
     private val loggingService = project.gradle.serviceOf<LoggingManagerInternal>()
@@ -44,7 +44,7 @@ class KotlinCompileDaemonFallbackDetector(
                    3. kill <pid>
                    
                 If that didn't help, check that there are no invalid JVM arguments in "kotlin.daemon.jvm.options" property except for Xmx.
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
         return emptyList()
@@ -68,9 +68,8 @@ class KotlinCompileDaemonFallbackDetector(
 }
 
 internal class FailureEventListener(
-    private val fallbacksCounter: AtomicInteger
+    private val fallbacksCounter: AtomicInteger,
 ) : OutputEventListener {
-
     override fun onOutput(event: OutputEvent) {
         if (isFallbackMessage(event)) {
             // Can't fail a build from OutputEventListener. So, only mark it

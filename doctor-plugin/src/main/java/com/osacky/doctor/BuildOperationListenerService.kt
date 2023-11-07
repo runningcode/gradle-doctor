@@ -11,7 +11,6 @@ import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
 abstract class BuildOperationListenerService : BuildService<BuildOperationListenerService.Params>, BuildOperationListener {
-
     interface Params : BuildServiceParameters {
         fun getNegativeAvoidanceThreshold(): Property<Int>
     }
@@ -19,15 +18,24 @@ abstract class BuildOperationListenerService : BuildService<BuildOperationListen
     // Needs to be created within the service since the lifecycle of the BuildService is controlled by Gradle.
     private val buildOperations = BuildOperations(parameters.getNegativeAvoidanceThreshold())
 
-    override fun started(buildOperation: BuildOperationDescriptor, startEvent: OperationStartEvent) {
+    override fun started(
+        buildOperation: BuildOperationDescriptor,
+        startEvent: OperationStartEvent,
+    ) {
         buildOperations.started(buildOperation, startEvent)
     }
 
-    override fun progress(operationIdentifier: OperationIdentifier, progressEvent: OperationProgressEvent) {
+    override fun progress(
+        operationIdentifier: OperationIdentifier,
+        progressEvent: OperationProgressEvent,
+    ) {
         buildOperations.progress(operationIdentifier, progressEvent)
     }
 
-    override fun finished(buildOperation: BuildOperationDescriptor, finishEvent: OperationFinishEvent) {
+    override fun finished(
+        buildOperation: BuildOperationDescriptor,
+        finishEvent: OperationFinishEvent,
+    ) {
         buildOperations.finished(buildOperation, finishEvent)
     }
 

@@ -6,7 +6,6 @@ import org.gradle.api.logging.Logger
  * Prints strings inside a nicely fitted pill box.
  */
 class PillBoxPrinter(private val logger: Logger) {
-
     private val messageLength = 100
     private val title = "Gradle Doctor Prescriptions"
 

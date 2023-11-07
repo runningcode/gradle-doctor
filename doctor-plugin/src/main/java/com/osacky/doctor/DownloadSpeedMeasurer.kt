@@ -14,20 +14,20 @@ import java.util.Collections
 class DownloadSpeedMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
-    private val intervalMeasurer: IntervalMeasurer
+    private val intervalMeasurer: IntervalMeasurer,
 ) : BuildStartFinishListener, HasBuildScanTag {
-
     private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
 
     override fun onStart() {
-        disposable = buildOperations.finishes()
-            .filter { it.result is ExternalResourceReadBuildOperationType.Result }
-            .map { fromGradleType(it) }
-            .subscribe { event ->
-                downloadEvents.add(event)
-            }
+        disposable =
+            buildOperations.finishes()
+                .filter { it.result is ExternalResourceReadBuildOperationType.Result }
+                .map { fromGradleType(it) }
+                .subscribe { event ->
+                    downloadEvents.add(event)
+                }
     }
 
     override fun onFinish(): List<String> {

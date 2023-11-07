@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
-
     @Test
     fun testDisallowKotlinCompileDaemonFallback() {
         writeKotlinBuildGradle(true)
@@ -14,24 +13,24 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         testProjectRoot.writeFileToName(
             "src/main/java/Foo.kt",
             """
-                package foo
-                class Foo {
-                    fun bar() {
-                        println("Hello, world!")
-                    }
+            package foo
+            class Foo {
+                fun bar() {
+                    println("Hello, world!")
                 }
-            """.trimIndent()
+            }
+            """.trimIndent(),
         )
         testProjectRoot.writeFileToName(
             "src/test/java/Foo.kt",
             """
-                package foo
-                class Foo {
-                    fun bar() {
-                        println("Hello, world!")
-                    }
+            package foo
+            class Foo {
+                fun bar() {
+                    println("Hello, world!")
                 }
-            """.trimIndent()
+            }
+            """.trimIndent(),
         )
 
         val result = assembleRunnerWithIncorrectDaemonArguments().build()
@@ -48,13 +47,13 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         testProjectRoot.writeFileToName(
             "src/main/java/foo/Foo.kt",
             """
-                package foo
-                class Foo {
-                    fun bar() {
-                        println("Hello, world!")
-                    }
+            package foo
+            class Foo {
+                fun bar() {
+                    println("Hello, world!")
                 }
-            """.trimIndent()
+            }
+            """.trimIndent(),
         )
 
         val result = assembleRunnerWithIncorrectDaemonArguments().build()
@@ -67,36 +66,37 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         testProjectRoot.writeFileToName(
             "settings.gradle",
             """
-                                pluginManagement {
-                                  repositories {
-                                    mavenCentral()
-                                    gradlePluginPortal()
-                                  }
-                                }
-            """.trimIndent()
+            pluginManagement {
+              repositories {
+                mavenCentral()
+                gradlePluginPortal()
+              }
+            }
+            """.trimIndent(),
         )
     }
 
-    private fun assembleRunnerWithIncorrectDaemonArguments() = createRunner()
-        .withArguments("check", "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup")
+    private fun assembleRunnerWithIncorrectDaemonArguments() =
+        createRunner()
+            .withArguments("check", "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup")
 
     private fun writeKotlinBuildGradle(allowDaemonFallback: Boolean) {
         testProjectRoot.writeBuildGradle(
             """
-                plugins {
-                  id "com.osacky.doctor"
-                  id "org.jetbrains.kotlin.jvm" version "1.6.10"
-                }
-                repositories {
-                  mavenCentral()
-                }
-                doctor {
-                  warnIfKotlinCompileDaemonFallback = $allowDaemonFallback
-                  javaHome {
-                    ensureJavaHomeMatches = false
-                  }
-                }
-            """.trimIndent()
+            plugins {
+              id "com.osacky.doctor"
+              id "org.jetbrains.kotlin.jvm" version "1.6.10"
+            }
+            repositories {
+              mavenCentral()
+            }
+            doctor {
+              warnIfKotlinCompileDaemonFallback = $allowDaemonFallback
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
+            }
+            """.trimIndent(),
         )
     }
 }

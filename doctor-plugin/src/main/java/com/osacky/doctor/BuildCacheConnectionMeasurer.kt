@@ -15,21 +15,25 @@ import java.util.Collections
 class BuildCacheConnectionMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
-    private val intervalMeasurer: IntervalMeasurer
+    private val intervalMeasurer: IntervalMeasurer,
 ) : BuildStartFinishListener, HasBuildScanTag {
-
     private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
+
     override fun onStart() {
-        disposable = buildOperations.finishes()
-            .filter { (it.result is BuildCacheRemoteLoadBuildOperationType.Result) && (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit }
-            .map {
-                fromGradleType(it)
-            }
-            .subscribe {
-                downloadEvents.add(it)
-            }
+        disposable =
+            buildOperations.finishes()
+                .filter {
+                    (it.result is BuildCacheRemoteLoadBuildOperationType.Result) &&
+                        (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit
+                }
+                .map {
+                    fromGradleType(it)
+                }
+                .subscribe {
+                    downloadEvents.add(it)
+                }
     }
 
     override fun onFinish(): List<String> {
@@ -37,8 +41,14 @@ class BuildCacheConnectionMeasurer(
         disposable.dispose()
 
         synchronized(downloadEvents) {
-            val totalBytes = requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
-                .sumBy { event -> requireNotNull(requireNotNull(event) { "ExternalDownloadEvent cannot be null" }.byteTotal) { "byteTotal cannot be null" }.toInt() }
+            val totalBytes =
+                requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
+                    .sumBy {
+                            event ->
+                        requireNotNull(
+                            requireNotNull(event) { "ExternalDownloadEvent cannot be null" }.byteTotal,
+                        ) { "byteTotal cannot be null" }.toInt()
+                    }
             val totalTime = intervalMeasurer.findTotalTime(downloadEvents.map { it.start to it.end })
 
             // Don't do anything if we didn't download anything.
@@ -60,6 +70,7 @@ class BuildCacheConnectionMeasurer(
     data class ExternalDownloadEvent(val start: Long, val end: Long, val byteTotal: Long) {
         companion object {
             private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
+
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result
                 require(result is BuildCacheRemoteLoadBuildOperationType.Result)
@@ -68,7 +79,11 @@ class BuildCacheConnectionMeasurer(
                     // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
                     return zero
                 }
-                return ExternalDownloadEvent(event.startTime, event.endTime, requireNotNull(result.archiveSize) { "Archive size was not null for $result" })
+                return ExternalDownloadEvent(
+                    event.startTime,
+                    event.endTime,
+                    requireNotNull(result.archiveSize) { "Archive size was not null for $result" },
+                )
             }
 
             val zero = ExternalDownloadEvent(0, 0, 0)

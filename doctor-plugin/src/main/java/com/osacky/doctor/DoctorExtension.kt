@@ -7,7 +7,6 @@ import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
 open class DoctorExtension(objects: ObjectFactory) {
-
     internal val javaHomeHandler = objects.newInstance<JavaHomeHandler>()
 
     /**
@@ -23,11 +22,13 @@ open class DoctorExtension(objects: ObjectFactory) {
     /**
      * The level at which to warn when a build spends more than this percent garbage collecting.
      */
+    @Suppress("ktlint:standard:property-naming")
     val GCWarningThreshold = objects.property<Float>().convention(0.10f)
 
     /**
      * The level at which to fail when a build spends more than this percent garbage collecting.
      */
+    @Suppress("ktlint:standard:property-naming")
     val GCFailThreshold = objects.property<Float>().convention(0.9f)
 
     /**
@@ -93,26 +94,28 @@ open class DoctorExtension(objects: ObjectFactory) {
     }
 }
 
-abstract class JavaHomeHandler @Inject constructor(objects: ObjectFactory) {
-    /**
-     * Ensure that we are using `JAVA_HOME` to build with this Gradle.
-     */
-    val ensureJavaHomeMatches = objects.property<Boolean>().convention(true)
+abstract class JavaHomeHandler
+    @Inject
+    constructor(objects: ObjectFactory) {
+        /**
+         * Ensure that we are using `JAVA_HOME` to build with this Gradle.
+         */
+        val ensureJavaHomeMatches = objects.property<Boolean>().convention(true)
 
-    /**
-     * Ensure we have `JAVA_HOME` set.
-     */
-    val ensureJavaHomeIsSet = objects.property<Boolean>().convention(true)
+        /**
+         * Ensure we have `JAVA_HOME` set.
+         */
+        val ensureJavaHomeIsSet = objects.property<Boolean>().convention(true)
 
-    /**
-     * Fail on any `JAVA_HOME` issues.
-     */
-    val failOnError = objects.property<Boolean>().convention(true)
+        /**
+         * Fail on any `JAVA_HOME` issues.
+         */
+        val failOnError = objects.property<Boolean>().convention(true)
 
-    /**
-     * Extra message text, if any, to show with the Gradle Doctor message. This is useful if you have a wiki page or
-     * other instructions that you want to link for developers on your team if they encounter an issue.
-     */
-    @Suppress("CAST_NEVER_SUCCEEDS") // Cast is for overload ambiguity
-    val extraMessage = objects.property<String>().convention(null as? String)
-}
+        /**
+         * Extra message text, if any, to show with the Gradle Doctor message. This is useful if you have a wiki page or
+         * other instructions that you want to link for developers on your team if they encounter an issue.
+         */
+        @Suppress("CAST_NEVER_SUCCEEDS") // Cast is for overload ambiguity
+        val extraMessage = objects.property<String>().convention(null as? String)
+    }
