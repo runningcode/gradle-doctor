@@ -6,20 +6,19 @@ import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.junit.Test
 
 class ParallelGCIntegrationTest : AbstractIntegrationTest() {
-
     @Test
     fun testParallelGCWarningEnabled() {
         testProjectRoot.writeBuildGradle(
             """
-                    plugins {
-                      id "com.osacky.doctor"
-                    }
-                    doctor {
-                      javaHome {
-                        ensureJavaHomeMatches = false
-                      }
-                    }
-            """.trimIndent()
+            plugins {
+              id "com.osacky.doctor"
+            }
+            doctor {
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
+            }
+            """.trimIndent(),
         )
 
         val runner = createRunner()
@@ -33,7 +32,7 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
               |  | For faster builds, use the parallel GC.                                                              |
               |  | Add -XX:+UseParallelGC to the org.gradle.jvmargs                                                     |
               |  ========================================================================================================
-           """.trimMargin("|")
+           """.trimMargin("|"),
             )
         }
     }
@@ -42,19 +41,20 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
     fun testParallelGCWarningWhenUsingParallelGC() {
         testProjectRoot.writeBuildGradle(
             """
-                    plugins {
-                      id "com.osacky.doctor"
-                    }
-                    doctor {
-                      javaHome {
-                        ensureJavaHomeMatches = false
-                      }
-                    }
-            """.trimIndent()
+            plugins {
+              id "com.osacky.doctor"
+            }
+            doctor {
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
+            }
+            """.trimIndent(),
         )
 
-        val runner = (createRunner() as DefaultGradleRunner)
-            .withJvmArguments("-XX:+UseParallelGC")
+        val runner =
+            (createRunner() as DefaultGradleRunner)
+                .withJvmArguments("-XX:+UseParallelGC")
 
         assertThat(runner.build().output).contains("SUCCESS")
     }

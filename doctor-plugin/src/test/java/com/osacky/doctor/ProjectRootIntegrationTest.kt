@@ -17,12 +17,13 @@ class ProjectRootIntegrationTest {
         testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
 
-        val result = GradleRunner.create()
-            .withProjectDir(testProjectRoot.root)
-            .withPluginClasspath()
-            .withGradleVersion("6.1.1")
-            .withArguments("assemble")
-            .buildAndFail()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(testProjectRoot.root)
+                .withPluginClasspath()
+                .withGradleVersion("6.1.1")
+                .withArguments("assemble")
+                .buildAndFail()
 
         assertThat(result.output).contains("Gradle Doctor must be applied in the project root.")
     }

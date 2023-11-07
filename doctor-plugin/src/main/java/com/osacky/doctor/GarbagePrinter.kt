@@ -10,9 +10,8 @@ import java.text.NumberFormat
 class GarbagePrinter(
     private val clock: Clock,
     private val collector: DirtyBeanCollector,
-    private val extension: DoctorExtension
+    private val extension: DoctorExtension,
 ) : BuildStartFinishListener, HasBuildScanTag {
-
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTimeMillis()
     private val formatter = NumberFormat.getPercentInstance()
@@ -29,8 +28,9 @@ class GarbagePrinter(
         val garbageDuration = endGarbageTime - startGarbageTime
 
         val percentGarbageCollecting = (garbageDuration * 1f / buildDuration)
-        val isThresholdExceeded = percentGarbageCollecting > extension.GCWarningThreshold.get() ||
-            percentGarbageCollecting > extension.GCFailThreshold.get()
+        val isThresholdExceeded =
+            percentGarbageCollecting > extension.GCWarningThreshold.get() ||
+                percentGarbageCollecting > extension.GCFailThreshold.get()
         if (buildDuration > warningThreshold && isThresholdExceeded) {
             val message =
                 """

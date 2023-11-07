@@ -5,7 +5,6 @@ import org.gradle.util.GradleVersion
 import java.io.InputStream
 
 class CliCommandExecutor(private val project: Project) {
-
     fun execute(command: Array<String>): String {
         return if (GradleVersion.current() >= GradleVersion.version("7.5")) {
             executeWithConfigCacheSupport(command)
@@ -22,9 +21,10 @@ class CliCommandExecutor(private val project: Project) {
     }
 
     private fun executeInLegacyWay(command: Array<String>): String {
-        fun InputStream.readToString() = use {
-            it.readBytes().toString(Charsets.UTF_8).trim()
-        }
+        fun InputStream.readToString() =
+            use {
+                it.readBytes().toString(Charsets.UTF_8).trim()
+            }
 
         val process = Runtime.getRuntime().exec(command)
         if (process.waitFor() != 0) {

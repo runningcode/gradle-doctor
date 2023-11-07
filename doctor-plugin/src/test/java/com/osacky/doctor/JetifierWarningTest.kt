@@ -7,7 +7,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 class JetifierWarningTest {
-
     @get:Rule
     val testProjectRoot = TemporaryFolder()
 
@@ -27,31 +26,32 @@ class JetifierWarningTest {
                     |  }
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
 
-        val result = GradleRunner.create()
-            .forwardOutput()
-            .withArguments("help", "-Pandroid.enableJetifier=true")
-            .withPluginClasspath()
-            .withProjectDir(testProjectRoot.root)
-            .build()
+        val result =
+            GradleRunner.create()
+                .forwardOutput()
+                .withArguments("help", "-Pandroid.enableJetifier=true")
+                .withPluginClasspath()
+                .withProjectDir(testProjectRoot.root)
+                .build()
 
         assertThat(result.output).contains(
             """
-                =============================== Gradle Doctor Prescriptions ============================================
-                | Jetifier was enabled which means your builds are slower by 4-20%.                                    |
-                | Here's an article to help you disable it:                                                            |
-                | https://adambennett.dev/2020/08/disabling-jetifier/                                                  |
-                |                                                                                                      |
-                | To disable this warning, configure the Gradle Doctor extension:                                      |
-                | doctor {                                                                                             |
-                |   warnWhenJetifierEnabled.set(false)                                                                 |
-                | }                                                                                                    |
-                ========================================================================================================
+            =============================== Gradle Doctor Prescriptions ============================================
+            | Jetifier was enabled which means your builds are slower by 4-20%.                                    |
+            | Here's an article to help you disable it:                                                            |
+            | https://adambennett.dev/2020/08/disabling-jetifier/                                                  |
+            |                                                                                                      |
+            | To disable this warning, configure the Gradle Doctor extension:                                      |
+            | doctor {                                                                                             |
+            |   warnWhenJetifierEnabled.set(false)                                                                 |
+            | }                                                                                                    |
+            ========================================================================================================
 
-                BUILD SUCCESSFUL
-            """.trimIndent()
+            BUILD SUCCESSFUL
+            """.trimIndent(),
         )
     }
 
@@ -69,15 +69,16 @@ class JetifierWarningTest {
                     |  }
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|")
+                """.trimMargin("|"),
         )
 
-        val result = GradleRunner.create()
-            .forwardOutput()
-            .withArguments("help", "-Pandroid.enableJetifier=false")
-            .withPluginClasspath()
-            .withProjectDir(testProjectRoot.root)
-            .build()
+        val result =
+            GradleRunner.create()
+                .forwardOutput()
+                .withArguments("help", "-Pandroid.enableJetifier=false")
+                .withPluginClasspath()
+                .withProjectDir(testProjectRoot.root)
+                .build()
 
         assertThat(result.output).contains("BUILD SUCCESSFUL")
         assertThat(result.output).doesNotContain(jetifierWarning)

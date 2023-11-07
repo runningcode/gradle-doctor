@@ -12,7 +12,6 @@ import org.gradle.nativeplatform.platform.OperatingSystem
 import org.junit.Test
 
 class AppleRosettaTranslationCheckTest {
-
     private val operatingSystem = mock<OperatingSystem>()
     private val cliCommandExecutor = mock<CliCommandExecutor>()
     private val pillBoxPrinter = mock<PillBoxPrinter>()

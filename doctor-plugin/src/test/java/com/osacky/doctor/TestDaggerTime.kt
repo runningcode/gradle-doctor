@@ -15,32 +15,33 @@ class TestDaggerTime {
         val fixtureName = "dagger-jvm"
         testProjectRoot.newFile("build.gradle").writeText(
             """
-                    plugins {
-                      id "com.osacky.doctor"
-                    }
-                    doctor {
-                      disallowMultipleDaemons = false
-                      javaHome {
-                        daggerThreshold = 100
-                        ensureJavaHomeMatches = false
-                      }
-                      warnWhenNotUsingParallelGC = false
-                    }
-            """.trimIndent()
+            plugins {
+              id "com.osacky.doctor"
+            }
+            doctor {
+              disallowMultipleDaemons = false
+              javaHome {
+                daggerThreshold = 100
+                ensureJavaHomeMatches = false
+              }
+              warnWhenNotUsingParallelGC = false
+            }
+            """.trimIndent(),
         )
         testProjectRoot.newFile("settings.gradle").writeText(
             """
             include '$fixtureName'
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         testProjectRoot.setupFixture(fixtureName)
 
-        val result = GradleRunner.create()
-            .withProjectDir(testProjectRoot.root)
-            .withPluginClasspath()
-            .withArguments("assemble")
-            .build()
+        val result =
+            GradleRunner.create()
+                .withProjectDir(testProjectRoot.root)
+                .withPluginClasspath()
+                .withArguments("assemble")
+                .build()
 
         assertThat(result.output).containsMatch("This build spent 0.\\d+ s in Dagger Annotation Processors.")
     }

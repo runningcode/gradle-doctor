@@ -9,10 +9,10 @@ import java.lang.management.ManagementFactory
  */
 class JavaGCFlagChecker(
     private val pillBoxPrinter: PillBoxPrinter,
-    private val extension: DoctorExtension
+    private val extension: DoctorExtension,
 ) : BuildStartFinishListener {
-
     private val parallelGCFlag = "-XX:+UseParallelGC"
+
     override fun onStart() {
         if (!extension.warnWhenNotUsingParallelGC.get()) {
             return
@@ -22,10 +22,10 @@ class JavaGCFlagChecker(
                 throw GradleException(
                     pillBoxPrinter.createPill(
                         """
-                   For faster builds, use the parallel GC.
-                   Add $parallelGCFlag to the org.gradle.jvmargs
-                        """.trimIndent()
-                    )
+                        For faster builds, use the parallel GC.
+                        Add $parallelGCFlag to the org.gradle.jvmargs
+                        """.trimIndent(),
+                    ),
                 )
             }
         }

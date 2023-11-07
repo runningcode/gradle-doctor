@@ -15,9 +15,8 @@ import java.io.File
 class RemoteCacheEstimation(
     private val buildOperations: BuildOperations,
     private val project: Project,
-    private val clock: Clock
+    private val clock: Clock,
 ) : BuildStartFinishListener {
-
     private val benchmarkBuildCache: Boolean = project.properties.containsKey("benchmarkRemoteCache")
     private val rerunSourceTasks: Boolean = project.properties.containsKey("rerunSourceTasksForBenchmark")
     private val rerunLargeOutputTasks: Boolean = project.properties.containsKey("rerunLargeOutputTasksForBenchmark")
@@ -39,7 +38,16 @@ class RemoteCacheEstimation(
                 if (rerunLargeOutputTasks) {
                     // Look up tasks by name so we don't depend on the Android Plugin.
                     // If the task has a different build type (not debug), it likely won't work here though.
-                    tasks.matching { it.name == "processDebugResources" || it.name == "mergeDebugJavaResource" || it.name == "mergeDebugAssets" || it.name == "mergeDebugResources" || it.name == "bundleLibResDebug" || it.name == "packageDebugResources" || it.name == "mergeDebugNativeLibs" || it.name == "generateDebugUnitTestStubRFile" }
+                    tasks.matching {
+                        it.name == "processDebugResources" ||
+                            it.name == "mergeDebugJavaResource" ||
+                            it.name == "mergeDebugAssets" ||
+                            it.name == "mergeDebugResources" ||
+                            it.name == "bundleLibResDebug" ||
+                            it.name == "packageDebugResources" ||
+                            it.name == "mergeDebugNativeLibs" ||
+                            it.name == "generateDebugUnitTestStubRFile"
+                    }
                         .configureEach {
                             outputs.upToDateWhen { false }
                         }
@@ -57,16 +65,17 @@ class RemoteCacheEstimation(
         val cacheDir = gradleLocalCacheDir()
 
         // For every task output hash, find the size of the corresponding compressed artifact in the build cache directory.
-        val cacheSizeBytes = buildOperations.cacheKeys().sumBy {
-            File(cacheDir, it.toString()).length().toInt()
-        }
+        val cacheSizeBytes =
+            buildOperations.cacheKeys().sumBy {
+                File(cacheDir, it.toString()).length().toInt()
+            }
 
         if (cacheSizeBytes == 0) {
             return listOf(
                 """
                 = Remote Build Cache Benchmark Report =
                 This build did not generate any cached artifacts.
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
 
@@ -94,7 +103,9 @@ class RemoteCacheEstimation(
             Executed tasks created compressed artifacts of size ${twoDigits.format(cacheSizeMB)} MB
             Total task execution time was ${twoDigits.format(executionTimeSec)} s
 
-            In order for a remote build cache to save you time, you would need a connection speed to your node of at least ${twoDigits.format(minBuildCacheSpeed)} MB/s.
+            In order for a remote build cache to save you time, you would need a connection speed to your node of at least ${twoDigits.format(
+                minBuildCacheSpeed,
+            )} MB/s.
             Check a build scan to see your connection speed to the build cache node.
             Build cache node throughput may be different than your internet connection speed.
 
@@ -103,7 +114,7 @@ class RemoteCacheEstimation(
             A 10 MB/s connection would save you ${twoDigits.format(tenMBSavings)} s.
 
             Note: This is an estimate. Real world performance may vary. This estimate does not take in to account time spent decompressing cached artifacts or roundtrip communication time to the cache node.
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 
@@ -126,22 +137,23 @@ class RemoteCacheEstimation(
         }
     }
 
-    private val listener = object : BuildListener {
-        override fun settingsEvaluated(settings: Settings) {
-        }
+    private val listener =
+        object : BuildListener {
+            override fun settingsEvaluated(settings: Settings) {
+            }
 
-        override fun buildFinished(result: BuildResult) {
-        }
+            override fun buildFinished(result: BuildResult) {
+            }
 
-        override fun projectsLoaded(gradle: Gradle) {
-        }
+            override fun projectsLoaded(gradle: Gradle) {
+            }
 
-        fun buildStarted(gradle: Gradle) {
-        }
+            fun buildStarted(gradle: Gradle) {
+            }
 
-        override fun projectsEvaluated(gradle: Gradle) {
-            // Configuration time is complete. We only want to measure task execution time.
-            startTime = clock.upTimeMillis()
+            override fun projectsEvaluated(gradle: Gradle) {
+                // Configuration time is complete. We only want to measure task execution time.
+                startTime = clock.upTimeMillis()
+            }
         }
-    }
 }

@@ -6,10 +6,12 @@ import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
 interface OperationEvents {
-
     fun starts(): Observable<OperationStartEvent>
+
     fun progress(): Observable<OperationProgressEvent>
+
     fun finishes(): Observable<OperationFinishEvent>
+
     fun <T : Any> progressDetailsOfType(clazz: Class<T>): Observable<T> {
         return progress()
             .filter { it.details != null }

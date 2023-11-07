@@ -34,7 +34,6 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.util.GradleVersion
 
 class DoctorPlugin : Plugin<Project> {
-
     override fun apply(target: Project) {
         ensureMinimumSupportedGradleVersion()
         ensureAppliedInProjectRoot(target)
@@ -59,7 +58,11 @@ class DoctorPlugin : Plugin<Project> {
         val jetifierWarning = JetifierWarning(extension, target)
         val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
         val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target, extension)
-        val list = listOf(daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer, buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector)
+        val list =
+            listOf(
+                daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer,
+                buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector,
+            )
 
         garbagePrinter.onStart()
         javaAnnotationTime.onStart()
@@ -92,7 +95,10 @@ class DoctorPlugin : Plugin<Project> {
                         source.visit {
                             if (file.isDirectory && file.listFiles().isEmpty()) {
                                 val farthestEmptyParent = file.farthestEmptyParent()
-                                throw IllegalStateException("Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\nrmdir ${farthestEmptyParent.absolutePath}")
+                                throw IllegalStateException(
+                                    "Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\n" +
+                                        "rmdir ${farthestEmptyParent.absolutePath}",
+                                )
                             }
                         }
                     }
@@ -116,9 +122,10 @@ class DoctorPlugin : Plugin<Project> {
             if (appPluginProjects.size <= 1 || extension.allowBuildingAllAndroidAppsSimultaneously.get()) {
                 return@whenReady
             }
-            val assembleTasksInAndroidAppProjects = allTasks
-                // Find executing tasks which are in Android AppPlugin Projects and contain the word assemble in the name.
-                .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble") || it.name.contains("install") }
+            val assembleTasksInAndroidAppProjects =
+                allTasks
+                    // Find executing tasks which are in Android AppPlugin Projects and contain the word assemble in the name.
+                    .filter { appPluginProjects.contains(it.project) && it.name.contains("assemble") || it.name.contains("install") }
             val projectsWithAssembleTasks = assembleTasksInAndroidAppProjects.map { it.project }.toSet()
             // Check if we have at least one assemble task in every project which has the application plugin.
             if (projectsWithAssembleTasks.containsAll(appPluginProjects)) {
@@ -135,7 +142,10 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
-    private fun tagFreshDaemon(target: Project, buildScanApi: ScanApi) {
+    private fun tagFreshDaemon(
+        target: Project,
+        buildScanApi: ScanApi,
+    ) {
         ((target.gradle as GradleInternal).services.find(DaemonScanInfo::class.java) as DaemonScanInfo?)?.let {
             if (it.numberOfBuilds == 1) {
                 buildScanApi.tag(FRESH_DAEMON)
@@ -148,7 +158,7 @@ class DoctorPlugin : Plugin<Project> {
         pillBoxPrinter: PillBoxPrinter,
         target: Project,
         buildOperations: OperationEvents,
-        buildScanApi: ScanApi
+        buildScanApi: ScanApi,
     ) {
         val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
 
@@ -166,7 +176,11 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
-    private fun ensureNoCleanTaskDependenciesIfNeeded(target: Project, extension: DoctorExtension, pillBoxPrinter: PillBoxPrinter) {
+    private fun ensureNoCleanTaskDependenciesIfNeeded(
+        target: Project,
+        extension: DoctorExtension,
+        pillBoxPrinter: PillBoxPrinter,
+    ) {
         if (GradleVersion.current() >= GradleVersion.version("7.4")) {
             // Gradle 7.4 has a fix for 2488 and 10889
             return
@@ -180,11 +194,11 @@ class DoctorPlugin : Plugin<Project> {
                         throw IllegalArgumentException(
                             pillBoxPrinter.createPill(
                                 """
-                            Adding dependencies to the clean task could cause unexpected build outcomes.
-                            Please remove the dependency from $this on the following tasks: $taskDependencies. 
-                            See github.com/gradle/gradle/issues/2488 for more information.
-                                """.trimIndent()
-                            )
+                                Adding dependencies to the clean task could cause unexpected build outcomes.
+                                Please remove the dependency from $this on the following tasks: $taskDependencies. 
+                                See github.com/gradle/gradle/issues/2488 for more information.
+                                """.trimIndent(),
+                            ),
                         )
                     }
                 }
@@ -200,13 +214,15 @@ class DoctorPlugin : Plugin<Project> {
 
     private fun ensureMinimumSupportedGradleVersion() {
         if (GradleVersion.current() < GradleVersion.version("6.1.1")) {
-            throw GradleException("Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}")
+            throw GradleException(
+                "Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}",
+            )
         }
     }
 
     private fun createDaemonChecker(
         operatingSystem: OperatingSystem,
-        cliCommandExecutor: CliCommandExecutor
+        cliCommandExecutor: CliCommandExecutor,
     ): DaemonChecker {
         return when {
             operatingSystem.isLinux || operatingSystem.isMacOsX -> UnixDaemonChecker(cliCommandExecutor)
@@ -214,11 +230,15 @@ class DoctorPlugin : Plugin<Project> {
         }
     }
 
-    private fun getOperationEvents(target: Project, extension: DoctorExtension): OperationEvents {
+    private fun getOperationEvents(
+        target: Project,
+        extension: DoctorExtension,
+    ): OperationEvents {
         return if (shouldUseCoCaClasses()) {
-            val listenerService = target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
-                this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
-            }
+            val listenerService =
+                target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
+                    this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
+                }
             val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
             buildEventListenerRegistry.onOperationCompletion(listenerService)
             listenerService.get().getOperations()
@@ -239,16 +259,17 @@ class DoctorPlugin : Plugin<Project> {
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
-    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: ScanApi) : Action<List<BuildStartFinishListener>> {
-
+    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: ScanApi) :
+        Action<List<BuildStartFinishListener>> {
         override fun execute(list: List<BuildStartFinishListener>) {
-            val thingsToPrint: List<String> = list.flatMap {
-                val messages = it.onFinish()
-                if (messages.isNotEmpty() && it is HasBuildScanTag) {
-                    it.addCustomValues(buildScanApi)
+            val thingsToPrint: List<String> =
+                list.flatMap {
+                    val messages = it.onFinish()
+                    if (messages.isNotEmpty() && it is HasBuildScanTag) {
+                        it.addCustomValues(buildScanApi)
+                    }
+                    messages
                 }
-                messages
-            }
             if (thingsToPrint.isEmpty()) {
                 return
             }

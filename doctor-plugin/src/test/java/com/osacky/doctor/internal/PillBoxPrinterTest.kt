@@ -7,7 +7,6 @@ import org.gradle.api.logging.Logger
 import org.junit.Test
 
 internal class PillBoxPrinterTest {
-
     private val logger: Logger = mock()
     private val underTest = PillBoxPrinter(logger)
 
@@ -26,7 +25,7 @@ internal class PillBoxPrinterTest {
                 """
                                 || This is the message.                                                                                 |
                                 || This is the second line.                                                                             |
-                """.trimMargin()
+                """.trimMargin(),
             )
             verify().warn("========================================================================================================")
         }
@@ -53,7 +52,7 @@ internal class PillBoxPrinterTest {
                 """
                                 || This is the message.                                                                                 |
                                 || This is the second line.                                                                             |
-                """.trimMargin()
+                """.trimMargin(),
             )
             verify().warn("========================================================================================================")
             verify().warn(
@@ -62,7 +61,7 @@ internal class PillBoxPrinterTest {
                                 || sentence keeps going without saying anything                                                         |
                                 ||                                                                                                      |
                                 || Just another message                                                                                 |
-                """.trimMargin()
+                """.trimMargin(),
             )
             verify().warn("========================================================================================================")
         }
@@ -82,7 +81,7 @@ internal class PillBoxPrinterTest {
                                 || This is a really long message that will overflow from one line on to the other and looks really bad  |
                                 || if we don't do anything about it and its also not such a well structured sentence but more of a run  |
                                 || on.                                                                                                  |
-                """.trimMargin()
+                """.trimMargin(),
             )
             verify().warn("========================================================================================================")
         }
