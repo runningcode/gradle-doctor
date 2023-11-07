@@ -18,4 +18,4 @@ jobs:
       name: Publish Snapshot
       if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'runningcode/gradle-doctor'
       with:
-        arguments: publishToMavenCentral -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }}
+        arguments: publishToMavenCentral -PmavenCentralUsername=${{ secrets.SONATYPE_USERNAME }} -PmavenCentralPassword=${{ secrets.SONATYPE_PASSWORD }}

@@ -1,7 +1,7 @@
 # Changelog
 
-## Unreleased
-* [Implement Apple Rosetta Translation Check](https://github.com/runningcode/gradle-doctor/pull/220) Thanks [Gediminas Zuckas](https://github.com/GediminasZukas)
+## 0.9.0
+* [Implement Apple Rosetta Translation Check](https://github.com/runningcode/gradle-doctor/pull/220) Thanks [Gediminas Zukas](https://github.com/GediminasZukas)
 * Bump Kotlin language version to 1.5
 
 ## 0.8.1
