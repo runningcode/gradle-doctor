@@ -58,8 +58,8 @@ java {
 
 val isReleaseBuild : Boolean = !version.toString().endsWith("SNAPSHOT")
 
-val sonatypeUsername : String? by project
-val sonatypePassword : String? by project
+val mavenCentralUsername : String? by project
+val mavenCentralPassword : String? by project
 
 publishing {
     repositories {
@@ -69,8 +69,8 @@ publishing {
                 val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
                 url = if (isReleaseBuild) releasesRepoUrl else snapshotsRepoUrl
                 credentials {
-                    username = sonatypeUsername
-                    password = sonatypePassword
+                    username = mavenCentralUsername
+                    password = mavenCentralPassword
                 }
             }
         }
