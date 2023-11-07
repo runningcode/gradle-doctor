@@ -167,7 +167,7 @@ tasks.withType<Sign>().configureEach {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
-        languageVersion = "1.4"
-        apiVersion = "1.4"
+        languageVersion = "1.5"
+        apiVersion = "1.5"
     }
 }
