@@ -25,7 +25,7 @@ class AppleRosettaTranslationCheck(
         if (!os.isMacOsX) return
         val output =
             runCatching {
-                cliCommandExecutor.execute(isTranslatedCheckCommand)
+                cliCommandExecutor.execute(isTranslatedCheckCommand, ignoreExitValue = true)
             }.getOrNull()
         if (output == translatedWithRosetta) {
             throw GradleException(pillBoxPrinter.createPill(errorMessage))
