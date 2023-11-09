@@ -5,7 +5,10 @@ import org.gradle.util.GradleVersion
 import java.io.InputStream
 
 class CliCommandExecutor(private val project: Project) {
-    fun execute(command: Array<String>, ignoreExitValue: Boolean = false): String {
+    fun execute(
+        command: Array<String>,
+        ignoreExitValue: Boolean = false,
+    ): String {
         return if (GradleVersion.current() >= GradleVersion.version("7.5")) {
             executeWithConfigCacheSupport(command, ignoreExitValue)
         } else {
@@ -14,14 +17,20 @@ class CliCommandExecutor(private val project: Project) {
     }
 
     @Suppress("UnstableApiUsage")
-    private fun executeWithConfigCacheSupport(command: Array<String>, ignoreExitValue: Boolean = false): String {
+    private fun executeWithConfigCacheSupport(
+        command: Array<String>,
+        ignoreExitValue: Boolean = false,
+    ): String {
         return project.providers.exec {
             commandLine(*command)
             isIgnoreExitValue = ignoreExitValue
         }.standardOutput.asText.get().trim()
     }
 
-    private fun executeInLegacyWay(command: Array<String>, ignoreExitValue: Boolean = false): String {
+    private fun executeInLegacyWay(
+        command: Array<String>,
+        ignoreExitValue: Boolean = false,
+    ): String {
         fun InputStream.readToString() =
             use {
                 it.readBytes().toString(Charsets.UTF_8).trim()
