@@ -38,7 +38,7 @@ class AppleRosettaTranslationCheckTest {
     @Test(expected = GradleException::class)
     fun testGradleRunsUnderAppleRosettaExceptionThrownWithMessage() {
         whenever(operatingSystem.isMacOsX).doReturn(true)
-        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand))
+        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand, true))
             .thenReturn(underTest.translatedWithRosetta)
 
         underTest.onStart()
@@ -49,7 +49,7 @@ class AppleRosettaTranslationCheckTest {
     @Test
     fun testGradleRunsNativelyOnAppleNoException() {
         whenever(operatingSystem.isMacOsX).doReturn(true)
-        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand))
+        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand, true))
             .thenReturn("sysctl.proc_translated: 0")
 
         underTest.onStart()
@@ -60,7 +60,7 @@ class AppleRosettaTranslationCheckTest {
     @Test
     fun testErrorDuringTranslationDeterminationNoException() {
         whenever(operatingSystem.isMacOsX).doReturn(true)
-        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand))
+        whenever(cliCommandExecutor.execute(underTest.isTranslatedCheckCommand, true))
             .thenReturn("sysctl.proc_translated: -1")
 
         underTest.onStart()
