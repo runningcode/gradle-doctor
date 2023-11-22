@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.1
+* [Ignore exit process status for rosetta translation check](https://github.com/runningcode/gradle-doctor/pull/285) Thanks [Andres Di Menna](https://github.com/ninniuz)
+
 ## 0.9.0
 * [Implement Apple Rosetta Translation Check](https://github.com/runningcode/gradle-doctor/pull/220) Thanks [Gediminas Zukas](https://github.com/GediminasZukas)
 * Bump Kotlin language version to 1.5
