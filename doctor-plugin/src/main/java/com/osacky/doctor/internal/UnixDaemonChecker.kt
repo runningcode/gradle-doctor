@@ -6,14 +6,20 @@ class UnixDaemonChecker(private val cliCommandExecutor: CliCommandExecutor) : Da
         return if (numberOfDaemons > 1) {
             """
             $numberOfDaemons Gradle Daemons Active.
-            This may indicate a settings mismatch between the IDE and the terminal.
-            There might also be a bug causing extra Daemons to spawn.
-            You can check active Daemons with `jps`.
-            To kill all active Daemons use:
-            pkill -f '.*GradleDaemon.*'
 
-            This might be expected if you are working on multiple Gradle projects or if you are using build.gradle.kts.
-            To disable this message add this to your root build.gradle file:
+            Multiple active Daemons can occur due to any of the following reasons:
+            * Ongoing Gradle syncs
+            * Simultaneous builds in different projects
+            * Settings mismatches between the IDE and the terminal
+            * Potential bug causing extra daemons to spawn
+            
+            To monitor active Daemons, use `jps`. 
+            If needed, terminate all active Daemons with `pkill -f '.*GradleDaemon.*'`.
+    
+            Such a scenario is common when working on multiple Gradle projects or using 
+            build.gradle.kts files.
+            If this behavior is expected and not problematic, you can suppress this warning by updating your 
+            root build.gradle file:
             doctor {
               disallowMultipleDaemons = false
             }
