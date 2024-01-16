@@ -13,6 +13,6 @@ mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version = "0.50.0" }
-kotlinter = { id = "org.jmailen.kotlinter", version = "4.1.0" }
+kotlinter = { id = "org.jmailen.kotlinter", version = "4.2.0" }
 plugin-publish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 
