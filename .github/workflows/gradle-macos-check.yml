@@ -10,7 +10,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: gradle/gradle-build-action@v2
-        name: Check Gradle Doctor
-        with:
-          arguments: pluginTasks
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Check Gradle Doctor
+        run: ./gradlew pluginTasks
