@@ -21,8 +21,13 @@ class AppleRosettaTranslationCheckTest {
     private val pillBoxPrinter = mock<PillBoxPrinter>()
     private val appleRosettaTranslationCheckMode = mock<Property<AppleRosettaTranslationCheckMode>>()
 
-    private val underTest = AppleRosettaTranslationCheck(operatingSystem, cliCommandExecutor, pillBoxPrinter,
-        appleRosettaTranslationCheckMode)
+    private val underTest =
+        AppleRosettaTranslationCheck(
+            operatingSystem,
+            cliCommandExecutor,
+            pillBoxPrinter,
+            appleRosettaTranslationCheckMode,
+        )
 
     @Test
     fun testOperatingSystemCheck() {

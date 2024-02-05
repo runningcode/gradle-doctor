@@ -134,10 +134,12 @@ enum class AppleRosettaTranslationCheckMode {
      * The check will not be executed.
      */
     DISABLED,
+
     /**
      * The check will be executed on macOS machines, and a warning will be printed to the console if the check fails.
      */
     WARN,
+
     /**
      * The check will be executed on macOS machines, and the build will fail if the check fails.
      */
