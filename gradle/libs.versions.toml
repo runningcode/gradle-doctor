@@ -5,7 +5,7 @@ junit = "4.13.2"
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-gradle-plugin-lib = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-truth = "com.google.truth:truth:1.3.0"
+truth = "com.google.truth:truth:1.4.0"
 tagger = "com.osacky.tagger:tagger-lib:0.2"
 rxjava = "io.reactivex.rxjava3:rxjava:3.1.8"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
