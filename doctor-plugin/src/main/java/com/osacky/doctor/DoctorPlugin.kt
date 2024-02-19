@@ -47,7 +47,13 @@ class DoctorPlugin : Plugin<Project> {
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
         val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
-        val appleRosettaTranslationCheck = AppleRosettaTranslationCheck(os, cliCommandExecutor, pillBoxPrinter)
+        val appleRosettaTranslationCheck =
+            AppleRosettaTranslationCheck(
+                os,
+                cliCommandExecutor,
+                pillBoxPrinter,
+                extension.appleRosettaTranslationCheckMode,
+            )
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
         val buildOperations = getOperationEvents(target, extension)
         val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension)

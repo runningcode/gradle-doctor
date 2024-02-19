@@ -69,6 +69,10 @@
        * https://youtrack.jetbrains.com/issue/KT-48843
        */
       warnIfKotlinCompileDaemonFallback = true
+      /**
+       * The mode in which the Apple Rosetta translation check is executed.
+       */
+      appleRosettaTranslationCheckMode = AppleRosettaTranslationCheckMode.ERROR
 
 
       /** Configuration properties relating to JAVA_HOME */
@@ -160,6 +164,10 @@
         * https://youtrack.jetbrains.com/issue/KT-48843
         */
        warnIfKotlinCompileDaemonFallback.set(true)
+       /**
+        * The mode in which the Apple Rosetta translation check is executed.
+        */
+       appleRosettaTranslationCheckMode.set(AppleRosettaTranslationCheckMode.ERROR)
 
       /** Configuration properties relating to JAVA_HOME */
       javaHome {

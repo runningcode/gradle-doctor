@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.AppleRosettaTranslationCheckMode.ERROR
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.newInstance
@@ -87,6 +88,11 @@ open class DoctorExtension(objects: ObjectFactory) {
     val warnIfKotlinCompileDaemonFallback = objects.property<Boolean>().convention(true)
 
     /**
+     * The mode in which the Apple Rosetta translation check is executed. Default is "ERROR".
+     */
+    val appleRosettaTranslationCheckMode = objects.property<AppleRosettaTranslationCheckMode>().convention(ERROR)
+
+    /**
      * Configures `JAVA_HOME`-specific behavior.
      */
     fun javaHome(action: Action<JavaHomeHandler>) {
@@ -119,3 +125,23 @@ abstract class JavaHomeHandler
         @Suppress("CAST_NEVER_SUCCEEDS") // Cast is for overload ambiguity
         val extraMessage = objects.property<String>().convention(null as? String)
     }
+
+/**
+ * Defines different execution modes for the Apple Rosetta translation check.
+ */
+enum class AppleRosettaTranslationCheckMode {
+    /**
+     * The check will not be executed.
+     */
+    DISABLED,
+
+    /**
+     * The check will be executed on macOS machines, and a warning will be printed to the console if the check fails.
+     */
+    WARN,
+
+    /**
+     * The check will be executed on macOS machines, and the build will fail if the check fails.
+     */
+    ERROR,
+}
