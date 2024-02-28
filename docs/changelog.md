@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.2
+* [Introduce execution modes for AppleRosettaTranslationCheck](https://github.com/runningcode/gradle-doctor/pull/311) Thanks [Egor Andreevich](https://github.com/Egorand)
+
 ## 0.9.1
 * [Ignore exit process status for rosetta translation check](https://github.com/runningcode/gradle-doctor/pull/285) Thanks [Andres Di Menna](https://github.com/ninniuz)
 
