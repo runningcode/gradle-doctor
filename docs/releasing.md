@@ -38,7 +38,7 @@ git push origin v{{ doctor.next_release }}
 
 * Upload to Maven Central
 ``` bash
-./gradlew publishToMavenCentral -Dorg.gradle.internal.publish.checksums.insecure=true
+./gradlew publishToMavenCentral -Dorg.gradle.internal.publish.checksums.insecure=true --no-configuration-cache
 ```
 * Upload to Gradle Plugin Portal
 ```bash
