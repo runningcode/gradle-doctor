@@ -9,7 +9,7 @@ truth = "com.google.truth:truth:1.4.2"
 tagger = "com.osacky.tagger:tagger-lib:0.2"
 rxjava = "io.reactivex.rxjava3:rxjava:3.1.8"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-okio = "com.squareup.okio:okio:3.8.0"
+okio = "com.squareup.okio:okio:3.9.0"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
