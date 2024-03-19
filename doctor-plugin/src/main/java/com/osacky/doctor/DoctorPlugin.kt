@@ -66,8 +66,17 @@ class DoctorPlugin : Plugin<Project> {
         val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target, extension)
         val list =
             listOf(
-                daemonChecker, javaHomeCheck, garbagePrinter, javaAnnotationTime, downloadSpeedMeasurer, buildCacheConnectionMeasurer,
-                buildCacheKey, slowerFromCacheCollector, jetifierWarning, javaElevenGC, kotlinCompileDaemonFallbackDetector,
+                daemonChecker,
+                javaHomeCheck,
+                garbagePrinter,
+                javaAnnotationTime,
+                downloadSpeedMeasurer,
+                buildCacheConnectionMeasurer,
+                buildCacheKey,
+                slowerFromCacheCollector,
+                jetifierWarning,
+                javaElevenGC,
+                kotlinCompileDaemonFallbackDetector,
             )
 
         garbagePrinter.onStart()
