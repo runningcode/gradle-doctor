@@ -5,8 +5,6 @@ import com.osacky.doctor.internal.androidHome
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.junit.Assume
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -19,7 +17,8 @@ import java.io.File
 class PluginIntegrationTest constructor(private val version: String) {
     val agpVersion = "4.0.1"
 
-    @get:Rule val testProjectRoot = TemporaryFolder()
+    @get:Rule
+    val testProjectRoot = TemporaryFolder()
 
     companion object {
         @JvmStatic
@@ -94,28 +93,37 @@ class PluginIntegrationTest constructor(private val version: String) {
                 """.trimMargin("|"),
         )
         val result = createRunner().buildAndFail()
-        assertThat(result.output)
-            .contains(
-                """
-                    |  | This may indicate a settings mismatch between the IDE and the terminal.                              |
-                    |  | There might also be a bug causing extra Daemons to spawn.                                            |
-                    |  | You can check active Daemons with `jps`.                                                             |
-                    |  | To kill all active Daemons use:                                                                      |
-                    |  | pkill -f '.*GradleDaemon.*'                                                                          |
-                    |  |                                                                                                      |
-                    |  | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
-                    |  | le.kts.                                                                                              |
-                    |  | To disable this message add this to your root build.gradle file:                                     |
-                    |  | doctor {                                                                                             |
-                    |  |   disallowMultipleDaemons = false                                                                    |
-                    |  | }                                                                                                    |
-                    |  ========================================================================================================
-                """.trimMargin(),
-            )
+        assertThat(
+            result.output.replace("\\d+ Gradle Daemons Active.".toRegex(), "N Gradle Daemons Active.")
+        ).contains(
+            """
+            > =============================== Gradle Doctor Prescriptions ============================================
+              | N Gradle Daemons Active.                                                                             |
+              |                                                                                                      |
+              | Multiple active Daemons can occur due to any of the following reasons:                               |
+              | * Ongoing Gradle syncs                                                                               |
+              | * Simultaneous builds in different projects                                                          |
+              | * Settings mismatches between the IDE and the terminal                                               |
+              | * Potential bug causing extra daemons to spawn                                                       |
+              |                                                                                                      |
+              | To monitor active Daemons, use `jps`.                                                                |
+              | If needed, terminate all active Daemons with `pkill -f '.*GradleDaemon.*'`.                          |
+              |                                                                                                      |
+              | Such a scenario is common when working on multiple Gradle projects or using                          |
+              | build.gradle.kts files.                                                                              |
+              | If this behavior is expected and not problematic, you can suppress this warning by updating your     |
+              | root build.gradle file:                                                                              |
+              | doctor {                                                                                             |
+              |   disallowMultipleDaemons = false                                                                    |
+              | }                                                                                                    |
+              ========================================================================================================
+               """.trimIndent()
+        )
     }
 
     // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
+    @Ignore
     fun testJavaHomeNotSet() {
         assumeSupportedVersion()
 
@@ -152,7 +160,8 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
+    @Ignore
     fun testJavaHomeNotSetWithConsoleError() {
         assumeSupportedVersion()
 
@@ -189,7 +198,8 @@ class PluginIntegrationTest constructor(private val version: String) {
     }
 
     // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
+    @Ignore
     fun testJavaHomeNotSetWithCustomMessage() {
         assumeSupportedVersion()
 
