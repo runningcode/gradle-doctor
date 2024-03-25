@@ -28,7 +28,8 @@ configure<DoctorExtension> {
   downloadSpeedWarningThreshold.set(2.0f)
   daggerThreshold.set(100)
   javaHome {
-    ensureJavaHomeMatches.set(!providers.environmentVariable("CI").isPresent)
+    ensureJavaHomeMatches.set(false)
+      ensureJavaHomeIsSet.set(false)
   }
 }
 
