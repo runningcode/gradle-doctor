@@ -88,7 +88,11 @@ internal class SlowerFromCacheCollectorTest {
             throw NotImplementedError()
         }
 
-        override fun getOriginExecutionTime(): Long? {
+        override fun getOriginBuildCacheKeyBytes(): ByteArray? {
+            TODO("Not yet implemented")
+        }
+
+        override fun getOriginExecutionTime(): Long {
             return originExecutionTime
         }
 

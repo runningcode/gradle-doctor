@@ -28,7 +28,8 @@ configure<DoctorExtension> {
   downloadSpeedWarningThreshold.set(2.0f)
   daggerThreshold.set(100)
   javaHome {
-    ensureJavaHomeMatches.set(!providers.environmentVariable("CI").isPresent)
+    ensureJavaHomeMatches.set(false)
+      ensureJavaHomeIsSet.set(false)
   }
 }
 
@@ -39,7 +40,7 @@ tasks.withType(Test::class.java).configureEach {
 }
 
 tasks.wrapper {
-  gradleVersion = "8.6"
+  gradleVersion = "8.7"
 }
 
 tasks.register("pluginTasks").configure {
