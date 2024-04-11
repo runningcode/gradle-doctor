@@ -1,3 +1,5 @@
+import com.osacky.doctor.findAdapter
+
 plugins {
     kotlin("jvm")
 }
@@ -6,4 +8,4 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-com.osacky.tagger.ScanApi(project).tag("test-tag")
+findAdapter(project).tag("foo")

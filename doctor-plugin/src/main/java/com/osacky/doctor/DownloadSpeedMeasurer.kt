@@ -1,11 +1,11 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.DownloadSpeedMeasurer.ExternalDownloadEvent.Companion.fromGradleType
 import com.osacky.doctor.internal.IntervalMeasurer
 import com.osacky.doctor.internal.SLOW_MAVEN_CONNECTION
 import com.osacky.doctor.internal.SlowNetworkPrinter
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
-import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.Disposable
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.resource.ExternalResourceReadBuildOperationType
@@ -65,7 +65,7 @@ class DownloadSpeedMeasurer(
         }
     }
 
-    override fun addCustomValues(buildScanApi: ScanApi) {
+    override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(SLOW_MAVEN_CONNECTION)
     }
 }

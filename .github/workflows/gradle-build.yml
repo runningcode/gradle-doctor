@@ -11,6 +11,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - uses: gradle/actions/setup-gradle@v3
+      with:
+        add-job-summary-as-pr-comment: on-failure
     - name: Check Gradle Doctor
       run: ./gradlew checkPlugin
     - name: Publish Snapshot

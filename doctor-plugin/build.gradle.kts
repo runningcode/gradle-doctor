@@ -27,8 +27,8 @@ gradlePlugin {
 
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin.lib)
-    implementation(libs.tagger)
     implementation(libs.rxjava)
+    implementation(libs.develocity.agent.adapters)
     "parallelGCTestImplementation"(testFixtures(project))
     "integrationTestImplementation"(testFixtures(project))
     testFixturesApi(gradleTestKit())
