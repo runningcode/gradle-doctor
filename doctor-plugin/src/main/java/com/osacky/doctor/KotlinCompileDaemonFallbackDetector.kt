@@ -1,8 +1,8 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.KOTLIN_COMPILE_DAEMON_FALLBACK
 import com.osacky.doctor.internal.sysProperty
-import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.gradle.api.Project
 import org.gradle.internal.logging.LoggingManagerInternal
@@ -50,7 +50,7 @@ class KotlinCompileDaemonFallbackDetector(
         return emptyList()
     }
 
-    override fun addCustomValues(buildScanApi: ScanApi) {
+    override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         if (hasUsedFallback()) {
             buildScanApi.tag(KOTLIN_COMPILE_DAEMON_FALLBACK)
         }

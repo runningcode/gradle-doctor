@@ -1,9 +1,9 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DirtyBeanCollector
 import com.osacky.doctor.internal.HIGH_GC
-import com.osacky.tagger.ScanApi
 import org.gradle.api.GradleException
 import java.text.NumberFormat
 
@@ -48,7 +48,7 @@ class GarbagePrinter(
         return emptyList()
     }
 
-    override fun addCustomValues(buildScanApi: ScanApi) {
+    override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(HIGH_GC)
     }
 }

@@ -1,8 +1,8 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.JAVA_HOME_TAG
 import com.osacky.doctor.internal.PillBoxPrinter
-import com.osacky.tagger.ScanApi
 import org.gradle.api.GradleException
 import org.gradle.internal.jvm.Jvm
 import java.io.File
@@ -77,7 +77,7 @@ class JavaHomeCheck(
 
     private fun String.toFile() = File(this)
 
-    override fun addCustomValues(buildScanApi: ScanApi) {
+    override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(JAVA_HOME_TAG)
     }
 }

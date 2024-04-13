@@ -1,8 +1,8 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.LONG_DAGGER
 import com.osacky.doctor.internal.plusAssign
-import com.osacky.tagger.ScanApi
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.gradle.api.internal.tasks.compile.CompileJavaBuildOperationType
 
@@ -33,7 +33,7 @@ class JavaAnnotationTime(
         return emptyList()
     }
 
-    override fun addCustomValues(buildScanApi: ScanApi) {
+    override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(LONG_DAGGER)
     }
 }

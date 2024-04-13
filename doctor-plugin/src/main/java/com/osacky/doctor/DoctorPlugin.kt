@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.CliCommandExecutor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonChecker
@@ -12,7 +13,6 @@ import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
 import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
-import com.osacky.tagger.ScanApi
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -93,7 +93,7 @@ class DoctorPlugin : Plugin<Project> {
             kotlinCompileDaemonFallbackDetector.onStart()
         }
 
-        val buildScanApi = ScanApi(target)
+        val buildScanApi = findAdapter(target)
         registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations, buildScanApi)
 
         tagFreshDaemon(target, buildScanApi)
@@ -159,7 +159,7 @@ class DoctorPlugin : Plugin<Project> {
 
     private fun tagFreshDaemon(
         target: Project,
-        buildScanApi: ScanApi,
+        buildScanApi: BuildScanAdapter,
     ) {
         ((target.gradle as GradleInternal).services.find(DaemonScanInfo::class.java) as DaemonScanInfo?)?.let {
             if (it.numberOfBuilds == 1) {
@@ -173,7 +173,7 @@ class DoctorPlugin : Plugin<Project> {
         pillBoxPrinter: PillBoxPrinter,
         target: Project,
         buildOperations: OperationEvents,
-        buildScanApi: ScanApi,
+        buildScanApi: BuildScanAdapter,
     ) {
         val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
 
@@ -274,7 +274,7 @@ class DoctorPlugin : Plugin<Project> {
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
-    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: ScanApi) :
+    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: BuildScanAdapter) :
         Action<List<BuildStartFinishListener>> {
         override fun execute(list: List<BuildStartFinishListener>) {
             val thingsToPrint: List<String> =
