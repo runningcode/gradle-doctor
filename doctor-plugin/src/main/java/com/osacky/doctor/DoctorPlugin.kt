@@ -164,13 +164,7 @@ class DoctorPlugin : Plugin<Project> {
     ): JavaHomeCheck {
         val jvmVariables =
             JvmVariables(environmentJavaHome = System.getenv(JAVA_HOME), gradleJavaHome = Jvm.current().javaHome.path)
-        val javaHomeCheckConfig = JavaHomeCheckConfig(
-            ensureJavaHomeIsSet = extension.javaHomeHandler.ensureJavaHomeIsSet.get(),
-            ensureJavaHomeMatches = extension.javaHomeHandler.ensureJavaHomeMatches.get(),
-            extraMessage = extension.javaHomeHandler.extraMessage.orNull,
-            failOnError = extension.javaHomeHandler.failOnError.get()
-        )
-        return JavaHomeCheck(jvmVariables, javaHomeCheckConfig, pillBoxPrinter)
+        return JavaHomeCheck(jvmVariables, extension, pillBoxPrinter)
     }
 
     private fun tagFreshDaemon(

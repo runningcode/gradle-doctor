@@ -43,8 +43,10 @@ interface JavaHomeCheckPrescriptionsGenerator {
     fun generateJavaHomeMismatchesGradleHome(javaHomeLocation: String?, gradleJavaHomeLocation: String): String
 }
 
-internal class DefaultPrescriptionGenerator(private val extraMessage: String?) : JavaHomeCheckPrescriptionsGenerator {
-    override fun generateJavaHomeIsNotSetMessage() = String.format(NO_JAVA_HOME_MESSAGE, extraMessage).trimIndent()
+internal class DefaultPrescriptionGenerator(private val extraMessage: () -> String?) :
+    JavaHomeCheckPrescriptionsGenerator {
+    override fun generateJavaHomeIsNotSetMessage() =
+        String.format(NO_JAVA_HOME_MESSAGE, extraMessage().orEmpty()).trimIndent()
 
     override fun generateJavaHomeMismatchesGradleHome(
         javaHomeLocation: String?,
@@ -57,7 +59,7 @@ internal class DefaultPrescriptionGenerator(private val extraMessage: String?) :
             JAVA_HOME_DOESNT_MATCH_GRADLE_HOME,
             javaHomeMessage,
             gradleJavaHomeMessage,
-            extraMessage
+            extraMessage().orEmpty()
         ).trimIndent()
     }
 }

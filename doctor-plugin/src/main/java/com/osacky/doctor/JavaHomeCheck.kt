@@ -20,9 +20,9 @@ internal const val JAVA_HOME_NOT_FOUND =
 
 class JavaHomeCheck(
     jvmVariables: JvmVariables,
-    private val config: JavaHomeCheckConfig,
+    private val doctorExtension: DoctorExtension,
     private val pillBoxPrinter: PillBoxPrinter,
-    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator = DefaultPrescriptionGenerator(config.extraMessage)
+    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator = DefaultPrescriptionGenerator { doctorExtension.javaHomeHandler.extraMessage.orNull }
 ) : BuildStartFinishListener, HasBuildScanTag {
 
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
@@ -45,13 +45,13 @@ class JavaHomeCheck(
     }
 
     private fun ensureJavaHomeIsSet() {
-        if (config.ensureJavaHomeIsSet && environmentJavaExecutablePath == null) {
+        if (doctorExtension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaExecutablePath == null) {
             failOrRecordMessage(prescriptionsGenerator.generateJavaHomeIsNotSetMessage())
         }
     }
 
     private fun ensureJavaHomeMatchesGradleHome() {
-        if (config.ensureJavaHomeMatches && !isGradleUsingJavaHome) {
+        if (doctorExtension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome) {
             failOrRecordMessage(
                 prescriptionsGenerator.generateJavaHomeMismatchesGradleHome(
                     environmentJavaExecutablePath?.pathString,
@@ -62,7 +62,7 @@ class JavaHomeCheck(
     }
 
     private fun failOrRecordMessage(message: String) {
-        if (config.failOnError) {
+        if (doctorExtension.javaHomeHandler.failOnError.get()) {
             throw GradleException(pillBoxPrinter.createPill(message))
         } else {
             recordedErrors.add(message)
@@ -91,10 +91,3 @@ class JavaHomeCheck(
 }
 
 data class JvmVariables(val environmentJavaHome: String?, val gradleJavaHome: String)
-
-data class JavaHomeCheckConfig(
-    val ensureJavaHomeIsSet: Boolean,
-    val ensureJavaHomeMatches: Boolean,
-    val extraMessage: String?,
-    val failOnError: Boolean
-)
