@@ -36,8 +36,6 @@ class JavaHomeCheckTest {
     val testProjectRoot = TemporaryFolder()
 
     private val javaHomeHandler = mock<JavaHomeHandler>()
-    private val doctorExtension =
-        mock<DoctorExtension>().also { whenever(it.javaHomeHandler).thenReturn(javaHomeHandler) }
     private val alwaysFalseProperty = mock<Property<Boolean>>().also { whenever(it.get()).thenReturn(false) }
     private val alwaysTrueProperty = mock<Property<Boolean>>().also { whenever(it.get()).thenReturn(true) }
     private val errorMessageProperty =
@@ -91,7 +89,7 @@ class JavaHomeCheckTest {
         underTest =
             JavaHomeCheck(
                 jvmVariables,
-                doctorExtension,
+                javaHomeHandler,
                 pillBoxPrinter,
                 spyPrescriptionsGenerator
             )
@@ -107,7 +105,7 @@ class JavaHomeCheckTest {
     fun `given gradle and environment java home path doesn't match when a failOnError check is performed then there is at least one prescription and an exception thrown`() {
         val jvmVariables = setupDifferentJvmVariables()
         whenever(javaHomeHandler.failOnError).thenReturn(alwaysTrueProperty)
-        underTest = JavaHomeCheck(jvmVariables, doctorExtension, pillBoxPrinter, spyPrescriptionsGenerator)
+        underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
         assertFalse(spyPrescriptionsGenerator.noJavaHomeGenerationWasCalled)
         assertTrue(spyPrescriptionsGenerator.javaHomeMismatchGenerationWasCalled)
@@ -118,7 +116,7 @@ class JavaHomeCheckTest {
     @Test
     fun `given gradle and environment java home path doesn't match when a full check is performed then there is at least one prescription`() {
         val jvmVariables = setupDifferentJvmVariables()
-        underTest = JavaHomeCheck(jvmVariables, doctorExtension, pillBoxPrinter, spyPrescriptionsGenerator)
+        underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
         val errors = underTest.onFinish()
         assertTrue(errors.isNotEmpty())
@@ -130,7 +128,7 @@ class JavaHomeCheckTest {
     @Test
     fun `given gradle and environment java home matches when a full check is performed then there are no prescriptions`() {
         val legitJvmVariables = setupIdenticalJvmVariables()
-        underTest = JavaHomeCheck(legitJvmVariables, doctorExtension, pillBoxPrinter)
+        underTest = JavaHomeCheck(legitJvmVariables, javaHomeHandler, pillBoxPrinter)
         underTest.onStart()
         val errors = underTest.onFinish()
         verifyZeroInteractions(pillBoxPrinter)
@@ -174,7 +172,7 @@ class JavaHomeCheckTest {
 
         // environmentJavaHome=***/Users/doctor/.sdkman/candidates/java/current and gradleJavaHome=***/Users/doctor/.sdkman/candidates/java/17.0.10-zulu/zulu-17.jdk/Contents/Home
         val jvmVariables = JvmVariables(sdkmanEnvironmentJavaHome.pathString, javaHomePath.pathString)
-        underTest = JavaHomeCheck(jvmVariables, doctorExtension, pillBoxPrinter, spyPrescriptionsGenerator)
+        underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
         val errors = underTest.onFinish()
         assertFalse(spyPrescriptionsGenerator.noJavaHomeGenerationWasCalled)

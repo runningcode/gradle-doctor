@@ -20,9 +20,9 @@ internal const val JAVA_HOME_NOT_FOUND =
 
 class JavaHomeCheck(
     jvmVariables: JvmVariables,
-    private val doctorExtension: DoctorExtension,
+    private val javaHomeHandler: JavaHomeHandler,
     private val pillBoxPrinter: PillBoxPrinter,
-    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator = DefaultPrescriptionGenerator { doctorExtension.javaHomeHandler.extraMessage.orNull }
+    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator = DefaultPrescriptionGenerator { javaHomeHandler.extraMessage.orNull }
 ) : BuildStartFinishListener, HasBuildScanTag {
 
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
@@ -45,13 +45,13 @@ class JavaHomeCheck(
     }
 
     private fun ensureJavaHomeIsSet() {
-        if (doctorExtension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaExecutablePath == null) {
+        if (javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaExecutablePath == null) {
             failOrRecordMessage(prescriptionsGenerator.generateJavaHomeIsNotSetMessage())
         }
     }
 
     private fun ensureJavaHomeMatchesGradleHome() {
-        if (doctorExtension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome) {
+        if (javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome) {
             failOrRecordMessage(
                 prescriptionsGenerator.generateJavaHomeMismatchesGradleHome(
                     environmentJavaExecutablePath?.pathString,
@@ -62,7 +62,7 @@ class JavaHomeCheck(
     }
 
     private fun failOrRecordMessage(message: String) {
-        if (doctorExtension.javaHomeHandler.failOnError.get()) {
+        if (javaHomeHandler.failOnError.get()) {
             throw GradleException(pillBoxPrinter.createPill(message))
         } else {
             recordedErrors.add(message)
