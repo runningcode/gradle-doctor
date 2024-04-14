@@ -1,7 +1,7 @@
 package com.osacky.doctor
 
-import com.osacky.doctor.internal.DefaultPrescriptionGenerator
 import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
+import com.osacky.doctor.internal.DefaultPrescriptionGenerator
 import com.osacky.doctor.internal.JAVA_HOME_TAG
 import com.osacky.doctor.internal.JavaHomeCheckPrescriptionsGenerator
 import com.osacky.doctor.internal.PillBoxPrinter
@@ -22,9 +22,9 @@ class JavaHomeCheck(
     jvmVariables: JvmVariables,
     private val javaHomeHandler: JavaHomeHandler,
     private val pillBoxPrinter: PillBoxPrinter,
-    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator = DefaultPrescriptionGenerator { javaHomeHandler.extraMessage.orNull }
+    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator =
+        DefaultPrescriptionGenerator { javaHomeHandler.extraMessage.orNull },
 ) : BuildStartFinishListener, HasBuildScanTag {
-
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
     private val environmentJavaExecutablePath by lazy { resolveEnvironmentJavaHome(jvmVariables.environmentJavaHome) }
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
@@ -55,8 +55,8 @@ class JavaHomeCheck(
             failOrRecordMessage(
                 prescriptionsGenerator.generateJavaHomeMismatchesGradleHome(
                     environmentJavaExecutablePath?.pathString,
-                    gradleJavaExecutablePath.pathString
-                )
+                    gradleJavaExecutablePath.pathString,
+                ),
             )
         }
     }
@@ -69,22 +69,26 @@ class JavaHomeCheck(
         }
     }
 
-    private fun resolveEnvironmentJavaHome(location: String?) = location?.let {
-        resolveExecutableJavaPath(it) { path ->
-            if (!path.exists()) {
-                throw GradleException(String.format(JAVA_HOME_NOT_FOUND, path))
+    private fun resolveEnvironmentJavaHome(location: String?) =
+        location?.let {
+            resolveExecutableJavaPath(it) { path ->
+                if (!path.exists()) {
+                    throw GradleException(String.format(JAVA_HOME_NOT_FOUND, path))
+                }
+                return@resolveExecutableJavaPath path
             }
-            return@resolveExecutableJavaPath path
         }
-    }
 
-    private fun resolveExecutableJavaPath(location: String, fallback: (Path) -> Path = { it }): Path {
+    private fun resolveExecutableJavaPath(
+        location: String,
+        fallback: (Path) -> Path = { it },
+    ): Path {
         val path = File(location).toPath()
         return try {
             // Follow symlinks when checking that java home matches.
             path.resolve(JAVA_EXECUTABLES_FOLDER).toRealPath()
         } catch (exc: NoSuchFileException) {
-            //fallback to initial path
+            // fallback to initial path
             return fallback(path)
         }
     }

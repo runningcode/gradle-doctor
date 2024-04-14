@@ -17,11 +17,11 @@
 package com.osacky.doctor.internal
 
 class SpyJavaHomePrescriptionsGenerator : JavaHomeCheckPrescriptionsGenerator {
-
     var noJavaHomeGenerationWasCalled = false
     var javaHomeMismatchGenerationWasCalled = false
     var capturedJavaHomeLocation: String? = null
     var capturedGradleJavaHomeLocation: String = ""
+
     override fun generateJavaHomeIsNotSetMessage(): String {
         noJavaHomeGenerationWasCalled = true
         return "Fake no java home message."
@@ -29,7 +29,7 @@ class SpyJavaHomePrescriptionsGenerator : JavaHomeCheckPrescriptionsGenerator {
 
     override fun generateJavaHomeMismatchesGradleHome(
         javaHomeLocation: String?,
-        gradleJavaHomeLocation: String
+        gradleJavaHomeLocation: String,
     ): String {
         javaHomeMismatchGenerationWasCalled = true
         capturedJavaHomeLocation = javaHomeLocation

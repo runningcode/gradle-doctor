@@ -160,7 +160,7 @@ class DoctorPlugin : Plugin<Project> {
 
     private fun createJavaHomeCheck(
         extension: DoctorExtension,
-        pillBoxPrinter: PillBoxPrinter
+        pillBoxPrinter: PillBoxPrinter,
     ): JavaHomeCheck {
         val jvmVariables =
             JvmVariables(environmentJavaHome = System.getenv(JAVA_HOME), gradleJavaHome = Jvm.current().javaHome.path)

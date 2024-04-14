@@ -31,7 +31,6 @@ import java.nio.file.Paths
 import kotlin.io.path.*
 
 class JavaHomeCheckTest {
-
     @get:Rule
     val testProjectRoot = TemporaryFolder()
 
@@ -39,7 +38,9 @@ class JavaHomeCheckTest {
     private val alwaysFalseProperty = mock<Property<Boolean>>().also { whenever(it.get()).thenReturn(false) }
     private val alwaysTrueProperty = mock<Property<Boolean>>().also { whenever(it.get()).thenReturn(true) }
     private val errorMessageProperty =
-        mock<Property<String>>().also { whenever(it.get()).thenReturn("Please ensure your that your java home is set and is the same as gradle java home.") }
+        mock<Property<String>>().also {
+            whenever(it.get()).thenReturn("Please ensure your that your java home is set and is the same as gradle java home.")
+        }
 
     /**
      *  No need to test against different filesystems as this logic is entirely handled inside nio(Paths.get) framework,
@@ -56,19 +57,19 @@ class JavaHomeCheckTest {
     private val anotherLegitJavaHomePathFolders =
         arrayOf("Library", "Java", "JavaVirtualMachines", "z.y.x-jdk", *macOSContentFolderStructure)
 
-
     private val currentZuluDistributionFolder = "17.0.10-zulu"
     private val currentZuluJDKFolder = "zulu-17.jdk"
     private val zuluJDKStructure =
         arrayOf(currentZuluDistributionFolder, currentZuluJDKFolder, *macOSContentFolderStructure)
-    private val zuluJavaHomePathFolders = arrayOf(
-        "Users",
-        "doctor",
-        ".sdkman",
-        "candidates",
-        "java",
-        *zuluJDKStructure,
-    )
+    private val zuluJavaHomePathFolders =
+        arrayOf(
+            "Users",
+            "doctor",
+            ".sdkman",
+            "candidates",
+            "java",
+            *zuluJDKStructure,
+        )
 
     private lateinit var javaHomePath: Path
     private lateinit var spyPrescriptionsGenerator: SpyJavaHomePrescriptionsGenerator
@@ -91,7 +92,7 @@ class JavaHomeCheckTest {
                 jvmVariables,
                 javaHomeHandler,
                 pillBoxPrinter,
-                spyPrescriptionsGenerator
+                spyPrescriptionsGenerator,
             )
         underTest.onStart()
         val errors = underTest.onFinish()
@@ -142,28 +143,31 @@ class JavaHomeCheckTest {
 
         // removing 17.0.10-zulu/Contents/Home/ to reach to root Users/doctor/.sdkman/candidates/java and setup symlink
         val amountOfDirectoriesBeforeRootJavaFolder = zuluJDKStructure.size
-        val javaDistributionsRootFolderPath = javaHomePath.root.resolve(
-            javaHomePath.subpath(
-                0,
-                javaHomePath.count() - amountOfDirectoriesBeforeRootJavaFolder
+        val javaDistributionsRootFolderPath =
+            javaHomePath.root.resolve(
+                javaHomePath.subpath(
+                    0,
+                    javaHomePath.count() - amountOfDirectoriesBeforeRootJavaFolder,
+                ),
             )
-        )
 
         // creating several distributions to make it look more realistic
         val severalJavaDistributions = arrayOf("11.0.21.fx-zulu", "17.0.10-amzn", "17.0.10-oracle")
         severalJavaDistributions.forEach {
             javaDistributionsRootFolderPath.resolve(it).createDirectory()
         }
-        val zuluRootFolderPath = javaHomePath.root.resolve(
-            javaHomePath.subpath(
-                0,
-                javaHomePath.count() - (amountOfDirectoriesBeforeRootJavaFolder - 1)
+        val zuluRootFolderPath =
+            javaHomePath.root.resolve(
+                javaHomePath.subpath(
+                    0,
+                    javaHomePath.count() - (amountOfDirectoriesBeforeRootJavaFolder - 1),
+                ),
             )
-        )
 
         // creating the sdkman "current" symlink and pointing to zulu
-        val sdkmanEnvironmentJavaHome = javaDistributionsRootFolderPath.resolve("current")
-            .createSymbolicLinkPointingTo(zuluRootFolderPath.toAbsolutePath())
+        val sdkmanEnvironmentJavaHome =
+            javaDistributionsRootFolderPath.resolve("current")
+                .createSymbolicLinkPointingTo(zuluRootFolderPath.toAbsolutePath())
         val javaExecutableFolder = javaHomePath.resolve(JAVA_EXECUTABLES_FOLDER).createDirectories()
 
         // creating zulu bin symlink and pointing it to the actual /Contents/Home/bin folder
