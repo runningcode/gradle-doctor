@@ -9,7 +9,8 @@ import org.gradle.api.GradleException
 import java.io.File
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
-import java.util.*
+import java.util.Collections
+import kotlin.collections.LinkedHashSet
 import kotlin.io.path.exists
 import kotlin.io.path.pathString
 

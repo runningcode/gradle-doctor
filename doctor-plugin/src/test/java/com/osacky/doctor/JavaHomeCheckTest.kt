@@ -16,19 +16,29 @@
 
 package com.osacky.doctor
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.atLeast
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SpyJavaHomePrescriptionsGenerator
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.*
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
+import kotlin.io.path.createSymbolicLinkPointingTo
+import kotlin.io.path.pathString
 
 class JavaHomeCheckTest {
     @get:Rule
@@ -103,7 +113,7 @@ class JavaHomeCheckTest {
     }
 
     @Test(expected = GradleException::class)
-    fun `given gradle and environment java home path doesn't match when a failOnError check is performed then there is at least one prescription and an exception thrown`() {
+    fun `given paths don't match when a failOnError check is performed then there is at least one prescription and an exception thrown`() {
         val jvmVariables = setupDifferentJvmVariables()
         whenever(javaHomeHandler.failOnError).thenReturn(alwaysTrueProperty)
         underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
@@ -115,7 +125,7 @@ class JavaHomeCheckTest {
     }
 
     @Test
-    fun `given gradle and environment java home path doesn't match when a full check is performed then there is at least one prescription`() {
+    fun `given paths don't match when a full check is performed then there is at least one prescription`() {
         val jvmVariables = setupDifferentJvmVariables()
         underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
@@ -127,7 +137,7 @@ class JavaHomeCheckTest {
     }
 
     @Test
-    fun `given gradle and environment java home matches when a full check is performed then there are no prescriptions`() {
+    fun `given paths match when a full check is performed then there are no prescriptions`() {
         val legitJvmVariables = setupIdenticalJvmVariables()
         underTest = JavaHomeCheck(legitJvmVariables, javaHomeHandler, pillBoxPrinter)
         underTest.onStart()
@@ -138,7 +148,7 @@ class JavaHomeCheckTest {
 
     // in order to run this test successfully on windows you need to run as administrator as you need extra permissions to create symlinks
     @Test
-    fun `given zulu like java distributions(with symlinks) where gradle and environment java home matches when a full check is performed then there are no prescriptions`() {
+    fun `given zulu path(with symlink) and paths match when a full check is performed then there are no prescriptions`() {
         javaHomePath = setupJavaHomePathStructure(zuluJavaHomePathFolders)
 
         // removing 17.0.10-zulu/Contents/Home/ to reach to root Users/doctor/.sdkman/candidates/java and setup symlink
