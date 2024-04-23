@@ -112,16 +112,20 @@ class JavaHomeCheckTest {
         verifyJvmVariablesAreUsedForPrescriptionGeneration(jvmVariables)
     }
 
-    @Test(expected = GradleException::class)
+    @Test
     fun `given paths don't match when a failOnError check is performed then there is at least one prescription and an exception thrown`() {
         val jvmVariables = setupDifferentJvmVariables()
         whenever(javaHomeHandler.failOnError).thenReturn(alwaysTrueProperty)
         underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
-        underTest.onStart()
-        assertFalse(spyPrescriptionsGenerator.noJavaHomeGenerationWasCalled)
-        assertTrue(spyPrescriptionsGenerator.javaHomeMismatchGenerationWasCalled)
-        verifyJvmVariablesAreUsedForPrescriptionGeneration(jvmVariables)
-        verify(pillBoxPrinter, atLeast(1)).createPill(any())
+        val result = runCatching { underTest.onStart() }
+        assertTrue(result.isFailure)
+        result.onFailure {
+            assertTrue(it is GradleException)
+            assertFalse(spyPrescriptionsGenerator.noJavaHomeGenerationWasCalled)
+            assertTrue(spyPrescriptionsGenerator.javaHomeMismatchGenerationWasCalled)
+            verifyJvmVariablesAreUsedForPrescriptionGeneration(jvmVariables)
+            verify(pillBoxPrinter, atLeast(1)).createPill(any())
+        }
     }
 
     @Test
