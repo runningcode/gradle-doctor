@@ -11,7 +11,7 @@ jobs:
           java-version: |
             8
             17
-          distribution: 'temurin'
+          distribution: 'liberica'
       - uses: gradle/actions/setup-gradle@v3
         with:
           add-job-summary-as-pr-comment: on-failure
