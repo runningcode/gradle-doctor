@@ -9,8 +9,8 @@ jobs:
     - uses: actions/setup-java@v4
       with:
         java-version: |
-          '17'
-          '8'
+          17
+          8
         distribution: 'temurin'
     - uses: gradle/actions/setup-gradle@v3
       with:
