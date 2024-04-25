@@ -1,83 +1,98 @@
 package com.osacky.doctor
 
 import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
+import com.osacky.doctor.internal.DefaultPrescriptionGenerator
 import com.osacky.doctor.internal.JAVA_HOME_TAG
+import com.osacky.doctor.internal.JavaHomeCheckPrescriptionsGenerator
 import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
-import org.gradle.internal.jvm.Jvm
 import java.io.File
+import java.nio.file.NoSuchFileException
+import java.nio.file.Path
 import java.util.Collections
+import kotlin.collections.LinkedHashSet
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
+
+internal const val JAVA_HOME = "JAVA_HOME"
+internal const val JAVA_EXECUTABLES_FOLDER = "bin"
+internal const val JAVA_HOME_NOT_FOUND =
+    "There is no existing filesystem structure for %s. Please specify proper path for $JAVA_HOME!"
 
 class JavaHomeCheck(
-    private val extension: DoctorExtension,
+    jvmVariables: JvmVariables,
+    private val javaHomeHandler: JavaHomeHandler,
     private val pillBoxPrinter: PillBoxPrinter,
+    private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator =
+        DefaultPrescriptionGenerator { javaHomeHandler.extraMessage.orNull },
 ) : BuildStartFinishListener, HasBuildScanTag {
-    private val environmentJavaHome: String? = System.getenv("JAVA_HOME")
-    private val gradleJavaHome = Jvm.current().javaHome
+    private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
+    private val environmentJavaExecutablePath by lazy { resolveEnvironmentJavaHome(jvmVariables.environmentJavaHome) }
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
+    private val isGradleUsingJavaHome: Boolean
+        get() = gradleJavaExecutablePath == environmentJavaExecutablePath
 
     override fun onStart() {
-        val extraMessage = extension.javaHomeHandler.extraMessage.orNull
-        val failOnError = extension.javaHomeHandler.failOnError.get()
-
-        if (extension.javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaHome == null) {
-            val message =
-                buildString {
-                    appendln("JAVA_HOME is not set.")
-                    appendln(
-                        "Please set JAVA_HOME so that switching between Android Studio and the terminal does not trigger a full rebuild.",
-                    )
-                    appendln("To set JAVA_HOME: (using bash)")
-                    appendln("echo \"export JAVA_HOME=${'$'}(/usr/libexec/java_home)\" >> ~/.bash_profile")
-                    appendln("or `~/.zshrc` if using zsh.")
-                    extraMessage?.let {
-                        appendln()
-                        appendln(extraMessage)
-                    }
-                }
-            if (failOnError) {
-                throw GradleException(pillBoxPrinter.createPill(message))
-            } else {
-                recordedErrors.add(message)
-            }
-        }
-        if (extension.javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome()) {
-            val message =
-                buildString {
-                    appendln("Gradle is not using JAVA_HOME.")
-                    appendln("JAVA_HOME is ${environmentJavaHome?.toFile()?.toPath()?.toAbsolutePath()}")
-                    appendln("Gradle is using ${gradleJavaHome.toPath().toAbsolutePath()}")
-                    appendln("This can slow down your build significantly when switching from Android Studio to the terminal.")
-                    appendln("To fix: Project Structure -> JDK Location.")
-                    appendln("Set this to your JAVA_HOME.")
-                    extraMessage?.let {
-                        appendln()
-                        appendln(extraMessage)
-                    }
-                }
-            if (failOnError) {
-                throw GradleException(pillBoxPrinter.createPill(message))
-            } else {
-                recordedErrors.add(message)
-            }
-        }
+        ensureJavaHomeIsSet()
+        ensureJavaHomeMatchesGradleHome()
     }
 
     override fun onFinish(): List<String> {
         return recordedErrors.toList()
     }
 
-    private fun isGradleUsingJavaHome(): Boolean {
-        // Follow symlinks when checking that java home matches.
-        if (environmentJavaHome != null && gradleJavaHome.toPath().toRealPath() == File(environmentJavaHome).toPath().toRealPath()) {
-            return true
-        }
-        return false
-    }
-
-    private fun String.toFile() = File(this)
-
     override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(JAVA_HOME_TAG)
     }
+
+    private fun ensureJavaHomeIsSet() {
+        if (javaHomeHandler.ensureJavaHomeIsSet.get() && environmentJavaExecutablePath == null) {
+            failOrRecordMessage(prescriptionsGenerator.generateJavaHomeIsNotSetMessage())
+        }
+    }
+
+    private fun ensureJavaHomeMatchesGradleHome() {
+        if (javaHomeHandler.ensureJavaHomeMatches.get() && !isGradleUsingJavaHome) {
+            failOrRecordMessage(
+                prescriptionsGenerator.generateJavaHomeMismatchesGradleHome(
+                    environmentJavaExecutablePath?.pathString,
+                    gradleJavaExecutablePath.pathString,
+                ),
+            )
+        }
+    }
+
+    private fun failOrRecordMessage(message: String) {
+        if (javaHomeHandler.failOnError.get()) {
+            throw GradleException(pillBoxPrinter.createPill(message))
+        } else {
+            recordedErrors.add(message)
+        }
+    }
+
+    private fun resolveEnvironmentJavaHome(location: String?) =
+        location?.let {
+            resolveExecutableJavaPath(it) { path ->
+                if (!path.exists()) {
+                    throw GradleException(String.format(JAVA_HOME_NOT_FOUND, path))
+                }
+                return@resolveExecutableJavaPath path
+            }
+        }
+
+    private fun resolveExecutableJavaPath(
+        location: String,
+        fallback: (Path) -> Path = { it },
+    ): Path {
+        val path = File(location).toPath()
+        return try {
+            // Follow symlinks when checking that java home matches.
+            path.resolve(JAVA_EXECUTABLES_FOLDER).toRealPath()
+        } catch (exc: NoSuchFileException) {
+            // fallback to initial path
+            return fallback(path)
+        }
+    }
 }
+
+data class JvmVariables(val environmentJavaHome: String?, val gradleJavaHome: String)

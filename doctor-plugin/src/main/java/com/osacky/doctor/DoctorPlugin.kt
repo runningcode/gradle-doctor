@@ -23,6 +23,7 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
+import org.gradle.internal.jvm.Jvm
 import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
@@ -46,7 +47,7 @@ class DoctorPlugin : Plugin<Project> {
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
-        val javaHomeCheck = JavaHomeCheck(extension, pillBoxPrinter)
+        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter)
         val appleRosettaTranslationCheck =
             AppleRosettaTranslationCheck(
                 os,
@@ -155,6 +156,15 @@ class DoctorPlugin : Plugin<Project> {
                 throw GradleException(pillBoxPrinter.createPill(errorMessage))
             }
         }
+    }
+
+    private fun createJavaHomeCheck(
+        extension: DoctorExtension,
+        pillBoxPrinter: PillBoxPrinter,
+    ): JavaHomeCheck {
+        val jvmVariables =
+            JvmVariables(environmentJavaHome = System.getenv(JAVA_HOME), gradleJavaHome = Jvm.current().javaHome.path)
+        return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
     }
 
     private fun tagFreshDaemon(
