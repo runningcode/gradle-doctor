@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+* [Fix Develocity deprecation warnings](https://github.com/runningcode/gradle-doctor/pull/337)
+* [Add support for checking executables for Java home](https://github.com/runningcode/gradle-doctor/pull/336) Thanks [Slow Pacer](https://github.com/slowpacer)
+
 ## 0.9.2
 * [Introduce execution modes for AppleRosettaTranslationCheck](https://github.com/runningcode/gradle-doctor/pull/311) Thanks [Egor Andreevich](https://github.com/Egorand)
 
