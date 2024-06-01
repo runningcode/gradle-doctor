@@ -40,7 +40,7 @@ tasks.withType(Test::class.java).configureEach {
 }
 
 tasks.wrapper {
-  gradleVersion = "8.7"
+  gradleVersion = "8.8"
 }
 
 tasks.register("pluginTasks").configure {
