@@ -8,5 +8,5 @@ dependencies {
   kapt("com.google.dagger:dagger-compiler:2.51.1")
 
   implementation("com.google.auto.value:auto-value-annotations:1.11.0")
-  kapt("com.google.auto.value:auto-value:1.10.4")
+  kapt("com.google.auto.value:auto-value:1.11.0")
 }
