@@ -86,12 +86,12 @@ class DoctorPlugin : Plugin<Project> {
         buildCacheConnectionMeasurer.onStart()
         buildCacheKey.onStart()
         slowerFromCacheCollector.onStart()
-        appleRosettaTranslationCheck.onStart()
         target.afterEvaluate {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
             javaElevenGC.onStart()
             kotlinCompileDaemonFallbackDetector.onStart()
+            appleRosettaTranslationCheck.onStart()
         }
 
         val buildScanApi = findAdapter(target)
