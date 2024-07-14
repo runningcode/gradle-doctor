@@ -14,6 +14,6 @@ develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.0.2"
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
-kotlinter = { id = "org.jmailen.kotlinter", version = "4.3.0" }
+kotlinter = { id = "org.jmailen.kotlinter", version = "4.4.1" }
 plugin-publish = { id = "com.gradle.plugin-publish", version = "1.2.1" }
 
