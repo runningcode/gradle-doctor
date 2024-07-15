@@ -10,7 +10,9 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
-abstract class BuildOperationListenerService : BuildService<BuildOperationListenerService.Params>, BuildOperationListener {
+abstract class BuildOperationListenerService :
+    BuildService<BuildOperationListenerService.Params>,
+    BuildOperationListener {
     interface Params : BuildServiceParameters {
         fun getNegativeAvoidanceThreshold(): Property<Int>
     }
@@ -39,7 +41,5 @@ abstract class BuildOperationListenerService : BuildService<BuildOperationListen
         buildOperations.finished(buildOperation, finishEvent)
     }
 
-    fun getOperations(): OperationEvents {
-        return buildOperations
-    }
+    fun getOperations(): OperationEvents = buildOperations
 }

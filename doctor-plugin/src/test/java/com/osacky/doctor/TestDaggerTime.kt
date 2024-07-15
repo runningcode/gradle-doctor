@@ -37,7 +37,8 @@ class TestDaggerTime {
         testProjectRoot.setupFixture(fixtureName)
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withPluginClasspath()
                 .withArguments("assemble")

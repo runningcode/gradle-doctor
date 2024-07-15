@@ -8,9 +8,9 @@ abstract class AbstractIntegrationTest {
     @get:Rule
     val testProjectRoot = TemporaryFolder()
 
-    fun createRunner(): GradleRunner {
-        return GradleRunner.create()
+    fun createRunner(): GradleRunner =
+        GradleRunner
+            .create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
-    }
 }

@@ -6,13 +6,9 @@ import java.util.Optional
 
 fun shouldUseCoCaClasses(): Boolean = isGradle65OrNewer()
 
-fun isGradle65OrNewer(): Boolean {
-    return GradleVersion.current() >= GradleVersion.version("6.5")
-}
+fun isGradle65OrNewer(): Boolean = GradleVersion.current() >= GradleVersion.version("6.5")
 
-fun isGradle74OrNewer(): Boolean {
-    return GradleVersion.current() >= GradleVersion.version("7.4")
-}
+fun isGradle74OrNewer(): Boolean = GradleVersion.current() >= GradleVersion.version("7.4")
 
 fun sysProperty(
     name: String,

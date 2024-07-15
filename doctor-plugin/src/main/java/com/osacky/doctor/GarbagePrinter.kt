@@ -11,7 +11,8 @@ class GarbagePrinter(
     private val clock: Clock,
     private val collector: DirtyBeanCollector,
     private val extension: DoctorExtension,
-) : BuildStartFinishListener, HasBuildScanTag {
+) : BuildStartFinishListener,
+    HasBuildScanTag {
     private val startGarbageTime = collector.collect()
     private val startBuildTime = clock.upTimeMillis()
     private val formatter = NumberFormat.getPercentInstance()

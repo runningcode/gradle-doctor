@@ -47,23 +47,17 @@ class NoOpBuildScanAdapter : BuildScanAdapter {
     override fun setTermsOfUseUrl(p0: String?) {
     }
 
-    override fun getTermsOfUseUrl(): String? {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun getTermsOfUseUrl(): String? = throw UnsupportedOperationException("not implemented")
 
     override fun setTermsOfUseAgree(p0: String?) {
     }
 
-    override fun getTermsOfUseAgree(): String? {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun getTermsOfUseAgree(): String? = throw UnsupportedOperationException("not implemented")
 
     override fun setUploadInBackground(p0: Boolean) {
     }
 
-    override fun isUploadInBackground(): Boolean {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun isUploadInBackground(): Boolean = throw UnsupportedOperationException("not implemented")
 
     override fun publishAlways() {
     }
@@ -77,18 +71,12 @@ class NoOpBuildScanAdapter : BuildScanAdapter {
     override fun publishOnFailureIf(p0: Boolean) {
     }
 
-    override fun getObfuscation(): BuildScanObfuscationAdapter? {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun getObfuscation(): BuildScanObfuscationAdapter? = throw UnsupportedOperationException("not implemented")
 
     override fun obfuscation(p0: Action<in BuildScanObfuscationAdapter>?) {
     }
 
-    override fun getCapture(): BuildScanCaptureAdapter? {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun getCapture(): BuildScanCaptureAdapter? = throw UnsupportedOperationException("not implemented")
 
-    override fun capture(p0: Action<in BuildScanCaptureAdapter>?) {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun capture(p0: Action<in BuildScanCaptureAdapter>?): Unit = throw UnsupportedOperationException("not implemented")
 }

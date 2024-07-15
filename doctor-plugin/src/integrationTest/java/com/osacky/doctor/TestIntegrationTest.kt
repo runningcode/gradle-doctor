@@ -33,7 +33,8 @@ class TestIntegrationTest {
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withGradleVersion("6.7.1")
                 .withPluginClasspath()
@@ -66,7 +67,8 @@ class TestIntegrationTest {
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withGradleVersion("6.8")
                 .withPluginClasspath()
@@ -81,7 +83,8 @@ class TestIntegrationTest {
         projectWithCleanDependency(disallowCleanTaskDependencies = true)
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withPluginClasspath()
                 .withArguments("clean")
@@ -103,7 +106,8 @@ class TestIntegrationTest {
     fun cleanDependencyDisabledSucceeds() {
         projectWithCleanDependency(disallowCleanTaskDependencies = false)
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withPluginClasspath()
                 .withArguments("clean")
@@ -116,7 +120,8 @@ class TestIntegrationTest {
     fun cleanDependency74Succeeds() {
         projectWithCleanDependency(disallowCleanTaskDependencies = true)
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .withProjectDir(testProjectRoot.root)
                 .withPluginClasspath()
                 .withGradleVersion("7.4")

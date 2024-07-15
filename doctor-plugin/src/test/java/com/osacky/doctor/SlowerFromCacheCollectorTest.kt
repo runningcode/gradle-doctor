@@ -62,54 +62,36 @@ internal class SlowerFromCacheCollectorTest {
     fun finishWithTime(
         originExecutionTime: Long,
         thisExecutionTime: Long = 6,
-    ): OperationFinishEvent {
-        return OperationFinishEvent(0, thisExecutionTime, null, Result(originExecutionTime))
-    }
+    ): OperationFinishEvent = OperationFinishEvent(0, thisExecutionTime, null, Result(originExecutionTime))
 
-    fun descriptorWithName(name: String): BuildOperationDescriptor {
-        return BuildOperationDescriptor.displayName(name)
+    fun descriptorWithName(name: String): BuildOperationDescriptor =
+        BuildOperationDescriptor
+            .displayName(name)
             .build()
-    }
 
-    internal class Result(private val originExecutionTime: Long) : ExecuteTaskBuildOperationType.Result {
-        override fun getSkipMessage(): String? {
-            throw NotImplementedError()
-        }
+    internal class Result(
+        private val originExecutionTime: Long,
+    ) : ExecuteTaskBuildOperationType.Result {
+        override fun getSkipMessage(): String? = throw NotImplementedError()
 
-        override fun getSkipReasonMessage(): String? {
-            throw NotImplementedError()
-        }
+        override fun getSkipReasonMessage(): String? = throw NotImplementedError()
 
-        override fun isActionable(): Boolean {
-            throw NotImplementedError()
-        }
+        override fun isActionable(): Boolean = throw NotImplementedError()
 
-        override fun getOriginBuildInvocationId(): String? {
-            throw NotImplementedError()
-        }
+        override fun getOriginBuildInvocationId(): String? = throw NotImplementedError()
 
         override fun getOriginBuildCacheKeyBytes(): ByteArray? {
             TODO("Not yet implemented")
         }
 
-        override fun getOriginExecutionTime(): Long {
-            return originExecutionTime
-        }
+        override fun getOriginExecutionTime(): Long = originExecutionTime
 
-        override fun getCachingDisabledReasonMessage(): String? {
-            throw NotImplementedError()
-        }
+        override fun getCachingDisabledReasonMessage(): String? = throw NotImplementedError()
 
-        override fun getCachingDisabledReasonCategory(): String? {
-            throw NotImplementedError()
-        }
+        override fun getCachingDisabledReasonCategory(): String? = throw NotImplementedError()
 
-        override fun getUpToDateMessages(): MutableList<String> {
-            throw NotImplementedError()
-        }
+        override fun getUpToDateMessages(): MutableList<String> = throw NotImplementedError()
 
-        override fun isIncremental(): Boolean {
-            throw NotImplementedError()
-        }
+        override fun isIncremental(): Boolean = throw NotImplementedError()
     }
 }

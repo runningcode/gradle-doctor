@@ -2,7 +2,10 @@ package com.osacky.doctor
 
 import org.gradle.api.Project
 
-class JetifierWarning(private val doctorExtension: DoctorExtension, private val project: Project) : BuildStartFinishListener {
+class JetifierWarning(
+    private val doctorExtension: DoctorExtension,
+    private val project: Project,
+) : BuildStartFinishListener {
     override fun onStart() {
     }
 

@@ -30,7 +30,8 @@ class JetifierWarningTest {
         )
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .forwardOutput()
                 .withArguments("help", "-Pandroid.enableJetifier=true")
                 .withPluginClasspath()
@@ -73,7 +74,8 @@ class JetifierWarningTest {
         )
 
         val result =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .forwardOutput()
                 .withArguments("help", "-Pandroid.enableJetifier=false")
                 .withPluginClasspath()

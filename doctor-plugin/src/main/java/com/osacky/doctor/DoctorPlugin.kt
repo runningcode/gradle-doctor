@@ -189,7 +189,9 @@ class DoctorPlugin : Plugin<Project> {
 
         if (shouldUseCoCaClasses()) {
             val closeService =
-                target.gradle.sharedServices.registerIfAbsent("close-service", BuildFinishService::class.java) { }.get()
+                target.gradle.sharedServices
+                    .registerIfAbsent("close-service", BuildFinishService::class.java) { }
+                    .get()
             closeService.closeMeWhenFinished {
                 runnable.execute(list)
             }
@@ -248,18 +250,17 @@ class DoctorPlugin : Plugin<Project> {
     private fun createDaemonChecker(
         operatingSystem: OperatingSystem,
         cliCommandExecutor: CliCommandExecutor,
-    ): DaemonChecker {
-        return when {
+    ): DaemonChecker =
+        when {
             operatingSystem.isLinux || operatingSystem.isMacOsX -> UnixDaemonChecker(cliCommandExecutor)
             else -> UnsupportedOsDaemonChecker
         }
-    }
 
     private fun getOperationEvents(
         target: Project,
         extension: DoctorExtension,
-    ): OperationEvents {
-        return if (shouldUseCoCaClasses()) {
+    ): OperationEvents =
+        if (shouldUseCoCaClasses()) {
             val listenerService =
                 target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
                     this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
@@ -272,20 +273,19 @@ class DoctorPlugin : Plugin<Project> {
             target.gradle.buildOperationListenerManager.addListener(ops)
             ops
         }
-    }
 
     /**
      * Gradle now ignores empty directories starting in 6.8
      * https://docs.gradle.org/6.8-rc-1/release-notes.html#performance-improvements
      **/
-    private fun gradleIgnoresEmptyDirectories(): Boolean {
-        return GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
-    }
+    private fun gradleIgnoresEmptyDirectories(): Boolean = GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
-    class TheActionThing(private val pillBoxPrinter: PillBoxPrinter, private val buildScanApi: BuildScanAdapter) :
-        Action<List<BuildStartFinishListener>> {
+    class TheActionThing(
+        private val pillBoxPrinter: PillBoxPrinter,
+        private val buildScanApi: BuildScanAdapter,
+    ) : Action<List<BuildStartFinishListener>> {
         override fun execute(list: List<BuildStartFinishListener>) {
             val thingsToPrint: List<String> =
                 list.flatMap {

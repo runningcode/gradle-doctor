@@ -180,12 +180,14 @@ class JavaHomeCheckTest {
 
         // creating the sdkman "current" symlink and pointing to zulu
         val sdkmanEnvironmentJavaHome =
-            javaDistributionsRootFolderPath.resolve("current")
+            javaDistributionsRootFolderPath
+                .resolve("current")
                 .createSymbolicLinkPointingTo(zuluRootFolderPath.toAbsolutePath())
         val javaExecutableFolder = javaHomePath.resolve(JAVA_EXECUTABLES_FOLDER).createDirectories()
 
         // creating zulu bin symlink and pointing it to the actual /Contents/Home/bin folder
-        zuluRootFolderPath.resolve(JAVA_EXECUTABLES_FOLDER)
+        zuluRootFolderPath
+            .resolve(JAVA_EXECUTABLES_FOLDER)
             .createSymbolicLinkPointingTo(javaExecutableFolder.toAbsolutePath())
 
         // environmentJavaHome=***/Users/doctor/.sdkman/candidates/java/current and gradleJavaHome=***/Users/doctor/.sdkman/candidates/java/17.0.10-zulu/zulu-17.jdk/Contents/Home
@@ -205,11 +207,10 @@ class JavaHomeCheckTest {
         whenever(javaHomeHandler.extraMessage).thenReturn(errorMessageProperty)
     }
 
-    private fun setupJavaHomePathStructure(folders: Array<String>): Path {
-        return Paths.get(testProjectRoot.root.path, *folders).also {
+    private fun setupJavaHomePathStructure(folders: Array<String>): Path =
+        Paths.get(testProjectRoot.root.path, *folders).also {
             it.createDirectories()
         }
-    }
 
     private fun setupIdenticalJvmVariables(): JvmVariables {
         val legitPath = javaHomePath.pathString

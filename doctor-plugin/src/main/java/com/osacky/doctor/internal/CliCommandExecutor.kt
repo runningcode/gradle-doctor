@@ -4,28 +4,31 @@ import org.gradle.api.Project
 import org.gradle.util.GradleVersion
 import java.io.InputStream
 
-class CliCommandExecutor(private val project: Project) {
+class CliCommandExecutor(
+    private val project: Project,
+) {
     fun execute(
         command: Array<String>,
         ignoreExitValue: Boolean = false,
-    ): String {
-        return if (GradleVersion.current() >= GradleVersion.version("7.5")) {
+    ): String =
+        if (GradleVersion.current() >= GradleVersion.version("7.5")) {
             executeWithConfigCacheSupport(command, ignoreExitValue)
         } else {
             executeInLegacyWay(command, ignoreExitValue)
         }
-    }
 
     @Suppress("UnstableApiUsage")
     private fun executeWithConfigCacheSupport(
         command: Array<String>,
         ignoreExitValue: Boolean = false,
-    ): String {
-        return project.providers.exec {
-            commandLine(*command)
-            isIgnoreExitValue = ignoreExitValue
-        }.standardOutput.asText.get().trim()
-    }
+    ): String =
+        project.providers
+            .exec {
+                commandLine(*command)
+                isIgnoreExitValue = ignoreExitValue
+            }.standardOutput.asText
+            .get()
+            .trim()
 
     private fun executeInLegacyWay(
         command: Array<String>,

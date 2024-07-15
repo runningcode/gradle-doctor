@@ -16,7 +16,9 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-class PluginIntegrationTest constructor(private val version: String) {
+class PluginIntegrationTest constructor(
+    private val version: String,
+) {
     val agpVersion = "4.0.1"
 
     @get:Rule val testProjectRoot = TemporaryFolder()
@@ -146,8 +148,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 |> =============================== Gradle Doctor Prescriptions ============================================
                 |  | Gradle is not using JAVA_HOME.                                                                       |
                 |  | JAVA_HOME is foo                                                                                     |
-                |  """
-                .trimMargin("|"),
+                |  """.trimMargin("|"),
         )
     }
 
@@ -183,8 +184,7 @@ class PluginIntegrationTest constructor(private val version: String) {
                 |> =============================== Gradle Doctor Prescriptions ============================================
                 |  | Gradle is not using JAVA_HOME.                                                                       |
                 |  | JAVA_HOME is foo                                                                                     |
-                |  """
-                .trimMargin("|"),
+                |  """.trimMargin("|"),
         )
     }
 
@@ -446,12 +446,12 @@ class PluginIntegrationTest constructor(private val version: String) {
         assertThat(result.output).contains("SUCCESS")
     }
 
-    private fun createRunner(): GradleRunner {
-        return GradleRunner.create()
+    private fun createRunner(): GradleRunner =
+        GradleRunner
+            .create()
             .withProjectDir(testProjectRoot.root)
             .withPluginClasspath()
             .withGradleVersion(version)
-    }
 
     private fun assumeEmptyDirectoriesInInput() {
         Assume.assumeTrue(GradleVersion.version(version) < GradleVersion.version("6.8"))

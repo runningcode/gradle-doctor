@@ -25,7 +25,8 @@ class JavaHomeCheck(
     private val pillBoxPrinter: PillBoxPrinter,
     private val prescriptionsGenerator: JavaHomeCheckPrescriptionsGenerator =
         DefaultPrescriptionGenerator { javaHomeHandler.extraMessage.orNull },
-) : BuildStartFinishListener, HasBuildScanTag {
+) : BuildStartFinishListener,
+    HasBuildScanTag {
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
     private val environmentJavaExecutablePath by lazy { resolveEnvironmentJavaHome(jvmVariables.environmentJavaHome) }
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
@@ -37,9 +38,7 @@ class JavaHomeCheck(
         ensureJavaHomeMatchesGradleHome()
     }
 
-    override fun onFinish(): List<String> {
-        return recordedErrors.toList()
-    }
+    override fun onFinish(): List<String> = recordedErrors.toList()
 
     override fun addCustomValues(buildScanApi: BuildScanAdapter) {
         buildScanApi.tag(JAVA_HOME_TAG)
@@ -95,4 +94,7 @@ class JavaHomeCheck(
     }
 }
 
-data class JvmVariables(val environmentJavaHome: String?, val gradleJavaHome: String)
+data class JvmVariables(
+    val environmentJavaHome: String?,
+    val gradleJavaHome: String,
+)
