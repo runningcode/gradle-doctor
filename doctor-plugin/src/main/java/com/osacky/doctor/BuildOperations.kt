@@ -15,7 +15,10 @@ import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 import java.util.concurrent.ConcurrentHashMap
 
-class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEvents, BuildOperationListener {
+class BuildOperations(
+    negativeAvoidanceThreshold: Property<Int>,
+) : OperationEvents,
+    BuildOperationListener {
     // TODO move this out of this class
     // When multiple threads are accessing this HashMap, a ClassCastException may be thrown.
     private val snapshotIdsMap = ConcurrentHashMap<OperationIdentifier, SnapshotTaskInputsBuildOperationType.Result>()
@@ -60,9 +63,7 @@ class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEven
         }
     }
 
-    fun slowerFromCacheCollector(): SlowerFromCacheCollector {
-        return slowerFromCacheCollector
-    }
+    fun slowerFromCacheCollector(): SlowerFromCacheCollector = slowerFromCacheCollector
 
     // TODO move this out of this class
     fun cacheKeys(): List<HashCode> {
@@ -79,9 +80,7 @@ class BuildOperations(negativeAvoidanceThreshold: Property<Int>) : OperationEven
         return cacheKeys
     }
 
-    fun tasksRan(): Int {
-        return executeTaskIdsMap.entries.filter { it.value.skipMessage == null }.size
-    }
+    fun tasksRan(): Int = executeTaskIdsMap.entries.filter { it.value.skipMessage == null }.size
 
     override fun starts(): Observable<OperationStartEvent> = starts.hide()
 

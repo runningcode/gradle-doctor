@@ -15,7 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger
 class KotlinCompileDaemonFallbackDetector(
     private val project: Project,
     private val extension: DoctorExtension,
-) : BuildStartFinishListener, HasBuildScanTag {
+) : BuildStartFinishListener,
+    HasBuildScanTag {
     private val fallbackCounter = AtomicInteger(0)
     private val loggingService = project.gradle.serviceOf<LoggingManagerInternal>()
     private val failureEventListener = FailureEventListener(fallbackCounter)
@@ -77,8 +78,7 @@ internal class FailureEventListener(
         }
     }
 
-    private fun isFallbackMessage(event: OutputEvent): Boolean {
-        return event is LogEvent &&
+    private fun isFallbackMessage(event: OutputEvent): Boolean =
+        event is LogEvent &&
             event.message.contains("Could not connect to kotlin daemon. Using fallback strategy.")
-    }
 }

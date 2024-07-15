@@ -31,9 +31,7 @@ class JavaGCFlagChecker(
         }
     }
 
-    override fun onFinish(): List<String> {
-        return emptyList()
-    }
+    override fun onFinish(): List<String> = emptyList()
 
     /**
      * Returns the Java version as an Int in a backward compatible way.

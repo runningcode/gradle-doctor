@@ -16,22 +16,22 @@ class BuildCacheConnectionMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer,
-) : BuildStartFinishListener, HasBuildScanTag {
+) : BuildStartFinishListener,
+    HasBuildScanTag {
     private val slowNetworkPrinter = SlowNetworkPrinter("Build Cache")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
 
     override fun onStart() {
         disposable =
-            buildOperations.finishes()
+            buildOperations
+                .finishes()
                 .filter {
                     (it.result is BuildCacheRemoteLoadBuildOperationType.Result) &&
                         (it.result as BuildCacheRemoteLoadBuildOperationType.Result).isHit
-                }
-                .map {
+                }.map {
                     fromGradleType(it)
-                }
-                .subscribe {
+                }.subscribe {
                     downloadEvents.add(it)
                 }
     }
@@ -43,8 +43,7 @@ class BuildCacheConnectionMeasurer(
         synchronized(downloadEvents) {
             val totalBytes =
                 requireNotNull(downloadEvents) { "downloadEvents list cannot be null" }
-                    .sumBy {
-                            event ->
+                    .sumBy { event ->
                         requireNotNull(
                             requireNotNull(event) { "ExternalDownloadEvent cannot be null" }.byteTotal,
                         ) { "byteTotal cannot be null" }.toInt()
@@ -67,7 +66,11 @@ class BuildCacheConnectionMeasurer(
         }
     }
 
-    data class ExternalDownloadEvent(val start: Long, val end: Long, val byteTotal: Long) {
+    data class ExternalDownloadEvent(
+        val start: Long,
+        val end: Long,
+        val byteTotal: Long,
+    ) {
         companion object {
             private val logger = LoggerFactory.getLogger(ExternalDownloadEvent::class.java)
 

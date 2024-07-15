@@ -9,15 +9,9 @@ interface Clock {
 }
 
 class SystemClock : Clock {
-    override fun upTime(): Long {
-        return System.nanoTime()
-    }
+    override fun upTime(): Long = System.nanoTime()
 
-    override fun upTimeMillis(): Long {
-        return upTime().toMillis()
-    }
+    override fun upTimeMillis(): Long = upTime().toMillis()
 
-    private fun Long.toMillis(): Long {
-        return TimeUnit.NANOSECONDS.toMillis(this)
-    }
+    private fun Long.toMillis(): Long = TimeUnit.NANOSECONDS.toMillis(this)
 }

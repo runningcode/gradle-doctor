@@ -7,7 +7,9 @@ import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
-open class DoctorExtension(objects: ObjectFactory) {
+open class DoctorExtension(
+    objects: ObjectFactory,
+) {
     internal val javaHomeHandler = objects.newInstance<JavaHomeHandler>()
 
     /**
@@ -102,7 +104,9 @@ open class DoctorExtension(objects: ObjectFactory) {
 
 abstract class JavaHomeHandler
     @Inject
-    constructor(objects: ObjectFactory) {
+    constructor(
+        objects: ObjectFactory,
+    ) {
         /**
          * Ensure that we are using `JAVA_HOME` to build with this Gradle.
          */

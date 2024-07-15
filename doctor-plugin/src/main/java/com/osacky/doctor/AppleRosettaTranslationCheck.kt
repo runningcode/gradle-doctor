@@ -42,7 +42,5 @@ class AppleRosettaTranslationCheck(
         }
     }
 
-    override fun onFinish(): List<String> {
-        return emptyList()
-    }
+    override fun onFinish(): List<String> = emptyList()
 }

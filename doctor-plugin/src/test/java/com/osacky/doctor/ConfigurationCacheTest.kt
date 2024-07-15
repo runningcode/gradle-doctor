@@ -31,7 +31,8 @@ class ConfigurationCacheTest {
         testProjectRoot.setupFixture(fixtureName)
 
         val runner =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .forwardOutput()
                 .withArguments("assemble", "--configuration-cache")
                 .withProjectDir(testProjectRoot.root)

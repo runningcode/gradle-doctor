@@ -1,6 +1,8 @@
 package com.osacky.doctor.internal
 
-class UnixDaemonChecker(private val cliCommandExecutor: CliCommandExecutor) : DaemonChecker {
+class UnixDaemonChecker(
+    private val cliCommandExecutor: CliCommandExecutor,
+) : DaemonChecker {
     override fun check(): String? {
         val numberOfDaemons = numberOfDaemons()
         return if (numberOfDaemons > 1) {
@@ -23,8 +25,8 @@ class UnixDaemonChecker(private val cliCommandExecutor: CliCommandExecutor) : Da
         }
     }
 
-    private fun numberOfDaemons(): Int {
-        return cliCommandExecutor
-            .execute(arrayOf("/bin/bash", "-c", "ps aux | grep GradleDaemon | wc -l")).toInt() - 2
-    }
+    private fun numberOfDaemons(): Int =
+        cliCommandExecutor
+            .execute(arrayOf("/bin/bash", "-c", "ps aux | grep GradleDaemon | wc -l"))
+            .toInt() - 2
 }

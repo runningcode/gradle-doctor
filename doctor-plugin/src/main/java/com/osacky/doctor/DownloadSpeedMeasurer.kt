@@ -15,14 +15,16 @@ class DownloadSpeedMeasurer(
     private val buildOperations: OperationEvents,
     private val extension: DoctorExtension,
     private val intervalMeasurer: IntervalMeasurer,
-) : BuildStartFinishListener, HasBuildScanTag {
+) : BuildStartFinishListener,
+    HasBuildScanTag {
     private val slowNetworkPrinter = SlowNetworkPrinter("External Repos")
     private val downloadEvents = Collections.synchronizedList(mutableListOf<ExternalDownloadEvent>())
     private lateinit var disposable: Disposable
 
     override fun onStart() {
         disposable =
-            buildOperations.finishes()
+            buildOperations
+                .finishes()
                 .filter { it.result is ExternalResourceReadBuildOperationType.Result }
                 .map { fromGradleType(it) }
                 .subscribe { event ->
@@ -54,7 +56,11 @@ class DownloadSpeedMeasurer(
         return emptyList()
     }
 
-    data class ExternalDownloadEvent(val start: Long, val end: Long, val byteTotal: Long) {
+    data class ExternalDownloadEvent(
+        val start: Long,
+        val end: Long,
+        val byteTotal: Long,
+    ) {
         companion object {
             fun fromGradleType(event: OperationFinishEvent): ExternalDownloadEvent {
                 val result = event.result

@@ -38,17 +38,17 @@ class RemoteCacheEstimation(
                 if (rerunLargeOutputTasks) {
                     // Look up tasks by name so we don't depend on the Android Plugin.
                     // If the task has a different build type (not debug), it likely won't work here though.
-                    tasks.matching {
-                        it.name == "processDebugResources" ||
-                            it.name == "mergeDebugJavaResource" ||
-                            it.name == "mergeDebugAssets" ||
-                            it.name == "mergeDebugResources" ||
-                            it.name == "bundleLibResDebug" ||
-                            it.name == "packageDebugResources" ||
-                            it.name == "mergeDebugNativeLibs" ||
-                            it.name == "generateDebugUnitTestStubRFile"
-                    }
-                        .configureEach {
+                    tasks
+                        .matching {
+                            it.name == "processDebugResources" ||
+                                it.name == "mergeDebugJavaResource" ||
+                                it.name == "mergeDebugAssets" ||
+                                it.name == "mergeDebugResources" ||
+                                it.name == "bundleLibResDebug" ||
+                                it.name == "packageDebugResources" ||
+                                it.name == "mergeDebugNativeLibs" ||
+                                it.name == "generateDebugUnitTestStubRFile"
+                        }.configureEach {
                             outputs.upToDateWhen { false }
                         }
                 }
@@ -119,7 +119,9 @@ class RemoteCacheEstimation(
     }
 
     private fun gradleLocalCacheDir(): File {
-        val gradleInternalCacheDir = (project.gradle as GradleInternal).settings.buildCache.local.directory
+        val gradleInternalCacheDir =
+            (project.gradle as GradleInternal)
+                .settings.buildCache.local.directory
         return if (gradleInternalCacheDir != null) {
             when (gradleInternalCacheDir) {
                 is File -> {

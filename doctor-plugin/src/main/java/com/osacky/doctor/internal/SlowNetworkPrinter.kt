@@ -1,6 +1,8 @@
 package com.osacky.doctor.internal
 
-class SlowNetworkPrinter(private val type: String) {
+class SlowNetworkPrinter(
+    private val type: String,
+) {
     fun obtainMessage(
         totalBytes: Int,
         totalTime: Long,

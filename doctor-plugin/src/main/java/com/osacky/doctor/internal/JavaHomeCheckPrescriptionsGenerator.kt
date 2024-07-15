@@ -47,8 +47,9 @@ interface JavaHomeCheckPrescriptionsGenerator {
     ): String
 }
 
-internal class DefaultPrescriptionGenerator(private val extraMessage: () -> String?) :
-    JavaHomeCheckPrescriptionsGenerator {
+internal class DefaultPrescriptionGenerator(
+    private val extraMessage: () -> String?,
+) : JavaHomeCheckPrescriptionsGenerator {
     override fun generateJavaHomeIsNotSetMessage() = String.format(NO_JAVA_HOME_MESSAGE, extraMessage().orEmpty()).trimIndent()
 
     override fun generateJavaHomeMismatchesGradleHome(
@@ -58,11 +59,12 @@ internal class DefaultPrescriptionGenerator(private val extraMessage: () -> Stri
         val javaHomeMessage =
             javaHomeLocation?.let { String.format(JAVA_HOME_AT_LOCATION, it) } ?: NO_JAVA_HOME
         val gradleJavaHomeMessage = String.format(GRADLE_JAVA_HOME_AT_LOCATION, gradleJavaHomeLocation)
-        return String.format(
-            JAVA_HOME_DOESNT_MATCH_GRADLE_HOME,
-            javaHomeMessage,
-            gradleJavaHomeMessage,
-            extraMessage().orEmpty(),
-        ).trimIndent()
+        return String
+            .format(
+                JAVA_HOME_DOESNT_MATCH_GRADLE_HOME,
+                javaHomeMessage,
+                gradleJavaHomeMessage,
+                extraMessage().orEmpty(),
+            ).trimIndent()
     }
 }

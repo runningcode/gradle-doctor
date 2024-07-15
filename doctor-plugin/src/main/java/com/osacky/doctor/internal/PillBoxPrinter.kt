@@ -5,7 +5,9 @@ import org.gradle.api.logging.Logger
 /**
  * Prints strings inside a nicely fitted pill box.
  */
-class PillBoxPrinter(private val logger: Logger) {
+class PillBoxPrinter(
+    private val logger: Logger,
+) {
     private val messageLength = 100
     private val title = "Gradle Doctor Prescriptions"
 
@@ -20,23 +22,21 @@ class PillBoxPrinter(private val logger: Logger) {
         }
     }
 
-    private fun createTitle(lineLength: Int): String {
-        return " $title ".padStart(lineLength / 2 + 10, '=').padEnd(lineLength + 4, '=')
-    }
+    private fun createTitle(lineLength: Int): String = " $title ".padStart(lineLength / 2 + 10, '=').padEnd(lineLength + 4, '=')
 
-    private fun createEnding(lineLength: Int): String {
-        return "".padEnd(lineLength + 4, '=')
-    }
+    private fun createEnding(lineLength: Int): String = "".padEnd(lineLength + 4, '=')
 
     fun padMessage(message: String): String {
-        return message.split('\n').flatMap { line ->
-            val chunked = line.chunked(messageLength)
-            if (chunked.isEmpty()) {
-                return@flatMap listOf("| ${"".padEnd(messageLength)} |")
-            } else {
-                return@flatMap chunked.map { "| ${it.padEnd(messageLength)} |" }
-            }
-        }.joinToString("\n")
+        return message
+            .split('\n')
+            .flatMap { line ->
+                val chunked = line.chunked(messageLength)
+                if (chunked.isEmpty()) {
+                    return@flatMap listOf("| ${"".padEnd(messageLength)} |")
+                } else {
+                    return@flatMap chunked.map { "| ${it.padEnd(messageLength)} |" }
+                }
+            }.joinToString("\n")
     }
 
     fun createPill(message: String): String {
