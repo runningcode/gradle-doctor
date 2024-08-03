@@ -12,7 +12,7 @@ jobs:
           17
           8
         distribution: 'liberica'
-    - uses: gradle/actions/setup-gradle@v3
+    - uses: gradle/actions/setup-gradle@v4
       with:
         add-job-summary-as-pr-comment: on-failure
     - name: Check Gradle Doctor
