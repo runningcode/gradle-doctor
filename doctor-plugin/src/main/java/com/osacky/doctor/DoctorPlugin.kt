@@ -11,7 +11,6 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
-import com.osacky.doctor.internal.farthestEmptyParent
 import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.Action
 import org.gradle.api.GradleException
@@ -20,13 +19,10 @@ import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.SourceTask
-import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.internal.operations.BuildOperationListener
 import org.gradle.internal.operations.BuildOperationListenerManager
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
 import org.gradle.launcher.daemon.server.scaninfo.DaemonScanInfo
@@ -39,7 +35,7 @@ class DoctorPlugin : Plugin<Project> {
         ensureMinimumSupportedGradleVersion()
         ensureAppliedInProjectRoot(target)
 
-        val extension = target.extensions.create<DoctorExtension>("doctor")
+        val extension = target.getDoctorExtension()
 
         val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
         val cliCommandExecutor = CliCommandExecutor(target)
@@ -99,41 +95,11 @@ class DoctorPlugin : Plugin<Project> {
 
         tagFreshDaemon(target, buildScanApi)
 
-        val appPluginProjects = mutableSetOf<Project>()
-
         ensureNoCleanTaskDependenciesIfNeeded(target, extension, pillBoxPrinter)
 
-        target.subprojects project@{
-            tasks.withType(SourceTask::class.java).configureEach {
-                if (!gradleIgnoresEmptyDirectories() && extension.failOnEmptyDirectories.get()) {
-                    // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
-                    doFirst {
-                        source.visit {
-                            if (file.isDirectory && file.listFiles().isEmpty()) {
-                                val farthestEmptyParent = file.farthestEmptyParent()
-                                throw IllegalStateException(
-                                    "Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\n" +
-                                        "rmdir ${farthestEmptyParent.absolutePath}",
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
-            tasks.withType(Test::class.java).configureEach {
-                if (!extension.enableTestCaching.get()) {
-                    outputs.upToDateWhen { false }
-                }
-            }
-            plugins.whenPluginAdded plugin@{
-                if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
-                    appPluginProjects.add(this@project)
-                }
-            }
-        }
-
         target.gradle.taskGraph.whenReady {
+            val service = target.getAppProjectCollectorBuildService()
+            val appPluginProjects = service.getProjects()
             // If there is only one application plugin, we don't need to check that we're assembling all the applications.
             if (appPluginProjects.size <= 1 || extension.allowBuildingAllAndroidAppsSimultaneously.get()) {
                 return@whenReady
@@ -273,12 +239,6 @@ class DoctorPlugin : Plugin<Project> {
             target.gradle.buildOperationListenerManager.addListener(ops)
             ops
         }
-
-    /**
-     * Gradle now ignores empty directories starting in 6.8
-     * https://docs.gradle.org/6.8-rc-1/release-notes.html#performance-improvements
-     **/
-    private fun gradleIgnoresEmptyDirectories(): Boolean = GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
 
     private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
 
