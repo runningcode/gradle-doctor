@@ -18,20 +18,20 @@ buildscript {
 plugins {
   alias(libs.plugins.kgp)
   alias(libs.plugins.versions)
-  id("com.osacky.doctor")
+//  id("com.osacky.doctor")
 }
 
-configure<DoctorExtension> {
-  disallowMultipleDaemons.set(false)
-  GCWarningThreshold.set(0.01f)
-  enableTestCaching.set(false)
-  downloadSpeedWarningThreshold.set(2.0f)
-  daggerThreshold.set(100)
-  javaHome {
-      ensureJavaHomeMatches.set(true)
-      ensureJavaHomeIsSet.set(true)
-  }
-}
+//configure<DoctorExtension> {
+//  disallowMultipleDaemons.set(false)
+//  GCWarningThreshold.set(0.01f)
+//  enableTestCaching.set(false)
+//  downloadSpeedWarningThreshold.set(2.0f)
+//  daggerThreshold.set(100)
+//  javaHome {
+//      ensureJavaHomeMatches.set(true)
+//      ensureJavaHomeIsSet.set(true)
+//  }
+//}
 
 tasks.withType(Test::class.java).configureEach {
   testLogging {
