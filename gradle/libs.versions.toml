@@ -9,7 +9,7 @@ truth = "com.google.truth:truth:1.4.4"
 rxjava = "io.reactivex.rxjava3:rxjava:3.1.10"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 okio = "com.squareup.okio:okio:3.10.2"
-develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.0.4"
+develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.1"
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
