@@ -129,14 +129,6 @@ tasks.withType(Test::class.java).configureEach {
     }
 }
 
-val java8Int = tasks.register<Test>("java8IntegrationTest") {
-    group = "verification"
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    })
-    testClassesDirs = parallelGCTest.output.classesDirs
-    classpath = parallelGCTest.runtimeClasspath
-}
 val java11Int = tasks.register<Test>("java11IntegrationTest") {
     group = "verification"
     javaLauncher.set(javaToolchains.launcherFor {
@@ -146,7 +138,7 @@ val java11Int = tasks.register<Test>("java11IntegrationTest") {
     classpath = parallelGCTest.runtimeClasspath
 }
 
-tasks.check.configure { dependsOn(java8Int, java11Int, integrationTestTask)}
+tasks.check.configure { dependsOn(java11Int, integrationTestTask)}
 
 tasks.withType<ValidatePlugins>().configureEach {
     failOnWarning.set(true)
@@ -155,15 +147,15 @@ tasks.withType<ValidatePlugins>().configureEach {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
 // Ensure Java 8 Compatibility
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
     kotlinOptions {
-        jvmTarget = "1.8"
-        languageVersion = "1.5"
-        apiVersion = "1.5"
+        jvmTarget = "11"
+        languageVersion = "1.8"
+        apiVersion = "1.8"
     }
 }
