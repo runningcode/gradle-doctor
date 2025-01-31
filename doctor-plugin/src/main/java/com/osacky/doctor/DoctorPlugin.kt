@@ -47,7 +47,7 @@ class DoctorPlugin : Plugin<Project> {
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
-        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter)
+        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter, cliCommandExecutor)
         val appleRosettaTranslationCheck =
             AppleRosettaTranslationCheck(
                 os,
@@ -161,10 +161,33 @@ class DoctorPlugin : Plugin<Project> {
     private fun createJavaHomeCheck(
         extension: DoctorExtension,
         pillBoxPrinter: PillBoxPrinter,
+        cliCommandExecutor: CliCommandExecutor,
     ): JavaHomeCheck {
         val jvmVariables =
-            JvmVariables(environmentJavaHome = System.getenv(JAVA_HOME), gradleJavaHome = Jvm.current().javaHome.path)
+            JvmVariables(environmentJavaHome = getenv(JAVA_HOME, cliCommandExecutor), gradleJavaHome = Jvm.current().javaHome.path)
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
+    }
+
+    private fun getenv(name: String, cliCommandExecutor: CliCommandExecutor) =
+        System.getenv(name) ?: cliCommandExecutor.getenv(name)
+
+    private fun CliCommandExecutor.getenv(name: String): String {
+        val isWindows = System.getProperty("os.name")?.contains("windows", ignoreCase = true) == true
+
+        return execute(
+            if (isWindows) {
+                arrayOf("cmd.exe", "/c", "echo %$name%")
+            } else {
+                arrayOf(
+                    (System.getenv("SHELL") ?: "/bin/bash"),
+                    "-c",
+                    "source ~/.bashrc 2>/dev/null; source ~/.zshrc 2>/dev/null; echo \$$name",
+                )
+            }
+        )
+            .trim()
+            .takeUnless { output -> isWindows && output == "%$name%" } // in case Windows outputs with %NAME% if the value is absent
+            .orEmpty()
     }
 
     private fun tagFreshDaemon(
