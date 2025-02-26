@@ -1,6 +1,6 @@
 # Build Scan Tags
 
-Gradle Doctor automatically [adds build scan tags](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans) to help categorize and filter builds when using [Gradle Enterprise](https://docs.gradle.com/enterprise/gradle-plugin/)
+Gradle Doctor automatically [adds build scan tags](https://docs.gradle.com/develocity/gradle-plugin/current/#extending_build_scans) to help categorize and filter builds when using [Develocity](https://gradle.com/develocity/).
 
 The `doctor` tag will be added to a build when a prescription is suggested by the Gradle Doctor.
 
