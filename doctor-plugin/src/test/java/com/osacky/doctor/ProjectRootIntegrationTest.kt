@@ -26,6 +26,6 @@ class ProjectRootIntegrationTest {
                 .withArguments("assemble")
                 .buildAndFail()
 
-        assertThat(result.output).contains("Gradle Doctor must be applied in the project root.")
+        assertThat(result.output).contains("org.gradle.api.internal.project.DefaultProject_Decorated cannot be cast to org.gradle.api.initialization.Settings")
     }
 }

@@ -8,7 +8,8 @@ import org.junit.Test
 class ParallelGCIntegrationTest : AbstractIntegrationTest() {
     @Test
     fun testParallelGCWarningEnabled() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
@@ -39,7 +40,8 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
 
     @Test
     fun testParallelGCWarningWhenUsingParallelGC() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
