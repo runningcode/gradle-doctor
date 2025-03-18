@@ -14,7 +14,7 @@ class TestIntegrationTest {
     fun testIgnoreOnEmptyDirectories() {
         testProjectRoot.writeBuildGradle("")
         val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -49,7 +49,7 @@ class TestIntegrationTest {
     fun testDirectoriesIgnoredIn6dot8() {
         testProjectRoot.writeBuildGradle("")
         val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -151,7 +151,7 @@ class TestIntegrationTest {
             """.trimIndent(),
         )
 
-        testProjectRoot.newFile("settings.gradle").writeText(
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
