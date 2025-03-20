@@ -6,8 +6,8 @@ import org.junit.Test
 class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
     @Test
     fun testDisallowKotlinCompileDaemonFallback() {
-        writeKotlinBuildGradle(true)
-        writeSettingsFile()
+        writeKotlinBuildGradle()
+        writeSettingsFile(true)
         testProjectRoot.newFolder("src/main/java/foo")
         testProjectRoot.newFolder("src/test/java/foo")
         testProjectRoot.writeFileToName(
@@ -41,8 +41,8 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
 
     @Test
     fun allowKotlinCompileFallback() {
-        writeKotlinBuildGradle(false)
-        writeSettingsFile()
+        writeKotlinBuildGradle()
+        writeSettingsFile(false)
         testProjectRoot.newFolder("src/main/java/foo")
         testProjectRoot.writeFileToName(
             "src/main/java/foo/Foo.kt",
@@ -62,7 +62,7 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         assertThat(result.output).contains("SUCCESS")
     }
 
-    private fun writeSettingsFile() {
+    private fun writeSettingsFile(allowDaemonFallback: Boolean) {
         testProjectRoot.writeFileToName(
             "settings.gradle",
             """
@@ -70,6 +70,17 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
               repositories {
                 mavenCentral()
                 gradlePluginPortal()
+              }
+            }
+            
+            plugins {
+              id "com.osacky.doctor"
+            }
+
+            doctor {
+              warnIfKotlinCompileDaemonFallback = $allowDaemonFallback
+              javaHome {
+                ensureJavaHomeMatches = false
               }
             }
             """.trimIndent(),
@@ -80,21 +91,14 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
         createRunner()
             .withArguments("check", "-Dkotlin.daemon.jvm.options=invalid_jvm_argument_to_fail_process_startup")
 
-    private fun writeKotlinBuildGradle(allowDaemonFallback: Boolean) {
+    private fun writeKotlinBuildGradle() {
         testProjectRoot.writeBuildGradle(
             """
             plugins {
-              id "com.osacky.doctor"
               id "org.jetbrains.kotlin.jvm" version "1.6.10"
             }
             repositories {
               mavenCentral()
-            }
-            doctor {
-              warnIfKotlinCompileDaemonFallback = $allowDaemonFallback
-              javaHome {
-                ensureJavaHomeMatches = false
-              }
             }
             """.trimIndent(),
         )
