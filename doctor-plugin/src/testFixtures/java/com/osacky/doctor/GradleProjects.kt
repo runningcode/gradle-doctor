@@ -6,6 +6,10 @@ fun TemporaryFolder.writeBuildGradle(build: String) {
     writeFileToName("build.gradle", build)
 }
 
+fun TemporaryFolder.writeSettingsGradle(settings: String) {
+    writeFileToName("settings.gradle", settings)
+}
+
 fun TemporaryFolder.writeFileToName(
     fileName: String,
     contents: String,

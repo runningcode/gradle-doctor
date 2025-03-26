@@ -2,7 +2,10 @@ package com.osacky.doctor
 
 import com.osacky.doctor.AppleRosettaTranslationCheckMode.ERROR
 import org.gradle.api.Action
+import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
@@ -100,6 +103,16 @@ open class DoctorExtension(
     fun javaHome(action: Action<JavaHomeHandler>) {
         action.execute(javaHomeHandler)
     }
+
+    companion object {
+        const val EXTRAS_KEY = "_doctorExtension_settings"
+    }
+}
+
+fun Project.getDoctorExtension(): DoctorExtension {
+    val defaults = extensions.getByType(ExtraPropertiesExtension::class.java).get(DoctorExtension.EXTRAS_KEY)
+            as? DoctorExtension ?: throw GradleException("Settings extension type mismatch")
+    return defaults
 }
 
 abstract class JavaHomeHandler
