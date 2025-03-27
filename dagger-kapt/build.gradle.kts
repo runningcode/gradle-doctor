@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-  implementation("com.google.dagger:dagger:2.56")
+  implementation("com.google.dagger:dagger:2.56.1")
   kapt("com.google.dagger:dagger-compiler:2.56")
 
   implementation("com.google.auto.value:auto-value-annotations:1.11.0")
