@@ -14,7 +14,8 @@ class JetifierWarningTest {
 
     @Test
     fun testJetifierEnabledShowsWarning() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -58,7 +59,8 @@ class JetifierWarningTest {
 
     @Test
     fun testJetifierDisabledShowNoWarning() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"

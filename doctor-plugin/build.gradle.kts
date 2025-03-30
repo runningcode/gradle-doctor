@@ -46,7 +46,7 @@ gradlePlugin {
             displayName = "Doctor Plugin"
             description = "The right prescription for your gradle build."
             tags.addAll(listOf("doctor", "android"))
-            implementationClass = "com.osacky.doctor.DoctorPlugin"
+            implementationClass = "com.osacky.doctor.DoctorSettingsPlugin"
         }
     }
 }

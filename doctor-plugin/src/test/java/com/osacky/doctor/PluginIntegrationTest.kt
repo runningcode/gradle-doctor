@@ -36,7 +36,8 @@ class PluginIntegrationTest constructor(
     @Test
     fun testSupportedVersion() {
         assumeSupportedVersion()
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -59,7 +60,8 @@ class PluginIntegrationTest constructor(
     @Test
     fun testFailOnOlderVersion() {
         assumeUnsupportedVersion()
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -82,7 +84,8 @@ class PluginIntegrationTest constructor(
     @Test
     fun testFailWithMultipleDaemons() {
         assumeSupportedVersion()
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -121,7 +124,8 @@ class PluginIntegrationTest constructor(
     fun testJavaHomeNotSet() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -136,7 +140,6 @@ class PluginIntegrationTest constructor(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -157,7 +160,8 @@ class PluginIntegrationTest constructor(
     fun testJavaHomeNotSetWithConsoleError() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -171,7 +175,6 @@ class PluginIntegrationTest constructor(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -193,7 +196,8 @@ class PluginIntegrationTest constructor(
     fun testJavaHomeNotSetWithCustomMessage() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        writeBuildGradle("")
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -207,7 +211,6 @@ class PluginIntegrationTest constructor(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -222,17 +225,19 @@ class PluginIntegrationTest constructor(
         assumeSupportedVersion()
         assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
-            """
-            buildscript {
+        writeBuildGradle("""
+             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+        """.trimIndent())
+        writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -243,15 +248,10 @@ class PluginIntegrationTest constructor(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
+            
             include 'app-one'
             include 'app-two'
-            """.trimMargin(),
+            """.trimIndent(),
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -305,17 +305,19 @@ class PluginIntegrationTest constructor(
         assumeSupportedVersion()
         assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
-            """
-            buildscript {
+        writeBuildGradle("""
+             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+        """.trimIndent())
+        writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -326,15 +328,10 @@ class PluginIntegrationTest constructor(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
+            
             include 'app-one'
             include 'app-two'
-            """.trimMargin(),
+            """.trimIndent(),
         )
 
         val srcFolder = testProjectRoot.newFolder("app-one", "src", "main")
@@ -387,7 +384,9 @@ class PluginIntegrationTest constructor(
     fun testFailOnEmptyDirectories() {
         assumeSupportedVersion()
         assumeEmptyDirectoriesInInput()
-        writeBuildGradle(
+        writeBuildGradle("")
+        val fixtureName = "java-fixture"
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -400,10 +399,10 @@ class PluginIntegrationTest constructor(
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
                     |}
+                    |
+                    |include '$fixtureName'
                 """.trimMargin("|"),
         )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
@@ -418,7 +417,9 @@ class PluginIntegrationTest constructor(
     @Test
     fun testDontFailOnEmptyDirectoriesWhenDisabled() {
         assumeSupportedVersion()
-        writeBuildGradle(
+        writeBuildGradle("")
+        val fixtureName = "java-fixture"
+        writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -431,10 +432,10 @@ class PluginIntegrationTest constructor(
                     |  failOnEmptyDirectories = false
                     |  warnWhenNotUsingParallelGC = false
                     |}
+                    |
+                    |include '$fixtureName'
                 """.trimMargin("|"),
         )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
@@ -471,6 +472,10 @@ class PluginIntegrationTest constructor(
 
     private fun writeBuildGradle(build: String) {
         testProjectRoot.writeBuildGradle(build)
+    }
+
+    private fun writeSettingsGradle(settings: String) {
+        testProjectRoot.writeSettingsGradle(settings)
     }
 
     private fun createFileInFolder(
