@@ -7,7 +7,7 @@ To fix this issue, we recommend setting your JAVA_HOME environment variable and 
 used by Android Studio or IntelliJ.
 
 ## Set JAVA_HOME
-Set `JAVA_HOME` so that switching between Android Studio and the terminal does not trigger a full rebuild.
+Set `JAVA_HOME` so that switching between Android Studio or IntelliJ and the terminal does not trigger a full rebuild.
 
 To set `JAVA_HOME` (using bash):
 `echo \"export JAVA_HOME=${'$'}(/usr/libexec/java_home)\" >> ~/.bash_profile`
