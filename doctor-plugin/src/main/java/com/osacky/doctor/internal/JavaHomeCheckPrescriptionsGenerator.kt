@@ -21,7 +21,7 @@ internal const val JAVA_HOME_AT_LOCATION = "JAVA_HOME is %s"
 internal const val GRADLE_JAVA_HOME_AT_LOCATION = "Gradle is using %s"
 internal const val NO_JAVA_HOME_MESSAGE = """
     $NO_JAVA_HOME
-    Please set JAVA_HOME so that switching between Android Studio and the terminal does not trigger a full rebuild.
+    Please set JAVA_HOME so that switching between Android Studio or IntelliJ and the terminal does not trigger a full rebuild.
     To set JAVA_HOME: (using bash)
     echo "export JAVA_HOME=${'$'}(/usr/libexec/java_home)" >> ~/.bash_profile
     or `~/.zshrc` if using zsh.
@@ -32,7 +32,7 @@ internal const val JAVA_HOME_DOESNT_MATCH_GRADLE_HOME = """
     Gradle is not using JAVA_HOME.
     %s
     %s
-    This can slow down your build significantly when switching from Android Studio to the terminal.
+    This can slow down your build significantly when switching from Android Studio or IntelliJ to the terminal.
     To fix: Project Structure -> JDK Location.
     Set this to your JAVA_HOME.
     %s
