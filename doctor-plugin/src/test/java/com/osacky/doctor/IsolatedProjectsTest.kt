@@ -6,16 +6,20 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-class ConfigurationCacheTest {
+class IsolatedProjectsTest {
     @get:Rule
     val testProjectRoot = TemporaryFolder()
 
+    /**
+     * Running this test produces an isolated project warning report in the test project because the JVM toolchain is
+     * set to 8 in /doctor-plugin/build.gradle.kts. Once that is updated to 17 then the warning will go away.
+     */
     @Test
-    fun configurationCacheWorks() {
+    fun isolatedProjectsWorks() {
         testProjectRoot.writeBuildGradle("")
         val fixtureName = "java-fixture"
         testProjectRoot.writeFileToName(
-            "settings.gradle", 
+            "settings.gradle",
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -36,17 +40,19 @@ class ConfigurationCacheTest {
             GradleRunner
                 .create()
                 .forwardOutput()
-                .withArguments("assemble", "--configuration-cache")
+                .withArguments("assemble", "--configuration-cache", "-Dorg.gradle.unsafe.isolated-projects=true")
                 .withProjectDir(testProjectRoot.root)
-                .withGradleVersion("6.7")
+                .withGradleVersion("8.13")
                 .withPluginClasspath()
 
         val result = runner.build()
 
+        assertThat(result.output).contains("Isolated projects is an incubating feature.")
         assertThat(result.output).contains("Configuration cache entry stored.")
         assertThat(result.output).contains("BUILD SUCCESSFUL")
 
         val resultTwo = runner.build()
+        assertThat(resultTwo.output).contains("Isolated projects is an incubating feature.")
         assertThat(resultTwo.output).contains("Reusing configuration cache.")
         assertThat(resultTwo.output).contains("BUILD SUCCESSFUL")
     }

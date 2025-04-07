@@ -13,7 +13,8 @@ class TestDaggerTime {
     @Test
     fun testDaggerJvm() {
         val fixtureName = "dagger-jvm"
-        testProjectRoot.newFile("build.gradle").writeText(
+        testProjectRoot.newFile("build.gradle").writeText("")
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
@@ -26,10 +27,6 @@ class TestDaggerTime {
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-        testProjectRoot.newFile("settings.gradle").writeText(
-            """
             include '$fixtureName'
             """.trimIndent(),
         )

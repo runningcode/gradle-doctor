@@ -12,7 +12,9 @@ class TestIntegrationTest {
 
     @Test
     fun testIgnoreOnEmptyDirectories() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        val fixtureName = "java-fixture"
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -25,10 +27,9 @@ class TestIntegrationTest {
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|"),
+                    |include '$fixtureName'
+                """.trimMargin("|")
         )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
@@ -46,7 +47,9 @@ class TestIntegrationTest {
 
     @Test
     fun testDirectoriesIgnoredIn6dot8() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeBuildGradle("")
+        val fixtureName = "java-fixture"
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -59,10 +62,9 @@ class TestIntegrationTest {
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
                     |}
-                """.trimMargin("|"),
+                    |include '$fixtureName'
+                """.trimMargin("|")
         )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
         testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
 
@@ -135,18 +137,8 @@ class TestIntegrationTest {
         testProjectRoot.writeBuildGradle(
             """
             plugins {
-              id "com.osacky.doctor"
               id 'java-library'
             }
-            doctor {
-              disallowMultipleDaemons = false
-              javaHome {
-                ensureJavaHomeMatches = false
-              }
-              warnWhenNotUsingParallelGC = false
-              disallowCleanTaskDependencies = $disallowCleanTaskDependencies
-            }
-            
             tasks.register('foo') {
               doFirst {
                 println 'foo'
@@ -157,6 +149,22 @@ class TestIntegrationTest {
               dependsOn 'foo'
             }
             """.trimIndent(),
+        )
+
+        testProjectRoot.writeSettingsGradle(
+            """
+            plugins {
+              id "com.osacky.doctor"
+            }
+            doctor {
+              disallowMultipleDaemons = false
+              javaHome {
+                ensureJavaHomeMatches = false
+              }
+              warnWhenNotUsingParallelGC = false
+              disallowCleanTaskDependencies = $disallowCleanTaskDependencies
+            }
+            """.trimIndent()
         )
     }
 }
