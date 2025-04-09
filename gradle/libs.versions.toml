@@ -8,7 +8,7 @@ kotlin-gradle-plugin-lib = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin
 truth = "com.google.truth:truth:1.4.4"
 rxjava = "io.reactivex.rxjava3:rxjava:3.1.10"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-okio = "com.squareup.okio:okio:3.10.2"
+okio = "com.squareup.okio:okio:3.11.0"
 develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.2.1"
 
 [plugins]
