@@ -47,7 +47,7 @@ class DoctorPlugin : Plugin<Project> {
         val intervalMeasurer = IntervalMeasurer()
         val pillBoxPrinter = PillBoxPrinter(target.logger)
         val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
-        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter)
+        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter, target)
         val appleRosettaTranslationCheck =
             AppleRosettaTranslationCheck(
                 os,
@@ -161,9 +161,13 @@ class DoctorPlugin : Plugin<Project> {
     private fun createJavaHomeCheck(
         extension: DoctorExtension,
         pillBoxPrinter: PillBoxPrinter,
+        project: Project
     ): JavaHomeCheck {
         val jvmVariables =
-            JvmVariables(environmentJavaHome = System.getenv(JAVA_HOME), gradleJavaHome = Jvm.current().javaHome.path)
+            JvmVariables(
+                environmentJavaHome = project.providers.environmentVariable(JAVA_HOME),
+                gradleJavaHome = Jvm.current().javaHome.path
+            )
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
     }
 
