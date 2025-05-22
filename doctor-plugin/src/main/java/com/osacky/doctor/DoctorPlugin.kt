@@ -165,7 +165,7 @@ class DoctorPlugin : Plugin<Project> {
     ): JavaHomeCheck {
         val jvmVariables =
             JvmVariables(
-                environmentJavaHome = project.providers.environmentVariable(JAVA_HOME),
+                environmentJavaHomeProvider = project.providers.environmentVariable(JAVA_HOME),
                 gradleJavaHome = Jvm.current().javaHome.path
             )
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
