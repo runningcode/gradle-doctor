@@ -39,10 +39,6 @@ tasks.withType(Test::class.java).configureEach {
   }
 }
 
-tasks.wrapper {
-  gradleVersion = "8.9"
-}
-
 tasks.register("pluginTasks").configure {
   dependsOn(gradle.includedBuild("doctor-plugin").task(":tasks"))
 }
