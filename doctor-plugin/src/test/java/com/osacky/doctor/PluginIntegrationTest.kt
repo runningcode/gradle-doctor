@@ -16,10 +16,10 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-class PluginIntegrationTest constructor(
+class PluginIntegrationTest (
     private val version: String,
 ) {
-    val agpVersion = "4.0.1"
+    val agpVersion = "7.0"
 
     @get:Rule val testProjectRoot = TemporaryFolder()
 
@@ -27,9 +27,9 @@ class PluginIntegrationTest constructor(
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun getParams(): List<String> {
-            // Keep 6.0 as minimum unsupported version and 6.1 as minimum supported version.
+            // Keep 6.8 as minimum unsupported version and 7.0 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("6.0.1", "6.5.1", "7.0", "7.4", "7.5.1")
+            return listOf("6.8", "7.0", "7.6.4", "8.0")
         }
     }
 
@@ -76,7 +76,7 @@ class PluginIntegrationTest constructor(
         val result = createRunner().buildAndFail()
         assertThat(
             result.output,
-        ).contains("Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
+        ).contains("Must be using Gradle Version 7.0 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
     }
 
     @Test
@@ -383,69 +383,6 @@ class PluginIntegrationTest constructor(
         )
     }
 
-    @Test
-    fun testFailOnEmptyDirectories() {
-        assumeSupportedVersion()
-        assumeEmptyDirectoriesInInput()
-        writeBuildGradle(
-            """
-                    |plugins {
-                    |  id "com.osacky.doctor"
-                    |}
-                    |doctor {
-                    |  disallowMultipleDaemons = false
-                    |  javaHome {
-                    |    ensureJavaHomeMatches = false
-                    |  }
-                    |  failOnEmptyDirectories = true
-                    |  warnWhenNotUsingParallelGC = false
-                    |}
-                """.trimMargin("|"),
-        )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
-        testProjectRoot.setupFixture(fixtureName)
-        testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
-
-        val result =
-            createRunner()
-                .withArguments("assemble")
-                .buildAndFail()
-
-        assertThat(result.output).contains("Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.")
-    }
-
-    @Test
-    fun testDontFailOnEmptyDirectoriesWhenDisabled() {
-        assumeSupportedVersion()
-        writeBuildGradle(
-            """
-                    |plugins {
-                    |  id "com.osacky.doctor"
-                    |}
-                    |doctor {
-                    |  disallowMultipleDaemons = false
-                    |  javaHome {
-                    |    ensureJavaHomeMatches = false
-                    |  }
-                    |  failOnEmptyDirectories = false
-                    |  warnWhenNotUsingParallelGC = false
-                    |}
-                """.trimMargin("|"),
-        )
-        val fixtureName = "java-fixture"
-        testProjectRoot.newFile("settings.gradle").writeText("include '$fixtureName'")
-        testProjectRoot.setupFixture(fixtureName)
-        testProjectRoot.newFolder("java-fixture", "src", "main", "java", "com", "foo")
-
-        val result =
-            createRunner()
-                .withArguments("assemble")
-                .build()
-
-        assertThat(result.output).contains("SUCCESS")
-    }
-
     private fun createRunner(): GradleRunner =
         GradleRunner
             .create()
@@ -453,20 +390,16 @@ class PluginIntegrationTest constructor(
             .withPluginClasspath()
             .withGradleVersion(version)
 
-    private fun assumeEmptyDirectoriesInInput() {
-        Assume.assumeTrue(GradleVersion.version(version) < GradleVersion.version("6.8"))
-    }
-
     private fun assumeCanRunAndroidBuild() {
-        Assume.assumeTrue(GradleVersion.version("5.4") < GradleVersion.version(version))
+        assumeTrue(GradleVersion.version("5.4") < GradleVersion.version(version))
     }
 
     private fun assumeSupportedVersion() {
-        Assume.assumeFalse(version == "6.0.1")
+        assumeFalse(version == "7.0")
     }
 
     private fun assumeUnsupportedVersion() {
-        Assume.assumeTrue(version == "6.0.1")
+        assumeTrue(version == "6.8")
     }
 
     private fun writeBuildGradle(build: String) {
