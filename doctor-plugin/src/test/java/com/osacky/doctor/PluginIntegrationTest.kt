@@ -394,7 +394,7 @@ class PluginIntegrationTest(
     }
 
     private fun assumeSupportedVersion() {
-        assumeFalse(version == "7.0")
+        assumeFalse(version == "6.8")
     }
 
     private fun assumeUnsupportedVersion() {
