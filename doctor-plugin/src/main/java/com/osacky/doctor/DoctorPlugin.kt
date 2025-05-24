@@ -11,21 +11,15 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
-import com.osacky.doctor.internal.farthestEmptyParent
-import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import org.gradle.internal.jvm.Jvm
-import org.gradle.internal.operations.BuildOperationListener
-import org.gradle.internal.operations.BuildOperationListenerManager
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
@@ -95,7 +89,7 @@ class DoctorPlugin : Plugin<Project> {
         }
 
         val buildScanApi = findAdapter(target)
-        registerBuildFinishActions(list, pillBoxPrinter, target, buildOperations, buildScanApi)
+        registerBuildFinishActions(list, pillBoxPrinter, target, buildScanApi)
 
         tagFreshDaemon(target, buildScanApi)
 
@@ -104,22 +98,6 @@ class DoctorPlugin : Plugin<Project> {
         ensureNoCleanTaskDependenciesIfNeeded(target, extension, pillBoxPrinter)
 
         target.subprojects project@{
-            tasks.withType(SourceTask::class.java).configureEach {
-                if (!gradleIgnoresEmptyDirectories() && extension.failOnEmptyDirectories.get()) {
-                    // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
-                    doFirst {
-                        source.visit {
-                            if (file.isDirectory && file.listFiles().isEmpty()) {
-                                val farthestEmptyParent = file.farthestEmptyParent()
-                                throw IllegalStateException(
-                                    "Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\n" +
-                                        "rmdir ${farthestEmptyParent.absolutePath}",
-                                )
-                            }
-                        }
-                    }
-                }
-            }
             // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
             tasks.withType(Test::class.java).configureEach {
                 if (!extension.enableTestCaching.get()) {
@@ -182,24 +160,16 @@ class DoctorPlugin : Plugin<Project> {
         list: List<BuildStartFinishListener>,
         pillBoxPrinter: PillBoxPrinter,
         target: Project,
-        buildOperations: OperationEvents,
         buildScanApi: BuildScanAdapter,
     ) {
         val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
 
-        if (shouldUseCoCaClasses()) {
-            val closeService =
-                target.gradle.sharedServices
-                    .registerIfAbsent("close-service", BuildFinishService::class.java) { }
-                    .get()
-            closeService.closeMeWhenFinished {
-                runnable.execute(list)
-            }
-        } else {
-            target.gradle.buildFinished {
-                runnable.execute(list)
-                target.gradle.buildOperationListenerManager.removeListener(buildOperations as BuildOperationListener)
-            }
+        val closeService =
+            target.gradle.sharedServices
+                .registerIfAbsent("close-service", BuildFinishService::class.java) { }
+                .get()
+        closeService.closeMeWhenFinished {
+            runnable.execute(list)
         }
     }
 
@@ -240,9 +210,9 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureMinimumSupportedGradleVersion() {
-        if (GradleVersion.current() < GradleVersion.version("6.1.1")) {
+        if (GradleVersion.current() < GradleVersion.version("7.0")) {
             throw GradleException(
-                "Must be using Gradle Version 6.1.1 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}",
+                "Must be using Gradle Version 7.0 in order to use DoctorPlugin. Current Gradle Version is ${GradleVersion.current()}",
             )
         }
     }
@@ -259,28 +229,20 @@ class DoctorPlugin : Plugin<Project> {
     private fun getOperationEvents(
         target: Project,
         extension: DoctorExtension,
-    ): OperationEvents =
-        if (shouldUseCoCaClasses()) {
-            val listenerService =
-                target.gradle.sharedServices.registerIfAbsent("listener-service", BuildOperationListenerService::class.java) {
-                    this.parameters.getNegativeAvoidanceThreshold().set(extension.negativeAvoidanceThreshold)
-                }
-            val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
-            buildEventListenerRegistry.onOperationCompletion(listenerService)
-            listenerService.get().getOperations()
-        } else {
-            val ops = BuildOperations(extension.negativeAvoidanceThreshold)
-            target.gradle.buildOperationListenerManager.addListener(ops)
-            ops
-        }
-
-    /**
-     * Gradle now ignores empty directories starting in 6.8
-     * https://docs.gradle.org/6.8-rc-1/release-notes.html#performance-improvements
-     **/
-    private fun gradleIgnoresEmptyDirectories(): Boolean = GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
-
-    private val Gradle.buildOperationListenerManager get() = (this as GradleInternal).services[BuildOperationListenerManager::class.java]
+    ): OperationEvents {
+        val listenerService =
+            target.gradle.sharedServices.registerIfAbsent(
+                "listener-service",
+                BuildOperationListenerService::class.java,
+            ) {
+                this.parameters
+                    .getNegativeAvoidanceThreshold()
+                    .set(extension.negativeAvoidanceThreshold)
+            }
+        val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
+        buildEventListenerRegistry.onOperationCompletion(listenerService)
+        return listenerService.get().getOperations()
+    }
 
     class TheActionThing(
         private val pillBoxPrinter: PillBoxPrinter,

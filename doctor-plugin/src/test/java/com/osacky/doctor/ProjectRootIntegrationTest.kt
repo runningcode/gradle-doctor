@@ -22,7 +22,6 @@ class ProjectRootIntegrationTest {
                 .create()
                 .withProjectDir(testProjectRoot.root)
                 .withPluginClasspath()
-                .withGradleVersion("6.1.1")
                 .withArguments("assemble")
                 .buildAndFail()
 

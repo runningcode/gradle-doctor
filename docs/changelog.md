@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.11.0
+* [Drop support for Gradle 6.8 and earlier.](https://github.com/runningcode/gradle-doctor/pull/413)
+
 ## 0.10.0
 * [Fix Develocity deprecation warnings](https://github.com/runningcode/gradle-doctor/pull/337)
 * [Add support for checking executables for Java home](https://github.com/runningcode/gradle-doctor/pull/336) Thanks [Slow Pacer](https://github.com/slowpacer)
