@@ -4,6 +4,9 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
+
+  val kotlinVersion = "2.1.21"
+
     @Test
     fun testDisallowKotlinCompileDaemonFallback() {
         writeKotlinBuildGradle(true)
@@ -85,13 +88,14 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
             """
             plugins {
               id "com.osacky.doctor"
-              id "org.jetbrains.kotlin.jvm" version "1.6.10"
+              id "org.jetbrains.kotlin.jvm" version $kotlinVersion"
             }
             repositories {
               mavenCentral()
             }
             doctor {
               warnIfKotlinCompileDaemonFallback = $allowDaemonFallback
+              warnWhenNotUsingParallelGC = false
               javaHome {
                 ensureJavaHomeMatches = false
               }
