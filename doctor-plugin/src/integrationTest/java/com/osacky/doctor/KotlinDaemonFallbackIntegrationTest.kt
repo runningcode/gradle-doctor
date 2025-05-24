@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
-
-  val kotlinVersion = "2.1.21"
+    // This needs to be updated to kotiln 2.X and see if we need to remove this check
+    val kotlinVersion = "1.7.21"
 
     @Test
     fun testDisallowKotlinCompileDaemonFallback() {
@@ -88,7 +88,7 @@ class KotlinDaemonFallbackIntegrationTest : AbstractIntegrationTest() {
             """
             plugins {
               id "com.osacky.doctor"
-              id "org.jetbrains.kotlin.jvm" version $kotlinVersion"
+              id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
             }
             repositories {
               mavenCentral()
