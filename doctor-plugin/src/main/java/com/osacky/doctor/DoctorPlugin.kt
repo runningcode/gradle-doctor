@@ -11,14 +11,12 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
-import com.osacky.doctor.internal.farthestEmptyParent
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import org.gradle.internal.jvm.Jvm
@@ -100,22 +98,6 @@ class DoctorPlugin : Plugin<Project> {
         ensureNoCleanTaskDependenciesIfNeeded(target, extension, pillBoxPrinter)
 
         target.subprojects project@{
-            tasks.withType(SourceTask::class.java).configureEach {
-                if (!gradleIgnoresEmptyDirectories() && extension.failOnEmptyDirectories.get()) {
-                    // Fail build if empty directories are found. These cause build cache misses and should be ignored by Gradle.
-                    doFirst {
-                        source.visit {
-                            if (file.isDirectory && file.listFiles().isEmpty()) {
-                                val farthestEmptyParent = file.farthestEmptyParent()
-                                throw IllegalStateException(
-                                    "Empty src dir(s) found. This causes build cache misses. Run the following command to fix it.\n" +
-                                        "rmdir ${farthestEmptyParent.absolutePath}",
-                                )
-                            }
-                        }
-                    }
-                }
-            }
             // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
             tasks.withType(Test::class.java).configureEach {
                 if (!extension.enableTestCaching.get()) {
@@ -251,21 +233,16 @@ class DoctorPlugin : Plugin<Project> {
         val listenerService =
             target.gradle.sharedServices.registerIfAbsent(
                 "listener-service",
-                BuildOperationListenerService::class.java
+                BuildOperationListenerService::class.java,
             ) {
-                this.parameters.getNegativeAvoidanceThreshold()
+                this.parameters
+                    .getNegativeAvoidanceThreshold()
                     .set(extension.negativeAvoidanceThreshold)
             }
         val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
         buildEventListenerRegistry.onOperationCompletion(listenerService)
         return listenerService.get().getOperations()
     }
-
-    /**
-     * Gradle now ignores empty directories starting in 6.8
-     * https://docs.gradle.org/6.8-rc-1/release-notes.html#performance-improvements
-     **/
-    private fun gradleIgnoresEmptyDirectories(): Boolean = GradleVersion.current() >= GradleVersion.version("6.8-rc-1")
 
     class TheActionThing(
         private val pillBoxPrinter: PillBoxPrinter,

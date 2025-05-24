@@ -81,7 +81,7 @@ class BuildCacheConnectionMeasurer(
                     logger.debug(
                         "Received non-hit from {}, total was {}",
                         result,
-                        result.archiveSize
+                        result.archiveSize,
                     )
                     // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
                     return zero
