@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import com.osacky.doctor.internal.androidHome
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
-import org.junit.Assume
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Ignore
@@ -16,7 +15,7 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-class PluginIntegrationTest (
+class PluginIntegrationTest(
     private val version: String,
 ) {
     val agpVersion = "7.0"
