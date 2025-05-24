@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.0"
+kotlin = "2.1.21"
 junit = "4.13.2"
 
 [libraries]
