@@ -18,7 +18,7 @@ import java.io.File
 class PluginIntegrationTest(
     private val version: String,
 ) {
-    val agpVersion = "7.0"
+    val agpVersion = "4.2.1"
 
     @get:Rule val testProjectRoot = TemporaryFolder()
 
@@ -28,7 +28,8 @@ class PluginIntegrationTest(
         fun getParams(): List<String> {
             // Keep 6.8 as minimum unsupported version and 7.0 as minimum supported version.
             // Keep this list to 5 as testing against too many versions causes OOMs.
-            return listOf("6.8", "7.0", "7.6.4", "8.0")
+            // Need to add 8.0 but that is dependendent on using java 11.
+            return listOf("6.8", "7.0.2", "7.6.4")
         }
     }
 
@@ -346,7 +347,7 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 28
+              compileSdkVersion 30
             }
             """.trimIndent(),
         )
@@ -360,7 +361,7 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 28
+              compileSdkVersion 30 
             }
             """.trimIndent(),
         )
