@@ -1,4 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     `kotlin-dsl`
@@ -87,7 +89,7 @@ publishing {
     }
 }
 
-fun org.gradle.api.publish.maven.MavenPom.configureForDoctor(pluginName: String) {
+fun MavenPom.configureForDoctor(pluginName: String) {
     name.set(pluginName)
     description.set("The right prescription for your Gradle build.")
     url.set("https://github.com/runningcode/gradle-doctor")
@@ -151,11 +153,10 @@ java {
     }
 }
 
-// Ensure Java 8 Compatibility
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-        languageVersion = "1.8"
-        apiVersion = "1.8"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+        languageVersion= KotlinVersion.KOTLIN_1_8
+        apiVersion = KotlinVersion.KOTLIN_1_8
     }
 }
