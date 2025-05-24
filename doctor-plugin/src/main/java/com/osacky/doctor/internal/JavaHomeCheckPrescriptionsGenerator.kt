@@ -33,7 +33,7 @@ internal const val JAVA_HOME_DOESNT_MATCH_GRADLE_HOME = """
     %s
     %s
     This can slow down your build significantly when switching from Android Studio or IntelliJ to the terminal.
-    To fix: Project Structure -> JDK Location.
+    To fix: Settings -> Build, Execution, Deployment -> Build Tools -> Gradle -> Gradle JDK.
     Set this to your JAVA_HOME.
     %s
 """
