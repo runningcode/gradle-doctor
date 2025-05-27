@@ -11,10 +11,7 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
-import com.osacky.doctor.internal.farthestEmptyParent
-import com.osacky.doctor.internal.isGradle65OrNewer
 import com.osacky.doctor.internal.isGradle74OrNewer
-import com.osacky.doctor.internal.shouldUseCoCaClasses
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -148,7 +145,7 @@ class DoctorPlugin : Plugin<Project> {
         val jvmVariables =
             JvmVariables(
                 environmentJavaHomeProvider =
-                if (isGradle65OrNewer() && !isGradle74OrNewer()) {
+                if (!isGradle74OrNewer()) {
                     project.providers.environmentVariable(JAVA_HOME).forUseAtConfigurationTime()
                 } else {
                     project.providers.environmentVariable(JAVA_HOME)
