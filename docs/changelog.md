@@ -4,6 +4,8 @@
 
 - [Remove Java 8 support](https://github.com/runningcode/gradle-doctor/pull/341)
 - [Drop support for Gradle 6.8 and earlier.](https://github.com/runningcode/gradle-doctor/pull/413)
+- [Deprecate `warnWhenNotUsingParallelGC`](https://github.com/runningcode/gradle-doctor/pull/419)
+- [Lazily read JAVA_HOME environment variable](https://github.com/runningcode/gradle-doctor/pull/412) Fixes [#408](https://github.com/runningcode/gradle-doctor/issues/408) Thanks [ss-block](https://github.com/ss-block)
 
 ## 0.10.0
 
