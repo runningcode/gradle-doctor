@@ -6,6 +6,7 @@ import com.osacky.doctor.internal.JAVA_HOME_TAG
 import com.osacky.doctor.internal.JavaHomeCheckPrescriptionsGenerator
 import com.osacky.doctor.internal.PillBoxPrinter
 import org.gradle.api.GradleException
+import org.gradle.api.provider.Provider
 import java.io.File
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
@@ -28,7 +29,9 @@ class JavaHomeCheck(
 ) : BuildStartFinishListener,
     HasBuildScanTag {
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
-    private val environmentJavaExecutablePath by lazy { resolveEnvironmentJavaHome(jvmVariables.environmentJavaHome) }
+    private val environmentJavaExecutablePath by lazy {
+        resolveEnvironmentJavaHome(jvmVariables.environmentJavaHomeProvider.get())
+    }
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
     private val isGradleUsingJavaHome: Boolean
         get() = gradleJavaExecutablePath == environmentJavaExecutablePath
@@ -95,6 +98,6 @@ class JavaHomeCheck(
 }
 
 data class JvmVariables(
-    val environmentJavaHome: String?,
+    val environmentJavaHomeProvider: Provider<String?>,
     val gradleJavaHome: String,
 )

@@ -26,6 +26,7 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SpyJavaHomePrescriptionsGenerator
 import org.gradle.api.GradleException
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -86,6 +87,7 @@ class JavaHomeCheckTest {
     private lateinit var underTest: JavaHomeCheck
 
     private val pillBoxPrinter = mock<PillBoxPrinter>()
+    private val provider = mock<Provider<String?>>()
 
     @Before
     fun setup() {
@@ -96,7 +98,8 @@ class JavaHomeCheckTest {
 
     @Test
     fun `given environment java home path is not set when a full check is performed then there are at least two prescriptions`() {
-        val jvmVariables = setupIdenticalJvmVariables().copy(environmentJavaHome = null)
+        whenever(provider.get()).thenReturn(null)
+        val jvmVariables = setupIdenticalJvmVariables().copy(environmentJavaHomeProvider = provider)
         underTest =
             JavaHomeCheck(
                 jvmVariables,
@@ -191,7 +194,8 @@ class JavaHomeCheckTest {
             .createSymbolicLinkPointingTo(javaExecutableFolder.toAbsolutePath())
 
         // environmentJavaHome=***/Users/doctor/.sdkman/candidates/java/current and gradleJavaHome=***/Users/doctor/.sdkman/candidates/java/17.0.10-zulu/zulu-17.jdk/Contents/Home
-        val jvmVariables = JvmVariables(sdkmanEnvironmentJavaHome.pathString, javaHomePath.pathString)
+        whenever(provider.get()).thenReturn(sdkmanEnvironmentJavaHome.pathString)
+        val jvmVariables = JvmVariables(provider, javaHomePath.pathString)
         underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
         val errors = underTest.onFinish()
@@ -214,16 +218,18 @@ class JavaHomeCheckTest {
 
     private fun setupIdenticalJvmVariables(): JvmVariables {
         val legitPath = javaHomePath.pathString
-        return JvmVariables(legitPath, legitPath)
+        val provider = mock<Provider<String?>>().also { whenever(it.get()).thenReturn(legitPath) }
+        return JvmVariables(provider, legitPath)
     }
 
     private fun setupDifferentJvmVariables(): JvmVariables {
         val anotherJavaHomePath = setupJavaHomePathStructure(anotherLegitJavaHomePathFolders)
-        return JvmVariables(javaHomePath.toString(), anotherJavaHomePath.toString())
+        val provider = mock<Provider<String?>>().also { whenever(it.get()).thenReturn(javaHomePath.toString()) }
+        return JvmVariables(provider, anotherJavaHomePath.toString())
     }
 
     private fun verifyJvmVariablesAreUsedForPrescriptionGeneration(jvmVariables: JvmVariables) {
-        assertEquals(jvmVariables.environmentJavaHome, spyPrescriptionsGenerator.capturedJavaHomeLocation)
+        assertEquals(jvmVariables.environmentJavaHomeProvider.get(), spyPrescriptionsGenerator.capturedJavaHomeLocation)
         assertEquals(jvmVariables.gradleJavaHome, spyPrescriptionsGenerator.capturedGradleJavaHomeLocation)
     }
 }
