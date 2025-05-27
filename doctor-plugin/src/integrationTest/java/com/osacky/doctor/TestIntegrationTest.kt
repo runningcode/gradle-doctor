@@ -21,7 +21,6 @@ class TestIntegrationTest {
                     |  disallowMultipleDaemons = false
                     |  javaHome {
                     |    ensureJavaHomeMatches = false
-                    |    ensureJavaHomeIsSet = false
                     |  }
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
@@ -56,7 +55,6 @@ class TestIntegrationTest {
                     |  disallowMultipleDaemons = false
                     |  javaHome {
                     |    ensureJavaHomeMatches = false
-                    |    ensureJavaHomeIsSet = false
                     |  }
                     |  failOnEmptyDirectories = true
                     |  warnWhenNotUsingParallelGC = false
