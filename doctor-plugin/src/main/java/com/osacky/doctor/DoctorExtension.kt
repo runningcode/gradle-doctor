@@ -48,6 +48,7 @@ open class DoctorExtension(
     /**
      * By default, Gradle treats empty directories as inputs to compilation tasks. This can cause cache misses.
      */
+    @Deprecated("This property is only useful in Gradle 6.x and earlier.")
     val failOnEmptyDirectories = objects.property<Boolean>().convention(true)
 
     /**

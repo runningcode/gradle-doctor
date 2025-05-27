@@ -78,7 +78,11 @@ class BuildCacheConnectionMeasurer(
                 val result = event.result
                 require(result is BuildCacheRemoteLoadBuildOperationType.Result)
                 if (!result.isHit) {
-                    logger.debug("Received non-hit from $result, total was ${result.archiveSize}")
+                    logger.debug(
+                        "Received non-hit from {}, total was {}",
+                        result,
+                        result.archiveSize,
+                    )
                     // If the result was not a hit, archive size and duration are undetermined so we set them to 0.
                     return zero
                 }
@@ -89,7 +93,7 @@ class BuildCacheConnectionMeasurer(
                 )
             }
 
-            val zero = ExternalDownloadEvent(0, 0, 0)
+            private val zero = ExternalDownloadEvent(0, 0, 0)
         }
     }
 

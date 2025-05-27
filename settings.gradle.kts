@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "4.0"
+  id("com.gradle.develocity") version "4.0.1"
 }
 
 develocity {
@@ -25,4 +25,5 @@ dependencyResolutionManagement {
   repositories {
     mavenCentral()
   }
+  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }

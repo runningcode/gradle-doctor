@@ -1,4 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     `kotlin-dsl`
@@ -87,7 +89,7 @@ publishing {
     }
 }
 
-fun org.gradle.api.publish.maven.MavenPom.configureForDoctor(pluginName: String) {
+fun MavenPom.configureForDoctor(pluginName: String) {
     name.set(pluginName)
     description.set("The right prescription for your Gradle build.")
     url.set("https://github.com/runningcode/gradle-doctor")
@@ -129,14 +131,6 @@ tasks.withType(Test::class.java).configureEach {
     }
 }
 
-val java8Int = tasks.register<Test>("java8IntegrationTest") {
-    group = "verification"
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    })
-    testClassesDirs = parallelGCTest.output.classesDirs
-    classpath = parallelGCTest.runtimeClasspath
-}
 val java11Int = tasks.register<Test>("java11IntegrationTest") {
     group = "verification"
     javaLauncher.set(javaToolchains.launcherFor {
@@ -146,7 +140,7 @@ val java11Int = tasks.register<Test>("java11IntegrationTest") {
     classpath = parallelGCTest.runtimeClasspath
 }
 
-tasks.check.configure { dependsOn(java8Int, java11Int, integrationTestTask)}
+tasks.check.configure { dependsOn(java11Int, integrationTestTask)}
 
 tasks.withType<ValidatePlugins>().configureEach {
     failOnWarning.set(true)
@@ -155,15 +149,14 @@ tasks.withType<ValidatePlugins>().configureEach {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
-// Ensure Java 8 Compatibility
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java).configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        languageVersion = "1.5"
-        apiVersion = "1.5"
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+        languageVersion= KotlinVersion.KOTLIN_1_8
+        apiVersion = KotlinVersion.KOTLIN_1_8
     }
 }

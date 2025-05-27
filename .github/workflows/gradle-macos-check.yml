@@ -9,9 +9,9 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: |
-            8
+            11
             17
-          distribution: 'liberica'
+          distribution: "liberica"
       - uses: gradle/actions/setup-gradle@v4
         with:
           add-job-summary-as-pr-comment: on-failure

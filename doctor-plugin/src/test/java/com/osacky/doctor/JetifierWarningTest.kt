@@ -50,10 +50,9 @@ class JetifierWarningTest {
             |   warnWhenJetifierEnabled.set(false)                                                                 |
             | }                                                                                                    |
             ========================================================================================================
-
-            BUILD SUCCESSFUL
             """.trimIndent(),
         )
+        assertThat(result.output).contains("BUILD SUCCESSFUL")
     }
 
     @Test
