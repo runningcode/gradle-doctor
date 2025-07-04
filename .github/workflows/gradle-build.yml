@@ -16,6 +16,8 @@ jobs:
         with:
           add-job-summary-as-pr-comment: always
       - name: Check Gradle Doctor
+        env:
+          GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
         run: ./gradlew checkPlugin
       - name: Publish Snapshot
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request' && github.repository == 'runningcode/gradle-doctor'
@@ -25,4 +27,5 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.GPG_SIGNING_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}
-        run: ./gradlew :doctor-plugin:publishToMavenCentral --no-configuration-cache
+          GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+        run: ./gradlew :doctor-plugin:publishToMavenCentral

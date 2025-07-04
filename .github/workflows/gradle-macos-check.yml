@@ -16,4 +16,6 @@ jobs:
         with:
           add-job-summary-as-pr-comment: on-failure
       - name: Check Gradle Doctor
+        env:
+          GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
         run: ./gradlew pluginTasks
