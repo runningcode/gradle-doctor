@@ -7,8 +7,7 @@ plugins {
     alias(libs.plugins.kgp)
     alias(libs.plugins.plugin.publish)
     alias(libs.plugins.kotlinter)
-    `maven-publish`
-    signing
+    alias(libs.plugins.maven.publish)
     `java-test-fixtures`
 }
 
@@ -58,62 +57,34 @@ java {
     withSourcesJar()
 }
 
-val isReleaseBuild : Boolean = !version.toString().endsWith("SNAPSHOT")
-
-val mavenCentralUsername : String? by project
-val mavenCentralPassword : String? by project
-
-publishing {
-    repositories {
-        repositories {
-            maven {
-                val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                url = if (isReleaseBuild) releasesRepoUrl else snapshotsRepoUrl
-                credentials {
-                    username = mavenCentralUsername
-                    password = mavenCentralPassword
-                }
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    
+    pom {
+        name.set("Gradle Doctor")
+        description.set("The right prescription for your Gradle build.")
+        url.set("https://github.com/runningcode/gradle-doctor/")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-    }
-    publications {
-        afterEvaluate {
-            named<MavenPublication>("pluginMaven") {
-                pom.configureForDoctor("Gradle Doctor")
-            }
-            named<MavenPublication>("doctor-pluginPluginMarkerMaven") {
-                pom.configureForDoctor("Gradle Doctor")
+        developers {
+            developer {
+                id.set("runningcode")
+                name.set("Nelson Osacky")
+                url.set("https://github.com/runningcode/")
             }
         }
-    }
-}
-
-fun MavenPom.configureForDoctor(pluginName: String) {
-    name.set(pluginName)
-    description.set("The right prescription for your Gradle build.")
-    url.set("https://github.com/runningcode/gradle-doctor")
-    licenses {
-        license {
-            name.set("The Apache License, Version 2.0")
-            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        scm {
+            url.set("https://github.com/runningcode/gradle-doctor/")
+            connection.set("scm:git:git://github.com/runningcode/gradle-doctor.git")
+            developerConnection.set("scm:git:ssh://github.com/runningcode/gradle-doctor.git")
         }
     }
-    developers {
-        developer {
-            id.set("runningcode")
-            name.set("Nelson Osacky")
-        }
-    }
-    scm {
-        connection.set("scm:git:git://github.com/runningcode/gradle-doctor.git")
-        developerConnection.set("scm:git:ssh://github.com/runningcode/gradle-doctor.git")
-        url.set("https://github.com/runningcode/gradle-doctor")
-    }
-}
-
-signing {
-    isRequired = isReleaseBuild
 }
 
 val integrationTestTask = tasks.register<Test>("integrationTest") {
