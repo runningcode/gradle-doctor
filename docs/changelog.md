@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1
+
+- [Switch to Vanniktech Maven Publish Plugin](https://github.com/runningcode/gradle-doctor/pull/427) - Simplified publishing configuration and improved GitHub Actions workflows
+
 ## 0.11.0
 
 - [Remove Java 8 support](https://github.com/runningcode/gradle-doctor/pull/341)
