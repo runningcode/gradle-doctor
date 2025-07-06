@@ -74,7 +74,7 @@ open class DoctorExtension(
      * Warn when not using parallel GC.
      */
     @Deprecated("Use a performance profiler to determine the best GC for your build.")
-    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(true)
+    val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(false)
 
     /**
      * Throws an error when the `Delete` or `clean` task has dependencies.
