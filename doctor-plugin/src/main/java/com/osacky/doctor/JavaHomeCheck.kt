@@ -30,7 +30,7 @@ class JavaHomeCheck(
     HasBuildScanTag {
     private val gradleJavaExecutablePath by lazy { resolveExecutableJavaPath(jvmVariables.gradleJavaHome) }
     private val environmentJavaExecutablePath by lazy {
-        resolveEnvironmentJavaHome(jvmVariables.environmentJavaHomeProvider.get())
+        resolveEnvironmentJavaHome(jvmVariables.environmentJavaHomeProvider.getOrNull())
     }
     private val recordedErrors = Collections.synchronizedSet(LinkedHashSet<String>())
     private val isGradleUsingJavaHome: Boolean

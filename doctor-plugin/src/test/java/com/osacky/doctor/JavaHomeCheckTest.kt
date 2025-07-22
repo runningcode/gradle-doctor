@@ -98,7 +98,7 @@ class JavaHomeCheckTest {
 
     @Test
     fun `given environment java home path is not set when a full check is performed then there are at least two prescriptions`() {
-        whenever(provider.get()).thenReturn(null)
+        whenever(provider.getOrNull()).thenReturn(null)
         val jvmVariables = setupIdenticalJvmVariables().copy(environmentJavaHomeProvider = provider)
         underTest =
             JavaHomeCheck(
@@ -194,7 +194,7 @@ class JavaHomeCheckTest {
             .createSymbolicLinkPointingTo(javaExecutableFolder.toAbsolutePath())
 
         // environmentJavaHome=***/Users/doctor/.sdkman/candidates/java/current and gradleJavaHome=***/Users/doctor/.sdkman/candidates/java/17.0.10-zulu/zulu-17.jdk/Contents/Home
-        whenever(provider.get()).thenReturn(sdkmanEnvironmentJavaHome.pathString)
+        whenever(provider.getOrNull()).thenReturn(sdkmanEnvironmentJavaHome.pathString)
         val jvmVariables = JvmVariables(provider, javaHomePath.pathString)
         underTest = JavaHomeCheck(jvmVariables, javaHomeHandler, pillBoxPrinter, spyPrescriptionsGenerator)
         underTest.onStart()
@@ -218,18 +218,18 @@ class JavaHomeCheckTest {
 
     private fun setupIdenticalJvmVariables(): JvmVariables {
         val legitPath = javaHomePath.pathString
-        val provider = mock<Provider<String?>>().also { whenever(it.get()).thenReturn(legitPath) }
+        val provider = mock<Provider<String?>>().also { whenever(it.getOrNull()).thenReturn(legitPath) }
         return JvmVariables(provider, legitPath)
     }
 
     private fun setupDifferentJvmVariables(): JvmVariables {
         val anotherJavaHomePath = setupJavaHomePathStructure(anotherLegitJavaHomePathFolders)
-        val provider = mock<Provider<String?>>().also { whenever(it.get()).thenReturn(javaHomePath.toString()) }
+        val provider = mock<Provider<String?>>().also { whenever(it.getOrNull()).thenReturn(javaHomePath.toString()) }
         return JvmVariables(provider, anotherJavaHomePath.toString())
     }
 
     private fun verifyJvmVariablesAreUsedForPrescriptionGeneration(jvmVariables: JvmVariables) {
-        assertEquals(jvmVariables.environmentJavaHomeProvider.get(), spyPrescriptionsGenerator.capturedJavaHomeLocation)
+        assertEquals(jvmVariables.environmentJavaHomeProvider.getOrNull(), spyPrescriptionsGenerator.capturedJavaHomeLocation)
         assertEquals(jvmVariables.gradleJavaHome, spyPrescriptionsGenerator.capturedGradleJavaHomeLocation)
     }
 }
