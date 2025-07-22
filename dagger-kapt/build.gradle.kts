@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+  implementation(libs.kotlin.stdlib)
   implementation("com.google.dagger:dagger:2.57")
   kapt("com.google.dagger:dagger-compiler:2.57")
 
