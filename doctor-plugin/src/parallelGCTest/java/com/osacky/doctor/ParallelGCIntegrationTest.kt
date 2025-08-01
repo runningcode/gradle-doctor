@@ -17,6 +17,7 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
               javaHome {
                 ensureJavaHomeMatches = false
               }
+              warnWhenNotUsingParallelGC = true
             }
             """.trimIndent(),
         )
