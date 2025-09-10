@@ -5,7 +5,7 @@ junit = "4.13.2"
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-gradle-plugin-lib = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-truth = "com.google.truth:truth:1.4.4"
+truth = "com.google.truth:truth:1.4.5"
 rxjava = "io.reactivex.rxjava3:rxjava:3.1.11"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.2.1"
