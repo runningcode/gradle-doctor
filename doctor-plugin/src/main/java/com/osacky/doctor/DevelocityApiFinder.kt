@@ -8,13 +8,13 @@ import com.gradle.develocity.agent.gradle.adapters.PublishedBuildScanAdapter
 import com.gradle.develocity.agent.gradle.adapters.develocity.DevelocityConfigurationAdapter
 import com.gradle.develocity.agent.gradle.adapters.enterprise.GradleEnterpriseExtensionAdapter
 import org.gradle.api.Action
-import org.gradle.api.Project
+import org.gradle.api.initialization.Settings
 
-fun findAdapter(project: Project): BuildScanAdapter {
-    if (project.rootProject.extensions.findByName("develocity") != null) {
-        return DevelocityConfigurationAdapter(project.rootProject.extensions.getByName("develocity")).buildScan
-    } else if (project.rootProject.extensions.findByName("gradleEnterprise") != null) {
-        return GradleEnterpriseExtensionAdapter(project.rootProject.extensions.getByName("gradleEnterprise")).buildScan
+fun findAdapter(settings: Settings): BuildScanAdapter {
+    if (settings.extensions.findByName("develocity") != null) {
+        return DevelocityConfigurationAdapter(settings.extensions.getByName("develocity")).buildScan
+    } else if (settings.extensions.findByName("gradleEnterprise") != null) {
+        return GradleEnterpriseExtensionAdapter(settings.extensions.getByName("gradleEnterprise")).buildScan
     }
     return NoOpBuildScanAdapter()
 }

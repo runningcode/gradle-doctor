@@ -11,16 +11,21 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
-import com.osacky.doctor.internal.isGradle74OrNewer
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.GradleInternal
+import org.gradle.api.initialization.Settings
+import org.gradle.api.invocation.Gradle
+import org.gradle.api.invocation.GradleLifecycle
+import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import org.gradle.internal.jvm.Jvm
+import org.gradle.internal.service.UnknownServiceException
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.kotlin.dsl.withType
@@ -29,20 +34,26 @@ import org.gradle.nativeplatform.platform.OperatingSystem
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.util.GradleVersion
 
-class DoctorPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
+class DoctorPlugin : Plugin<Settings> {
+    override fun apply(target: Settings) {
         ensureMinimumSupportedGradleVersion()
-        ensureAppliedInProjectRoot(target)
 
         val extension = target.extensions.create<DoctorExtension>("doctor")
 
         val os: OperatingSystem = DefaultNativePlatform.getCurrentOperatingSystem()
-        val cliCommandExecutor = CliCommandExecutor(target)
+        val providers = target.serviceOf<ProviderFactory>()
+        val cliCommandExecutor = CliCommandExecutor(providers)
         val clock: Clock = SystemClock()
         val intervalMeasurer = IntervalMeasurer()
-        val pillBoxPrinter = PillBoxPrinter(target.logger)
-        val daemonChecker = BuildDaemonChecker(extension, createDaemonChecker(os, cliCommandExecutor), pillBoxPrinter)
-        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter, target)
+        val logger = Logging.getLogger(javaClass)
+        val pillBoxPrinter = PillBoxPrinter(logger)
+        val daemonChecker =
+            BuildDaemonChecker(
+                extension,
+                createDaemonChecker(os, cliCommandExecutor),
+                pillBoxPrinter,
+            )
+        val javaHomeCheck = createJavaHomeCheck(extension, pillBoxPrinter, providers)
         val appleRosettaTranslationCheck =
             AppleRosettaTranslationCheck(
                 os,
@@ -51,15 +62,15 @@ class DoctorPlugin : Plugin<Project> {
                 extension.appleRosettaTranslationCheckMode,
             )
         val garbagePrinter = GarbagePrinter(clock, DirtyBeanCollector(), extension)
-        val buildOperations = getOperationEvents(target, extension)
+        val buildOperations = getOperationEvents(target.gradle, extension)
         val javaAnnotationTime = JavaAnnotationTime(buildOperations, extension)
         val downloadSpeedMeasurer = DownloadSpeedMeasurer(buildOperations, extension, intervalMeasurer)
         val buildCacheConnectionMeasurer = BuildCacheConnectionMeasurer(buildOperations, extension, intervalMeasurer)
-        val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, clock)
+        val buildCacheKey = RemoteCacheEstimation((buildOperations as BuildOperations), target, providers, clock)
         val slowerFromCacheCollector = buildOperations.slowerFromCacheCollector()
-        val jetifierWarning = JetifierWarning(extension, target)
+        val jetifierWarning = JetifierWarning(extension, providers)
         val javaElevenGC = JavaGCFlagChecker(pillBoxPrinter, extension)
-        val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target, extension)
+        val kotlinCompileDaemonFallbackDetector = KotlinCompileDaemonFallbackDetector(target.gradle, providers, extension)
         val list =
             listOf(
                 daemonChecker,
@@ -81,7 +92,7 @@ class DoctorPlugin : Plugin<Project> {
         buildCacheConnectionMeasurer.onStart()
         buildCacheKey.onStart()
         slowerFromCacheCollector.onStart()
-        target.afterEvaluate {
+        target.gradle.projectsEvaluated {
             daemonChecker.onStart()
             javaHomeCheck.onStart()
             javaElevenGC.onStart()
@@ -90,25 +101,23 @@ class DoctorPlugin : Plugin<Project> {
         }
 
         val buildScanApi = findAdapter(target)
-        registerBuildFinishActions(list, pillBoxPrinter, target, buildScanApi)
+        registerBuildFinishActions(list, pillBoxPrinter, target.gradle.sharedServices, buildScanApi)
 
         tagFreshDaemon(target, buildScanApi)
 
         val appPluginProjects = mutableSetOf<Project>()
 
-        ensureNoCleanTaskDependenciesIfNeeded(target, extension, pillBoxPrinter)
+        ensureNoCleanTaskDependenciesIfNeeded(target.gradle, extension, pillBoxPrinter)
 
-        target.subprojects project@{
+        target.gradle.beforeProject project@{
             // Ensure we are not caching any test tasks. Tests may not declare all inputs properly or depend on things like the date and caching them can lead to dangerous false positives.
             tasks.withType(Test::class.java).configureEach {
                 if (!extension.enableTestCaching.get()) {
                     outputs.upToDateWhen { false }
                 }
             }
-            plugins.whenPluginAdded plugin@{
-                if (this.javaClass.name == "com.android.build.gradle.AppPlugin") {
-                    appPluginProjects.add(this@project)
-                }
+            plugins.withId("com.android.application") plugin@{
+                appPluginProjects.add(this@project)
             }
         }
 
@@ -140,42 +149,40 @@ class DoctorPlugin : Plugin<Project> {
     private fun createJavaHomeCheck(
         extension: DoctorExtension,
         pillBoxPrinter: PillBoxPrinter,
-        project: Project,
+        providers: ProviderFactory,
     ): JavaHomeCheck {
         val jvmVariables =
             JvmVariables(
-                environmentJavaHomeProvider =
-                    if (!isGradle74OrNewer()) {
-                        project.providers.environmentVariable(JAVA_HOME).forUseAtConfigurationTime()
-                    } else {
-                        project.providers.environmentVariable(JAVA_HOME)
-                    },
+                environmentJavaHomeProvider = providers.environmentVariable(JAVA_HOME),
                 gradleJavaHome = Jvm.current().javaHome.path,
             )
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
     }
 
     private fun tagFreshDaemon(
-        target: Project,
+        settings: Settings,
         buildScanApi: BuildScanAdapter,
     ) {
-        ((target.gradle as GradleInternal).services.find(DaemonScanInfo::class.java) as DaemonScanInfo?)?.let {
-            if (it.numberOfBuilds == 1) {
+        try {
+            val daemonScanInfo = settings.serviceOf<DaemonScanInfo>()
+            if (daemonScanInfo.numberOfBuilds == 1) {
                 buildScanApi.tag(FRESH_DAEMON)
             }
+        } catch (_: UnknownServiceException) {
+            // No-op.
         }
     }
 
     private fun registerBuildFinishActions(
         list: List<BuildStartFinishListener>,
         pillBoxPrinter: PillBoxPrinter,
-        target: Project,
+        sharedServices: BuildServiceRegistry,
         buildScanApi: BuildScanAdapter,
     ) {
         val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
 
         val closeService =
-            target.gradle.sharedServices
+            sharedServices
                 .registerIfAbsent("close-service", BuildFinishService::class.java) { }
                 .get()
         closeService.closeMeWhenFinished {
@@ -184,7 +191,7 @@ class DoctorPlugin : Plugin<Project> {
     }
 
     private fun ensureNoCleanTaskDependenciesIfNeeded(
-        target: Project,
+        gradle: Gradle,
         extension: DoctorExtension,
         pillBoxPrinter: PillBoxPrinter,
     ) {
@@ -192,7 +199,7 @@ class DoctorPlugin : Plugin<Project> {
             // Gradle 7.4 has a fix for 2488 and 10889
             return
         }
-        target.allprojects {
+        gradle.beforeProject {
             // We use afterEvaluate in case other plugins configure the Delete task. We want our configuration to happen last.
             afterEvaluate {
                 tasks.withType(Delete::class).configureEach {
@@ -210,12 +217,6 @@ class DoctorPlugin : Plugin<Project> {
                     }
                 }
             }
-        }
-    }
-
-    private fun ensureAppliedInProjectRoot(target: Project) {
-        if (target.parent != null) {
-            throw GradleException("Gradle Doctor must be applied in the project root.")
         }
     }
 
@@ -237,11 +238,11 @@ class DoctorPlugin : Plugin<Project> {
         }
 
     private fun getOperationEvents(
-        target: Project,
+        gradle: Gradle,
         extension: DoctorExtension,
     ): OperationEvents {
         val listenerService =
-            target.gradle.sharedServices.registerIfAbsent(
+            gradle.sharedServices.registerIfAbsent(
                 "listener-service",
                 BuildOperationListenerService::class.java,
             ) {
@@ -249,7 +250,7 @@ class DoctorPlugin : Plugin<Project> {
                     .getNegativeAvoidanceThreshold()
                     .set(extension.negativeAvoidanceThreshold)
             }
-        val buildEventListenerRegistry: BuildEventListenerRegistryInternal = target.serviceOf()
+        val buildEventListenerRegistry = gradle.serviceOf<BuildEventListenerRegistryInternal>()
         buildEventListenerRegistry.onOperationCompletion(listenerService)
         return listenerService.get().getOperations()
     }

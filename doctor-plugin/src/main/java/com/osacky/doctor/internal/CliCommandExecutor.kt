@@ -1,11 +1,11 @@
 package com.osacky.doctor.internal
 
-import org.gradle.api.Project
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.util.GradleVersion
 import java.io.InputStream
 
 class CliCommandExecutor(
-    private val project: Project,
+    private val providers: ProviderFactory,
 ) {
     fun execute(
         command: Array<String>,
@@ -22,7 +22,7 @@ class CliCommandExecutor(
         command: Array<String>,
         ignoreExitValue: Boolean = false,
     ): String =
-        project.providers
+        providers
             .exec {
                 commandLine(*command)
                 isIgnoreExitValue = ignoreExitValue

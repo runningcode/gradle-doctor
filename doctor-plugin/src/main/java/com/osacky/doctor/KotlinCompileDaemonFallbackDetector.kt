@@ -2,9 +2,9 @@ package com.osacky.doctor
 
 import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.KOTLIN_COMPILE_DAEMON_FALLBACK
-import com.osacky.doctor.internal.sysProperty
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.internal.logging.LoggingManagerInternal
 import org.gradle.internal.logging.events.LogEvent
 import org.gradle.internal.logging.events.OutputEvent
@@ -13,17 +13,18 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinCompileDaemonFallbackDetector(
-    private val project: Project,
+    private val gradle: Gradle,
+    private val providers: ProviderFactory,
     private val extension: DoctorExtension,
 ) : BuildStartFinishListener,
     HasBuildScanTag {
     private val fallbackCounter = AtomicInteger(0)
-    private val loggingService = project.gradle.serviceOf<LoggingManagerInternal>()
+    private val loggingService = gradle.serviceOf<LoggingManagerInternal>()
     private val failureEventListener = FailureEventListener(fallbackCounter)
     private val disposable = CompositeDisposable()
 
     override fun onStart() {
-        if (!extension.warnIfKotlinCompileDaemonFallback.get() || isDaemonDisabled(project)) {
+        if (!extension.warnIfKotlinCompileDaemonFallback.get() || isDaemonDisabled()) {
             return
         }
         loggingService.addOutputEventListener(failureEventListener)
@@ -62,8 +63,8 @@ class KotlinCompileDaemonFallbackDetector(
     /**
      * Copy of internal logic in GradleKotlinCompilerRunner
      */
-    private fun isDaemonDisabled(project: Project): Boolean {
-        val strategy = sysProperty("kotlin.compiler.execution.strategy", project.providers).orElse("daemon")
+    private fun isDaemonDisabled(): Boolean {
+        val strategy = providers.systemProperty("kotlin.compiler.execution.strategy").getOrElse("daemon")
         return strategy != "daemon" // "in-process", "out-of-process"
     }
 }
