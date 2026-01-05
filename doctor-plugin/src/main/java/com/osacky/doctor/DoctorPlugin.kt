@@ -1,6 +1,5 @@
 package com.osacky.doctor
 
-import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.CliCommandExecutor
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.DaemonChecker
@@ -20,7 +19,6 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.invocation.GradleLifecycle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.services.BuildServiceRegistry
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
@@ -100,10 +98,9 @@ class DoctorPlugin : Plugin<Settings> {
             appleRosettaTranslationCheck.onStart()
         }
 
-        val buildScanApi = findAdapter(target)
-        registerBuildFinishActions(list, pillBoxPrinter, target.gradle.sharedServices, buildScanApi)
+        registerBuildFinishActions(list, pillBoxPrinter, target)
 
-        tagFreshDaemon(target, buildScanApi)
+        tagFreshDaemon(target)
 
         val appPluginProjects = mutableSetOf<Project>()
 
@@ -159,30 +156,29 @@ class DoctorPlugin : Plugin<Settings> {
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)
     }
 
-    private fun tagFreshDaemon(
-        settings: Settings,
-        buildScanApi: BuildScanAdapter,
-    ) {
-        try {
-            val daemonScanInfo = settings.serviceOf<DaemonScanInfo>()
-            if (daemonScanInfo.numberOfBuilds == 1) {
-                buildScanApi.tag(FRESH_DAEMON)
+    private fun tagFreshDaemon(settings: Settings) {
+        val daemonScanInfo =
+            try {
+                settings.serviceOf<DaemonScanInfo>()
+            } catch (_: UnknownServiceException) {
+                null
             }
-        } catch (_: UnknownServiceException) {
-            // No-op.
+        if (daemonScanInfo?.numberOfBuilds == 1) {
+            settings.withDevelocityPlugin {
+                buildScan.tag(FRESH_DAEMON)
+            }
         }
     }
 
     private fun registerBuildFinishActions(
         list: List<BuildStartFinishListener>,
         pillBoxPrinter: PillBoxPrinter,
-        sharedServices: BuildServiceRegistry,
-        buildScanApi: BuildScanAdapter,
+        settings: Settings,
     ) {
-        val runnable = TheActionThing(pillBoxPrinter, buildScanApi)
+        val runnable = TheActionThing(pillBoxPrinter, settings)
 
         val closeService =
-            sharedServices
+            settings.gradle.sharedServices
                 .registerIfAbsent("close-service", BuildFinishService::class.java) { }
                 .get()
         closeService.closeMeWhenFinished {
@@ -257,14 +253,16 @@ class DoctorPlugin : Plugin<Settings> {
 
     class TheActionThing(
         private val pillBoxPrinter: PillBoxPrinter,
-        private val buildScanApi: BuildScanAdapter,
+        private val settings: Settings,
     ) : Action<List<BuildStartFinishListener>> {
         override fun execute(list: List<BuildStartFinishListener>) {
             val thingsToPrint: List<String> =
                 list.flatMap {
                     val messages = it.onFinish()
                     if (messages.isNotEmpty() && it is HasBuildScanTag) {
-                        it.addCustomValues(buildScanApi)
+                        settings.withDevelocityPlugin {
+                            it.addCustomValues(buildScan)
+                        }
                     }
                     messages
                 }

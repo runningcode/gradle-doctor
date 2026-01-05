@@ -8,8 +8,8 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.develocity") version "4.3"
   id("com.osacky.doctor")
+  id("com.gradle.develocity") version "4.3"
 }
 
 develocity {
