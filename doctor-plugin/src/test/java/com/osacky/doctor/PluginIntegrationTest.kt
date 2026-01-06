@@ -118,8 +118,7 @@ class PluginIntegrationTest(
             )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSet() {
         assumeSupportedVersion()
 
@@ -141,20 +140,19 @@ class PluginIntegrationTest(
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
                 .buildAndFail()
-        assertThat(result.output).contains(
+        assertThat(result.output.trimIndent()).contains(
             """
-                |> =============================== Gradle Doctor Prescriptions ============================================
-                |  | Gradle is not using JAVA_HOME.                                                                       |
-                |  | JAVA_HOME is foo                                                                                     |
-                |  """.trimMargin("|"),
+            =============================== Gradle Doctor Prescriptions ============================================
+            | Gradle is not using JAVA_HOME.                                                                       |
+            | JAVA_HOME is                                                                                         |
+            """.trimIndent(),
         )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSetWithConsoleError() {
         assumeSupportedVersion()
 
@@ -175,21 +173,20 @@ class PluginIntegrationTest(
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
-                .buildAndFail()
+                .build()
         // Still prints the error
-        assertThat(result.output).contains(
+        assertThat(result.output.trimIndent()).contains(
             """
-                |> =============================== Gradle Doctor Prescriptions ============================================
-                |  | Gradle is not using JAVA_HOME.                                                                       |
-                |  | JAVA_HOME is foo                                                                                     |
-                |  """.trimMargin("|"),
+            =============================== Gradle Doctor Prescriptions ============================================
+            | Gradle is not using JAVA_HOME.                                                                       |
+            | JAVA_HOME is                                                                                         |
+            """.trimIndent(),
         )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSetWithCustomMessage() {
         assumeSupportedVersion()
 
@@ -210,7 +207,7 @@ class PluginIntegrationTest(
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
                 .buildAndFail()
         assertThat(result.output).contains("Check for more details here!")
