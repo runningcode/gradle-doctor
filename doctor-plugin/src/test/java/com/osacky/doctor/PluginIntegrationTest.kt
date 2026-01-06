@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
 import com.osacky.doctor.internal.androidHome
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.junit.Assume.assumeFalse
@@ -36,7 +37,7 @@ class PluginIntegrationTest(
     @Test
     fun testSupportedVersion() {
         assumeSupportedVersion()
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -59,7 +60,7 @@ class PluginIntegrationTest(
     @Test
     fun testFailOnOlderVersion() {
         assumeUnsupportedVersion()
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -82,7 +83,8 @@ class PluginIntegrationTest(
     @Test
     fun testFailWithMultipleDaemons() {
         assumeSupportedVersion()
-        writeBuildGradle(
+        assumeNixLikeOs()
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -99,20 +101,20 @@ class PluginIntegrationTest(
         assertThat(result.output)
             .contains(
                 """
-                    |  | This may indicate a settings mismatch between the IDE and the terminal.                              |
-                    |  | There might also be a bug causing extra Daemons to spawn.                                            |
-                    |  | You can check active Daemons with `jps`.                                                             |
-                    |  | To kill all active Daemons use:                                                                      |
-                    |  | pkill -f '.*GradleDaemon.*'                                                                          |
-                    |  |                                                                                                      |
-                    |  | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
-                    |  | le.kts.                                                                                              |
-                    |  | To disable this message add this to your root build.gradle file:                                     |
-                    |  | doctor {                                                                                             |
-                    |  |   disallowMultipleDaemons = false                                                                    |
-                    |  | }                                                                                                    |
-                    |  ========================================================================================================
-                """.trimMargin(),
+                | This may indicate a settings mismatch between the IDE and the terminal.                              |
+                | There might also be a bug causing extra Daemons to spawn.                                            |
+                | You can check active Daemons with `jps`.                                                             |
+                | To kill all active Daemons use:                                                                      |
+                | pkill -f '.*GradleDaemon.*'                                                                          |
+                |                                                                                                      |
+                | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
+                | le.kts.                                                                                              |
+                | To disable this message add this to your root build.gradle file:                                     |
+                | doctor {                                                                                             |
+                |   disallowMultipleDaemons = false                                                                    |
+                | }                                                                                                    |
+                ========================================================================================================
+                """.trimIndent(),
             )
     }
 
@@ -121,7 +123,7 @@ class PluginIntegrationTest(
     fun testJavaHomeNotSet() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -136,7 +138,6 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -157,7 +158,7 @@ class PluginIntegrationTest(
     fun testJavaHomeNotSetWithConsoleError() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -171,7 +172,6 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -193,7 +193,7 @@ class PluginIntegrationTest(
     fun testJavaHomeNotSetWithCustomMessage() {
         assumeSupportedVersion()
 
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -207,7 +207,6 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
@@ -222,17 +221,21 @@ class PluginIntegrationTest(
         assumeSupportedVersion()
         assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
+        testProjectRoot.writeBuildGradle(
             """
             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+            """.trimIndent(),
+        )
+        testProjectRoot.writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -243,12 +246,6 @@ class PluginIntegrationTest(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
             include 'app-one'
             include 'app-two'
             """.trimMargin(),
@@ -305,17 +302,21 @@ class PluginIntegrationTest(
         assumeSupportedVersion()
         assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
+        testProjectRoot.writeBuildGradle(
             """
             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+            """.trimIndent(),
+        )
+        testProjectRoot.writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -326,12 +327,6 @@ class PluginIntegrationTest(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
             include 'app-one'
             include 'app-two'
             """.trimMargin(),
@@ -402,8 +397,8 @@ class PluginIntegrationTest(
         assumeTrue(version == "6.8")
     }
 
-    private fun writeBuildGradle(build: String) {
-        testProjectRoot.writeBuildGradle(build)
+    private fun assumeNixLikeOs() {
+        assumeFalse(DefaultNativePlatform.getCurrentOperatingSystem().isWindows)
     }
 
     private fun createFileInFolder(

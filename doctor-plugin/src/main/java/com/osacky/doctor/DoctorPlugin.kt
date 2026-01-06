@@ -10,6 +10,7 @@ import com.osacky.doctor.internal.PillBoxPrinter
 import com.osacky.doctor.internal.SystemClock
 import com.osacky.doctor.internal.UnixDaemonChecker
 import com.osacky.doctor.internal.UnsupportedOsDaemonChecker
+import com.osacky.doctor.internal.environmentVariableCompat
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -150,7 +151,7 @@ class DoctorPlugin : Plugin<Settings> {
     ): JavaHomeCheck {
         val jvmVariables =
             JvmVariables(
-                environmentJavaHomeProvider = providers.environmentVariable(JAVA_HOME),
+                environmentJavaHomeProvider = providers.environmentVariableCompat(JAVA_HOME),
                 gradleJavaHome = Jvm.current().javaHome.path,
             )
         return JavaHomeCheck(jvmVariables, extension.javaHomeHandler, pillBoxPrinter)

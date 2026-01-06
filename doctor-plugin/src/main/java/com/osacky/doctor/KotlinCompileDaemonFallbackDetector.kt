@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.gradle.develocity.agent.gradle.adapters.BuildScanAdapter
 import com.osacky.doctor.internal.KOTLIN_COMPILE_DAEMON_FALLBACK
+import com.osacky.doctor.internal.systemPropertyCompat
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.ProviderFactory
@@ -64,7 +65,7 @@ class KotlinCompileDaemonFallbackDetector(
      * Copy of internal logic in GradleKotlinCompilerRunner
      */
     private fun isDaemonDisabled(): Boolean {
-        val strategy = providers.systemProperty("kotlin.compiler.execution.strategy").getOrElse("daemon")
+        val strategy = providers.systemPropertyCompat("kotlin.compiler.execution.strategy").getOrElse("daemon")
         return strategy != "daemon" // "in-process", "out-of-process"
     }
 }

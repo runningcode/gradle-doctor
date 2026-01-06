@@ -1,5 +1,6 @@
 package com.osacky.doctor
 
+import com.osacky.doctor.internal.gradlePropertyCompat
 import org.gradle.api.provider.ProviderFactory
 
 class JetifierWarning(
@@ -10,7 +11,7 @@ class JetifierWarning(
     }
 
     override fun onFinish(): List<String> {
-        val isJetifierEnabled = providers.gradleProperty(JETIFIER_GRADLE_PROPERTY).orNull
+        val isJetifierEnabled = providers.gradlePropertyCompat(JETIFIER_GRADLE_PROPERTY).orNull
         if (doctorExtension.warnWhenJetifierEnabled.get() &&
             isJetifierEnabled == "true"
         ) {

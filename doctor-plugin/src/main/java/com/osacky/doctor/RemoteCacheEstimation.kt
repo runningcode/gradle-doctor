@@ -2,6 +2,7 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
+import com.osacky.doctor.internal.booleanGradleProperty
 import com.osacky.doctor.internal.twoDigits
 import org.gradle.BuildListener
 import org.gradle.BuildResult
@@ -19,20 +20,11 @@ class RemoteCacheEstimation(
     private val clock: Clock,
 ) : BuildStartFinishListener {
     private val benchmarkBuildCache: Provider<Boolean> =
-        providers
-            .gradleProperty("benchmarkRemoteCache")
-            .map { true }
-            .orElse(false)
+        providers.booleanGradleProperty("benchmarkRemoteCache")
     private val rerunSourceTasks: Provider<Boolean> =
-        providers
-            .gradleProperty("rerunSourceTasksForBenchmark")
-            .map { true }
-            .orElse(false)
+        providers.booleanGradleProperty("rerunSourceTasksForBenchmark")
     private val rerunLargeOutputTasks: Provider<Boolean> =
-        providers
-            .gradleProperty("rerunLargeOutputTasksForBenchmark")
-            .map { true }
-            .orElse(false)
+        providers.booleanGradleProperty("rerunLargeOutputTasksForBenchmark")
     private var startTime: Long = -1L
 
     override fun onStart() {
