@@ -14,7 +14,7 @@ class JetifierWarningTest {
 
     @Test
     fun testJetifierEnabledShowsWarning() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -38,7 +38,7 @@ class JetifierWarningTest {
                 .withProjectDir(testProjectRoot.root)
                 .build()
 
-        assertThat(result.output).contains(
+        assertThat(result.output.trimIndent()).contains(
             """
             =============================== Gradle Doctor Prescriptions ============================================
             | Jetifier was enabled which means your builds are slower by 4-20%.                                    |
@@ -57,7 +57,7 @@ class JetifierWarningTest {
 
     @Test
     fun testJetifierDisabledShowNoWarning() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"

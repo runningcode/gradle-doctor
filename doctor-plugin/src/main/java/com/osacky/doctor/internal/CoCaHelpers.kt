@@ -1,18 +1,41 @@
+@file:Suppress("DEPRECATION")
+
 package com.osacky.doctor.internal
 
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.util.GradleVersion
-import java.util.Optional
 
-fun isGradle74OrNewer(): Boolean = GradleVersion.current() >= GradleVersion.version("7.4")
+private val needsForUseAtConfigurationTime = GradleVersion.current() < GradleVersion.version("7.4")
 
-fun sysProperty(
-    name: String,
-    providers: ProviderFactory,
-): Optional<String> {
-    if (!isGradle74OrNewer()) {
-        val property = providers.systemProperty(name).forUseAtConfigurationTime()
-        return Optional.ofNullable(property.orNull)
+internal fun ProviderFactory.environmentVariableCompat(propertyName: String): Provider<String> {
+    val prop = environmentVariable(propertyName)
+    return if (needsForUseAtConfigurationTime) {
+        prop.forUseAtConfigurationTime()
+    } else {
+        prop
     }
-    return Optional.ofNullable(System.getProperty(name))
 }
+
+internal fun ProviderFactory.systemPropertyCompat(propertyName: String): Provider<String> {
+    val prop = systemProperty(propertyName)
+    return if (needsForUseAtConfigurationTime) {
+        prop.forUseAtConfigurationTime()
+    } else {
+        prop
+    }
+}
+
+internal fun ProviderFactory.gradlePropertyCompat(propertyName: String): Provider<String> {
+    val prop = gradleProperty(propertyName)
+    return if (needsForUseAtConfigurationTime) {
+        prop.forUseAtConfigurationTime()
+    } else {
+        prop
+    }
+}
+
+internal fun ProviderFactory.booleanGradleProperty(propertyName: String): Provider<Boolean> =
+    gradlePropertyCompat(propertyName)
+        .map { true }
+        .orElse(false)

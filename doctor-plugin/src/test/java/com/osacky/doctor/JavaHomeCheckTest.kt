@@ -186,11 +186,11 @@ class JavaHomeCheckTest {
             javaDistributionsRootFolderPath
                 .resolve("current")
                 .createSymbolicLinkPointingTo(zuluRootFolderPath.toAbsolutePath())
-        val javaExecutableFolder = javaHomePath.resolve(JAVA_EXECUTABLES_FOLDER).createDirectories()
+        val javaExecutableFolder = javaHomePath.resolve("bin").createDirectories()
 
         // creating zulu bin symlink and pointing it to the actual /Contents/Home/bin folder
         zuluRootFolderPath
-            .resolve(JAVA_EXECUTABLES_FOLDER)
+            .resolve("bin")
             .createSymbolicLinkPointingTo(javaExecutableFolder.toAbsolutePath())
 
         // environmentJavaHome=***/Users/doctor/.sdkman/candidates/java/current and gradleJavaHome=***/Users/doctor/.sdkman/candidates/java/17.0.10-zulu/zulu-17.jdk/Contents/Home

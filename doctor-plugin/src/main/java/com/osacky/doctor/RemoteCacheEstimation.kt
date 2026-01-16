@@ -2,34 +2,41 @@ package com.osacky.doctor
 
 import com.osacky.doctor.internal.Clock
 import com.osacky.doctor.internal.SlowNetworkPrinter.Companion.ONE_MEGABYTE
+import com.osacky.doctor.internal.booleanGradleProperty
 import com.osacky.doctor.internal.twoDigits
 import org.gradle.BuildListener
 import org.gradle.BuildResult
-import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
-import org.gradle.api.internal.GradleInternal
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.SourceTask
 import java.io.File
 
 class RemoteCacheEstimation(
     private val buildOperations: BuildOperations,
-    private val project: Project,
+    private val settings: Settings,
+    private val providers: ProviderFactory,
     private val clock: Clock,
 ) : BuildStartFinishListener {
-    private val benchmarkBuildCache: Boolean = project.properties.containsKey("benchmarkRemoteCache")
-    private val rerunSourceTasks: Boolean = project.properties.containsKey("rerunSourceTasksForBenchmark")
-    private val rerunLargeOutputTasks: Boolean = project.properties.containsKey("rerunLargeOutputTasksForBenchmark")
+    private val benchmarkBuildCache: Provider<Boolean> =
+        providers.booleanGradleProperty("benchmarkRemoteCache")
+    private val rerunSourceTasks: Provider<Boolean> =
+        providers.booleanGradleProperty("rerunSourceTasksForBenchmark")
+    private val rerunLargeOutputTasks: Provider<Boolean> =
+        providers.booleanGradleProperty("rerunLargeOutputTasksForBenchmark")
     private var startTime: Long = -1L
 
     override fun onStart() {
-        if (!benchmarkBuildCache) {
+        if (!benchmarkBuildCache.get()) {
             return
         }
-        project.gradle.addBuildListener(listener)
+        settings.gradle.addBuildListener(listener)
         // Re-run all source tasks for benchmarking purposes
+        val rerunSourceTasks = rerunSourceTasks.get()
+        val rerunLargeOutputTasks = rerunLargeOutputTasks.get()
         if (rerunSourceTasks || rerunLargeOutputTasks) {
-            project.allprojects {
+            settings.gradle.beforeProject {
                 if (rerunSourceTasks) {
                     tasks.withType(SourceTask::class.java).configureEach {
                         outputs.upToDateWhen { false }
@@ -57,10 +64,10 @@ class RemoteCacheEstimation(
     }
 
     override fun onFinish(): List<String> {
-        if (!benchmarkBuildCache) {
+        if (!benchmarkBuildCache.get()) {
             return emptyList()
         }
-        project.gradle.removeListener(listener)
+        settings.gradle.removeListener(listener)
 
         val cacheDir = gradleLocalCacheDir()
 
@@ -119,23 +126,23 @@ class RemoteCacheEstimation(
     }
 
     private fun gradleLocalCacheDir(): File {
-        val gradleInternalCacheDir =
-            (project.gradle as GradleInternal)
-                .settings.buildCache.local.directory
+        val gradleInternalCacheDir = settings.buildCache?.local?.directory
         return if (gradleInternalCacheDir != null) {
             when (gradleInternalCacheDir) {
                 is File -> {
                     gradleInternalCacheDir
                 }
+
                 is String -> {
                     File(gradleInternalCacheDir)
                 }
+
                 else -> {
                     throw IllegalStateException("Unexpected type for $gradleInternalCacheDir")
                 }
             }
         } else {
-            File(project.gradle.gradleUserHomeDir, "caches/build-cache-1")
+            File(settings.gradle.gradleUserHomeDir, "caches/build-cache-1")
         }
     }
 
