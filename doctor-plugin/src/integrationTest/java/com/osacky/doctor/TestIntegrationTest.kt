@@ -64,11 +64,10 @@ class TestIntegrationTest {
     }
 
     fun projectWithCleanDependency(disallowCleanTaskDependencies: Boolean) {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
-              id 'java-library'
             }
             doctor {
               disallowMultipleDaemons = false
@@ -78,7 +77,13 @@ class TestIntegrationTest {
               warnWhenNotUsingParallelGC = false
               disallowCleanTaskDependencies = $disallowCleanTaskDependencies
             }
-            
+            """.trimIndent(),
+        )
+        testProjectRoot.writeBuildGradle(
+            """
+            plugins {
+              id 'java-library'
+            }
             tasks.register('foo') {
               doFirst {
                 println 'foo'
