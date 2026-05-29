@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+Breaking changes:
+
+- The plugin is now a Settings plugin. Apply it in `settings.gradle(.kts)` instead of the root `build.gradle(.kts)`.
+- Minimum supported Gradle version is now 8.8.
+- Removed `disallowCleanTaskDependencies`. Gradle 7.4+ fixes the underlying issue natively.
+
+Other changes:
+
+- Compatible with Gradle [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html). Per-project configuration is registered via `Gradle.lifecycle.beforeProject` with `IsolatedAction`.
+- Gradle Doctor no longer needs to be declared after the Develocity plugin to contribute to build scans.
+
 ## 0.11.1
 
 - [Switch to Vanniktech Maven Publish Plugin](https://github.com/runningcode/gradle-doctor/pull/427) - Simplified publishing configuration and improved GitHub Actions workflows

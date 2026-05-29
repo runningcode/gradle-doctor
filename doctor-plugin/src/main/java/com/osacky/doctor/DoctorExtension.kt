@@ -77,15 +77,6 @@ open class DoctorExtension(
     val warnWhenNotUsingParallelGC = objects.property<Boolean>().convention(false)
 
     /**
-     * Throws an error when the `Delete` or `clean` task has dependencies.
-     * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
-     * output. This can lead to build failures or just strangeness with seemingly straightforward builds
-     * (e.g., gradle clean build).
-     * http://github.com/gradle/gradle/issues/2488
-     */
-    val disallowCleanTaskDependencies = objects.property<Boolean>().convention(true)
-
-    /**
      * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
      * https://youtrack.jetbrains.com/issue/KT-48843
      */

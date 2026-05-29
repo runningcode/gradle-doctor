@@ -2,10 +2,9 @@ package com.osacky.doctor
 
 import com.google.common.truth.Truth.assertThat
 import com.osacky.doctor.internal.androidHome
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.util.GradleVersion
 import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -18,25 +17,25 @@ import java.io.File
 class PluginIntegrationTest(
     private val version: String,
 ) {
-    val agpVersion = "4.2.1"
+    // AGP/Gradle compatibility matrix:
+    // https://developer.android.com/build/releases/gradle-plugin#updating-gradle
+    val agpVersion =
+        when {
+            version.startsWith("9.") -> "8.13.0"
+            else -> "8.5.0"
+        }
 
     @get:Rule val testProjectRoot = TemporaryFolder()
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
-        fun getParams(): List<String> {
-            // Keep 6.8 as minimum unsupported version and 7.0 as minimum supported version.
-            // Keep this list to 5 as testing against too many versions causes OOMs.
-            // Need to add 8.0 but that is dependendent on using java 11.
-            return listOf("6.8", "7.0.2", "7.6.4")
-        }
+        fun getParams(): List<String> = listOf("8.8", "9.5.1")
     }
 
     @Test
     fun testSupportedVersion() {
-        assumeSupportedVersion()
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -57,32 +56,9 @@ class PluginIntegrationTest(
     }
 
     @Test
-    fun testFailOnOlderVersion() {
-        assumeUnsupportedVersion()
-        writeBuildGradle(
-            """
-                    |plugins {
-                    |  id "com.osacky.doctor"
-                    |}
-                    |doctor {
-                    |  disallowMultipleDaemons = false
-                    |  javaHome {
-                    |    ensureJavaHomeMatches = !System.getenv().containsKey("CI")
-                    |  }
-                    |}
-                """.trimMargin("|"),
-        )
-
-        val result = createRunner().buildAndFail()
-        assertThat(
-            result.output,
-        ).contains("Must be using Gradle Version 7.0 in order to use DoctorPlugin. Current Gradle Version is Gradle $version")
-    }
-
-    @Test
     fun testFailWithMultipleDaemons() {
-        assumeSupportedVersion()
-        writeBuildGradle(
+        assumeNixLikeOs()
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -99,29 +75,26 @@ class PluginIntegrationTest(
         assertThat(result.output)
             .contains(
                 """
-                    |  | This may indicate a settings mismatch between the IDE and the terminal.                              |
-                    |  | There might also be a bug causing extra Daemons to spawn.                                            |
-                    |  | You can check active Daemons with `jps`.                                                             |
-                    |  | To kill all active Daemons use:                                                                      |
-                    |  | pkill -f '.*GradleDaemon.*'                                                                          |
-                    |  |                                                                                                      |
-                    |  | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
-                    |  | le.kts.                                                                                              |
-                    |  | To disable this message add this to your root build.gradle file:                                     |
-                    |  | doctor {                                                                                             |
-                    |  |   disallowMultipleDaemons = false                                                                    |
-                    |  | }                                                                                                    |
-                    |  ========================================================================================================
-                """.trimMargin(),
+                | This may indicate a settings mismatch between the IDE and the terminal.                              |
+                | There might also be a bug causing extra Daemons to spawn.                                            |
+                | You can check active Daemons with `jps`.                                                             |
+                | To kill all active Daemons use:                                                                      |
+                | pkill -f '.*GradleDaemon.*'                                                                          |
+                |                                                                                                      |
+                | This might be expected if you are working on multiple Gradle projects or if you are using build.grad |
+                | le.kts.                                                                                              |
+                | To disable this message add this to your root build.gradle file:                                     |
+                | doctor {                                                                                             |
+                |   disallowMultipleDaemons = false                                                                    |
+                | }                                                                                                    |
+                ========================================================================================================
+                """.trimIndent(),
             )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSet() {
-        assumeSupportedVersion()
-
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -136,28 +109,24 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
                 .buildAndFail()
-        assertThat(result.output).contains(
+        assertThat(result.output.trimIndent()).contains(
             """
-                |> =============================== Gradle Doctor Prescriptions ============================================
-                |  | Gradle is not using JAVA_HOME.                                                                       |
-                |  | JAVA_HOME is foo                                                                                     |
-                |  """.trimMargin("|"),
+            =============================== Gradle Doctor Prescriptions ============================================
+            | Gradle is not using JAVA_HOME.                                                                       |
+            | JAVA_HOME is                                                                                         |
+            """.trimIndent(),
         )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSetWithConsoleError() {
-        assumeSupportedVersion()
-
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -171,29 +140,25 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
-                .buildAndFail()
+                .build()
         // Still prints the error
-        assertThat(result.output).contains(
+        assertThat(result.output.trimIndent()).contains(
             """
-                |> =============================== Gradle Doctor Prescriptions ============================================
-                |  | Gradle is not using JAVA_HOME.                                                                       |
-                |  | JAVA_HOME is foo                                                                                     |
-                |  """.trimMargin("|"),
+            =============================== Gradle Doctor Prescriptions ============================================
+            | Gradle is not using JAVA_HOME.                                                                       |
+            | JAVA_HOME is                                                                                         |
+            """.trimIndent(),
         )
     }
 
-    // This is failing, perhaps because it is actually trying to use "foo" as JAVA_HOME.
-    @Test @Ignore
+    @Test
     fun testJavaHomeNotSetWithCustomMessage() {
-        assumeSupportedVersion()
-
-        writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -207,11 +172,10 @@ class PluginIntegrationTest(
                     |}
                 """.trimMargin("|"),
         )
-        testProjectRoot.newFile("settings.gradle")
 
         val result =
             createRunner()
-                .withEnvironment(mapOf("JAVA_HOME" to "foo"))
+                .withEnvironment(mapOf("JAVA_HOME" to ""))
                 .withArguments("tasks")
                 .buildAndFail()
         assertThat(result.output).contains("Check for more details here!")
@@ -219,20 +183,22 @@ class PluginIntegrationTest(
 
     @Test
     fun testFailAssembleMultipleProjects() {
-        assumeSupportedVersion()
-        assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
+        testProjectRoot.writeBuildGradle(
             """
             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+            """.trimIndent(),
+        )
+        testProjectRoot.writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -243,12 +209,6 @@ class PluginIntegrationTest(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
             include 'app-one'
             include 'app-two'
             """.trimMargin(),
@@ -264,7 +224,8 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 28
+              namespace 'com.foo.bar.one'
+              compileSdk 34
             }
             """.trimIndent(),
         )
@@ -278,7 +239,8 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 28
+              namespace 'com.foo.bar.two'
+              compileSdk 34
             }
             """.trimIndent(),
         )
@@ -302,20 +264,22 @@ class PluginIntegrationTest(
 
     @Test
     fun testFailInstallMultipleProjects() {
-        assumeSupportedVersion()
-        assumeCanRunAndroidBuild()
         testProjectRoot.newFile("local.properties").writeText("sdk.dir=${androidHome()}\n")
-        writeBuildGradle(
+        testProjectRoot.writeBuildGradle(
             """
             buildscript {
               repositories {
                 google()
+                mavenCentral()
               }
               dependencies {
                 classpath("com.android.tools.build:gradle:$agpVersion")
               }
             }
-
+            """.trimIndent(),
+        )
+        testProjectRoot.writeSettingsGradle(
+            """
             plugins {
               id "com.osacky.doctor"
             }
@@ -326,12 +290,6 @@ class PluginIntegrationTest(
               }
               warnWhenNotUsingParallelGC = false
             }
-            """.trimIndent(),
-        )
-
-        testProjectRoot.writeFileToName(
-            "settings.gradle",
-            """
             include 'app-one'
             include 'app-two'
             """.trimMargin(),
@@ -347,7 +305,8 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 30
+              namespace 'com.foo.bar.one'
+              compileSdk 34
             }
             """.trimIndent(),
         )
@@ -361,7 +320,8 @@ class PluginIntegrationTest(
             apply plugin: 'com.android.application'
 
             android {
-              compileSdkVersion 30 
+              namespace 'com.foo.bar.two'
+              compileSdk 34
             }
             """.trimIndent(),
         )
@@ -390,20 +350,8 @@ class PluginIntegrationTest(
             .withPluginClasspath()
             .withGradleVersion(version)
 
-    private fun assumeCanRunAndroidBuild() {
-        assumeTrue(GradleVersion.version("5.4") < GradleVersion.version(version))
-    }
-
-    private fun assumeSupportedVersion() {
-        assumeFalse(version == "6.8")
-    }
-
-    private fun assumeUnsupportedVersion() {
-        assumeTrue(version == "6.8")
-    }
-
-    private fun writeBuildGradle(build: String) {
-        testProjectRoot.writeBuildGradle(build)
+    private fun assumeNixLikeOs() {
+        assumeFalse(DefaultNativePlatform.getCurrentOperatingSystem().isWindows)
     }
 
     private fun createFileInFolder(
