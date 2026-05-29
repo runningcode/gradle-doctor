@@ -12,7 +12,8 @@ class ConfigurationCacheTest {
 
     @Test
     fun configurationCacheWorks() {
-        testProjectRoot.writeBuildGradle(
+        val fixtureName = "java-fixture"
+        testProjectRoot.writeSettingsGradle(
             """
                     |plugins {
                     |  id "com.osacky.doctor"
@@ -24,10 +25,9 @@ class ConfigurationCacheTest {
                     |  }
                     |  warnWhenNotUsingParallelGC = false
                     |}
+                    |include '$fixtureName'
                 """.trimMargin("|"),
         )
-        val fixtureName = "java-fixture"
-        testProjectRoot.writeFileToName("settings.gradle", "include '$fixtureName'")
         testProjectRoot.setupFixture(fixtureName)
 
         val runner =

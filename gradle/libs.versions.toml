@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.2.21"
 junit = "4.13.2"
+minGradle = "8.8"
 
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
