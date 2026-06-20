@@ -2,9 +2,12 @@ package com.osacky.doctor.internal
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.text.NumberFormat
+import java.util.Locale
 
 class SlowNetworkPrinterTest {
-    private val slowNetworkPrinter = SlowNetworkPrinter("Fake Repository")
+    private val numberFormat = NumberFormat.getNumberInstance(Locale.US).apply { maximumFractionDigits = 2 }
+    private val slowNetworkPrinter = SlowNetworkPrinter("Fake Repository", numberFormat)
 
     @Test
     fun obtainZeroMessage() {

@@ -8,7 +8,7 @@ import org.junit.Test
 class ParallelGCIntegrationTest : AbstractIntegrationTest() {
     @Test
     fun testParallelGCWarningEnabled() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
@@ -29,18 +29,18 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
         } else {
             assertThat(runner.buildAndFail().output).contains(
                 """
-              |> =============================== Gradle Doctor Prescriptions ============================================
-              |  | For faster builds, use the parallel GC.                                                              |
-              |  | Add -XX:+UseParallelGC to the org.gradle.jvmargs                                                     |
-              |  ========================================================================================================
-           """.trimMargin("|"),
+                =============================== Gradle Doctor Prescriptions ============================================
+                | For faster builds, use the parallel GC.                                                              |
+                | Add -XX:+UseParallelGC to the org.gradle.jvmargs                                                     |
+                ========================================================================================================
+                """.trimIndent(),
             )
         }
     }
 
     @Test
     fun testParallelGCWarningWhenUsingParallelGC() {
-        testProjectRoot.writeBuildGradle(
+        testProjectRoot.writeSettingsGradle(
             """
             plugins {
               id "com.osacky.doctor"
@@ -49,6 +49,7 @@ class ParallelGCIntegrationTest : AbstractIntegrationTest() {
               javaHome {
                 ensureJavaHomeMatches = false
               }
+              warnWhenNotUsingParallelGC = true
             }
             """.trimIndent(),
         )

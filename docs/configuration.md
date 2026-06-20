@@ -57,14 +57,6 @@ doctor {
    */
   warnWhenNotUsingParallelGC = true
   /**
-   * Throws an error when the `Delete` or `clean` task has dependencies.
-   * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
-   * output. This can lead to build failures or just strangeness with seemingly straightforward builds
-   * (e.g., gradle clean build).
-   * http://github.com/gradle/gradle/issues/2488
-   */
-  disallowCleanTaskDependencies = true
-  /**
    * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
    * https://youtrack.jetbrains.com/issue/KT-48843
    */
@@ -151,14 +143,6 @@ doctor {
     * Warn when not using parallel GC. Parallel GC is faster for build type tasks and is no longer the default in Java 9+.
     */
   warnWhenNotUsingParallelGC.set(true)
-   /**
-    * Throws an error when the `Delete` or `clean` task has dependencies.
-    * If a clean task depends on other tasks, clean can be reordered and made to run after the tasks that would produce
-    * output. This can lead to build failures or just strangeness with seemingly straightforward builds
-    * (e.g., gradle clean build).
-    * http://github.com/gradle/gradle/issues/2488
-    */
-   disallowCleanTaskDependencies.set(true)
    /**
     * Warn if using the Kotlin Compiler Daemon Fallback. The fallback is incredibly slow and should be avoided.
     * https://youtrack.jetbrains.com/issue/KT-48843

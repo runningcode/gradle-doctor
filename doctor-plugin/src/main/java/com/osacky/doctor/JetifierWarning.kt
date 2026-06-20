@@ -1,18 +1,17 @@
 package com.osacky.doctor
 
-import org.gradle.api.Project
+import org.gradle.api.provider.ProviderFactory
 
 class JetifierWarning(
     private val doctorExtension: DoctorExtension,
-    private val project: Project,
+    private val providers: ProviderFactory,
 ) : BuildStartFinishListener {
     override fun onStart() {
     }
 
     override fun onFinish(): List<String> {
-        val isJetifierEnabled = project.findProperty(JETIFIER_GRADLE_PROPERTY) as String?
+        val isJetifierEnabled = providers.gradleProperty(JETIFIER_GRADLE_PROPERTY).orNull
         if (doctorExtension.warnWhenJetifierEnabled.get() &&
-            isJetifierEnabled != null &&
             isJetifierEnabled == "true"
         ) {
             return listOf(

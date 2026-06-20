@@ -98,6 +98,6 @@ class JavaHomeCheck(
 }
 
 data class JvmVariables(
-    val environmentJavaHomeProvider: Provider<String?>,
+    val environmentJavaHomeProvider: Provider<out String?>,
     val gradleJavaHome: String,
 )

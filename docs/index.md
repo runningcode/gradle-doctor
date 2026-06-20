@@ -7,21 +7,27 @@ The right prescription for your Gradle build.
 Watch this Virtual Android Makers 2019 entitled [The Secrets of the Build Scan Plugin and the Internals of Gradle](https://www.youtube.com/watch?v=lgaqS0pmUzk) to learn more about what this plugin does.
 
 ## Usage
-1. Apply the Gradle Plugin to the root of your project.
+1. Apply the Gradle Plugin in your **`settings.gradle`** file.
 2. The Gradle Doctor will print suggestions for your build as you run regular tasks.
 
 === "Groovy"
     ``` groovy
+    // settings.gradle
     plugins {
       id "com.osacky.doctor" version "{{ doctor.current_release }}"
     }
     ```
 === "Kotlin"
     ``` kotlin
+    // settings.gradle.kts
     plugins {
       id("com.osacky.doctor") version "{{ doctor.current_release }}"
     }
     ```
+
+The plugin is a Settings plugin so it is compatible with [Isolated Projects](https://docs.gradle.org/current/userguide/isolated_projects.html).
+Applying it in a project's `build.gradle` will fail with an error.
+
 [For legacy plugin application, see the Gradle Plugin Portal.](https://plugins.gradle.org/plugin/com.osacky.doctor)
 
 ## Features

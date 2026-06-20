@@ -1,3 +1,4 @@
+import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -24,6 +25,17 @@ val integrationTest by sourceSets.creating
 
 gradlePlugin {
     testSourceSets(integrationTest, parallelGCTest, sourceSets.test.get())
+}
+
+listOf("runtimeElements", "apiElements").forEach { configurationName ->
+    configurations.named(configurationName).configure {
+        attributes {
+            attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(GradlePluginApiVersion::class.java, libs.versions.minGradle.get()),
+            )
+        }
+    }
 }
 
 dependencies {
@@ -102,6 +114,26 @@ tasks.withType(Test::class.java).configureEach {
     }
 }
 
+// PluginIntegrationTest covers Gradle 9.x via TestKit, which requires JDK 17+.
+// Run it under a Java 17 launcher in its own task and exclude from the standard test task,
+// which still runs unit tests under Java 11.
+tasks.named<Test>("test").configure {
+    exclude("com/osacky/doctor/PluginIntegrationTest*")
+}
+
+val pluginIntegrationTest = tasks.register<Test>("pluginIntegrationTest") {
+    description = "Runs PluginIntegrationTest under a Java 17 launcher so Gradle 9.x can be exercised."
+    group = "verification"
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    include("com/osacky/doctor/PluginIntegrationTest*")
+    javaLauncher.set(
+        javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        },
+    )
+}
+
 val java11Int = tasks.register<Test>("java11IntegrationTest") {
     group = "verification"
     javaLauncher.set(javaToolchains.launcherFor {
@@ -111,7 +143,7 @@ val java11Int = tasks.register<Test>("java11IntegrationTest") {
     classpath = parallelGCTest.runtimeClasspath
 }
 
-tasks.check.configure { dependsOn(java11Int, integrationTestTask)}
+tasks.check.configure { dependsOn(java11Int, integrationTestTask, pluginIntegrationTest) }
 
 tasks.withType<ValidatePlugins>().configureEach {
     failOnWarning.set(true)
