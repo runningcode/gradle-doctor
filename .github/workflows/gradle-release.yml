@@ -15,6 +15,8 @@ jobs:
           java-version: "17"
           distribution: "liberica"
       - uses: gradle/actions/setup-gradle@v6
+        with:
+          develocity-access-key: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       - name: Publish Release to Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}

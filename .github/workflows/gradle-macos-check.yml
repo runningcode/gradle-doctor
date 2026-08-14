@@ -15,6 +15,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
         with:
           add-job-summary-as-pr-comment: on-failure
+          develocity-access-key: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
       - name: Check Gradle Doctor
         env:
           GRADLE_ENCRYPTION_KEY: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
