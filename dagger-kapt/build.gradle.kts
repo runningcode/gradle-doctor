@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
   implementation(libs.kotlin.stdlib)
-  implementation("com.google.dagger:dagger:2.59.2")
-  kapt("com.google.dagger:dagger-compiler:2.59.2")
+  implementation(libs.dagger)
+  kapt(libs.dagger.compiler)
 
-  implementation("com.google.auto.value:auto-value-annotations:1.11.1")
-  kapt("com.google.auto.value:auto-value:1.11.1")
+  implementation(libs.auto.value.annotations)
+  kapt(libs.auto.value)
 }
