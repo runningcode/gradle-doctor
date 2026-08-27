@@ -18,3 +18,5 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - uses: gradle/actions/dependency-submission@v6
+      with:
+        develocity-access-key: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
