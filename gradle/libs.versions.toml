@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.2.21"
 junit = "4.13.2"
-dagger = "2.59.2"
+dagger = "2.60.1"
 auto-value = "1.11.1"
 
 [libraries]
