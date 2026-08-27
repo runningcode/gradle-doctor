@@ -23,4 +23,4 @@ kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version = "0.61.0" }
 kotlinter = { id = "org.jmailen.kotlinter", version = "5.2.0" }
 plugin-publish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
-maven-publish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
+maven-publish = { id = "com.vanniktech.maven.publish", version = "0.37.0" }
