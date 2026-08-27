@@ -1,6 +1,8 @@
 [versions]
 kotlin = "2.2.21"
 junit = "4.13.2"
+dagger = "2.59.2"
+auto-value = "1.11.1"
 
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -10,11 +12,15 @@ rxjava = "io.reactivex.rxjava3:rxjava:3.1.12"
 mockito = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
 develocity-agent-adapters = "com.gradle:develocity-gradle-plugin-adapters:1.2.1"
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+auto-value = { module = "com.google.auto.value:auto-value", version.ref = "auto-value" }
+auto-value-annotations = { module = "com.google.auto.value:auto-value-annotations", version.ref = "auto-value" }
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 versions = { id = "com.github.ben-manes.versions", version = "0.61.0" }
 kotlinter = { id = "org.jmailen.kotlinter", version = "5.2.0" }
 plugin-publish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
 maven-publish = { id = "com.vanniktech.maven.publish", version = "0.35.0" }
-
